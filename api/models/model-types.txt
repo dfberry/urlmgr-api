@@ -1,0 +1,15 @@
+http://sailsjs.org/documentation/concepts/models-and-orm/attributes
+
+string
+text
+integer
+float
+date
+datetime
+boolean
+binary
+array
+json
+mediumtext
+longtext
+objectid
