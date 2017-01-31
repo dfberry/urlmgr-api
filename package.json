@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cd urlmgr-api && PORT=3005 NODE_ENV=development npm start",
-    "test": "cd urlmgr-api && npm test"
+    "start": "cd src && PORT=3005 NODE_ENV=development npm start",
+    "test": "cd src && npm test"
   },
   "keywords": [],
   "author": "",
