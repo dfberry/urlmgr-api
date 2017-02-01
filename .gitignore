@@ -4,3 +4,4 @@ bower_components
 src/bower_components
 npm-debug.log
 .DS_STORE
+example-json
