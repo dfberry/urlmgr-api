@@ -21,21 +21,27 @@ describe('urls', function() {
 
   describe('get', function() {
 
-    it('should return all urls', function(done) {
+    it('should return array of urls', function(done) {
 
       chai.request(server)
           .get('/v1/urls')
           .end((err, res) => {
-              debugger;
               res.should.have.status(200);
               res.body.should.be.a('array');
               res.body.length.should.be.eql(0);
               done();
           });
+    });
+    it('should return 1 urls', function(done) {
 
-
-
-
+      chai.request(server)
+          .get('/v1/urls/99')
+          .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              res.body.id.should.be.eql(99);
+              done();
+          });
     });
   });
 });
