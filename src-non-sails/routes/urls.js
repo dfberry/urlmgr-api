@@ -20,6 +20,8 @@ router.post('/',  function(req, res) {
 router.get("/:id",  function(req, res) {
   var id = req.params.id;
 
+  console.log("/v1/urls/:id");
+
   urlLib.getById(id)
   .then( (results) => {
     res.status(200).json(results);

@@ -5,17 +5,17 @@ var config = require('../config/config.json');
 var Urls = {
 
   getById: function(id) {
-    return id;
+    return Promise.resolve(id) || Promise.resolve();
   },
   getAll: function(){
-    return [];
+    return Promise.resolve([]);
   },
   deleteById: function(id){
-    return null;
+    return Promise.resolve();
   },
   create: function(obj){
     obj.id = "newId";
-    return obj;
+    return Promise.resolve(obj);
   }
 }
 

@@ -1,9 +1,14 @@
-var gulp = require('gulp');
-var eslint = require('gulp-eslint');
+const gulp = require('gulp');
+const eslint = require('gulp-eslint');
+const nodemon = require('gulp-nodemon');
+const mocha = require('gulp-mocha');
 
-var SRC_CODE = './src-non-sails/**/*.js';
+const MAIN_ENTRY = './src-non-sails/index.js';
+const SRC_CODE = './src-non-sails/**/*.js';
+const SRC_TEST = './src-non-sails/**/*.spec.js';
+const IGNORE_CHANGES_ARRAY = [];
 
-var LINT_OPTIONS = {};
+const LINT_OPTIONS = {};
 
 gulp.task('lint', () => {
     // ESLint ignores files with "node_modules" paths.
@@ -22,6 +27,30 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('default', ['lint'], function () {
+gulp.task('develop', function () {
+  var stream = nodemon({ script: MAIN_ENTRY
+          , ext: 'html js'
+          , ignore: IGNORE_CHANGES_ARRAY
+          , tasks: ['lint'] 
+          , nodeArgs: ['--debug=5858']
+        })
+ 
+  stream
+      .on('restart', function () {
+        console.log('restarted!')
+      })
+      .on('crash', function() {
+        console.error('Application has crashed!\n')
+         stream.emit('restart', 10)  // restart the server in 10 seconds 
+      })
+})
+
+gulp.task('test', () => 
+    gulp.src(SRC_TEST, {read: false})
+        // gulp-mocha needs filepaths so you can't have any plugins before it 
+        .pipe(mocha({reporter: 'nyan'}))
+);
+
+gulp.task('default', ['develop'], function () {
     // This will only run if the lint task is successful...
 });
