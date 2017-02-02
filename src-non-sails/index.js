@@ -11,5 +11,4 @@ server = http.createServer(app);
 
 // Start Server
 server.listen(port, host, function() {
-    console.log("Listening on port " + port);
 });

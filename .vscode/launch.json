@@ -2,7 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach 5858",
+            "name": "Mocha 5858",
+            "type": "node",
+            "request": "attach",
+            "port": 5858,
+            "address": "localhost",
+            "restart": false,
+            "sourceMaps": false,
+            "outDir": null,
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": "/home/docker/urlmgr-api",
+            "args": ["--debug=5858", "node_modules/mocha/bin/_mocha", "src-non-sails/**/*.spec.js", "--no-timeouts"]
+        },
+        {
+            "name": "Node 5858",
             "type": "node",
             "request": "attach",
             "port": 5858,

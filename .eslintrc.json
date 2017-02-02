@@ -1,8 +1,14 @@
 {
-    "plugins": ["node"],
+    "plugins": ["node", "mocha"],
     "extends": ["eslint:recommended", "plugin:node/recommended"],
     "rules": {
         "node/exports-style": ["error", "module.exports"],
+        "node/no-unpublished-require": 0,
+        "mocha/no-exclusive-tests": "error",
+        "mocha/no-skipped-tests": "error",
+        "mocha/handle-done-callback": "error",
+        "mocha/no-synchronous-tests": "error",
+        "mocha/no-global-tests": "error",
         "no-unreachable": "error"
     }
 }
