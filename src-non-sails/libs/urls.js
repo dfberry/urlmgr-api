@@ -11,7 +11,7 @@ var Urls = {
     return Promise.resolve([]);
   },
   deleteById: function(id){
-    return Promise.resolve();
+    return Promise.resolve({id:id});
   },
   create: function(obj){
     obj.id = "newId";

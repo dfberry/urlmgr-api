@@ -20,8 +20,6 @@ router.post('/',  function(req, res) {
 router.get("/:id",  function(req, res) {
   var id = Number(req.params.id);
 
-  console.log("/v1/urls/:id");
-
   urlLib.getById(id)
   .then( (results) => {
     res.status(200).json(results);
@@ -45,9 +43,9 @@ router.get("/",  function(req, res) {
 
 // get all  
 router.delete("/:id",  function(req, res) {
-  var id = req.params.id;
+  var id = Number(req.params.id);
 
-  urlLib.deleteById()
+  urlLib.deleteById(id)
   .then( results => {
     res.status(200).json(results);
   }).catch(err => {
