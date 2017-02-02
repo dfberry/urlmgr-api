@@ -18,7 +18,7 @@ router.post('/',  function(req, res) {
 
 // get 1  
 router.get("/:id",  function(req, res) {
-  var id = req.params.id;
+  var id = Number(req.params.id);
 
   console.log("/v1/urls/:id");
 
