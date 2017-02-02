@@ -12,15 +12,19 @@
   "scripts": {
     "start": "cd src-non-sails && node --debug=5858 index.js",
     "lint": "gulp lint",
-    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 10000 src-non-sails/routes/urls.spec.js"
+    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 10000 src-non-sails/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.7",
     "body-parser": "^1.16.0",
     "cors": "^2.8.1",
     "express": "^4.14.1",
+    "mongodb": "^2.2.22",
+    "mongoose": "^4.8.1",
+    "mongoose-class-wrapper": "^0.8.1",
     "morgan": "^1.7.0",
     "serve-favicon": "^2.3.2"
   },
