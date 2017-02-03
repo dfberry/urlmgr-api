@@ -1,7 +1,5 @@
 "use strict";
 
-var config = require('../config/config.json');
-
 var Urls = {
 
   getById: function(id) {

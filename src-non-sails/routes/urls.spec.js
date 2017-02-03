@@ -9,15 +9,8 @@ const server = require('../server.js');
 
 chai.use(chaiHttp);
 let should = chai.should();
-const config = require('../config/config.json');
-
-
 
 describe('urls', function() {
-
-  beforeEach(function() {
-    
-  });
 
   describe('get', function() {
     it('should return array of urls', function(done) {
