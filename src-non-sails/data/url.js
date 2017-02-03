@@ -9,7 +9,6 @@ const loadClass = require('mongoose-class-wrapper');
 mongoose.connect('mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db);
 
 var urlSchema = new mongoose.Schema({
-  id: {type: String, default: uuid.v1 },
   name: {type: String},
   title: {type: String},
   url: {type: String},

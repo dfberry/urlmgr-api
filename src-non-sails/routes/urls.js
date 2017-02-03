@@ -18,11 +18,11 @@ router.post('/',  function(req, res) {
 
 // get 1  
 router.get("/:id",  function(req, res) {
-  var id = Number(req.params.id);
+  var id = req.params.id;
 
   urlLib.getById(id)
   .then( (results) => {
-    res.status(200).json(results);
+    res.status(200).send();
   }).catch(err => {
     res.status(500).send({ error: err.message });
   });
@@ -31,7 +31,6 @@ router.get("/:id",  function(req, res) {
 
 // get all  
 router.get("/",  function(req, res) {
-
   urlLib.getAll()
   .then( (results) => {
     res.status(200).json(results);
@@ -41,10 +40,9 @@ router.get("/",  function(req, res) {
 
 });
 
-// get all  
+// get all - id is guid
 router.delete("/:id",  function(req, res) {
-  var id = Number(req.params.id);
-
+  var id = req.params.id;
   urlLib.deleteById(id)
   .then( results => {
     res.status(200).json(results);

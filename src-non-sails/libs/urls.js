@@ -1,19 +1,41 @@
 "use strict";
 
+var UrlModel = require('../data/url.js');
+
 var Urls = {
 
   getById: function(id) {
-    return Promise.resolve({id:id});
+    return new Promise(function(resolve, reject) {
+      UrlModel.findById(id, (err, status) =>{
+        if(err)reject(err);
+        resolve(status);
+      });
+    });
   },
   getAll: function(){
-    return Promise.resolve([]);
+    return new Promise(function(resolve, reject) {
+      UrlModel.find({}, (err, status) =>{
+        if(err)reject(err);
+        resolve(status);
+      });
+    });
   },
-  deleteById: function(id){
-    return Promise.resolve({id:id});
+  deleteById: function(uuid){
+    return new Promise(function(resolve, reject) {
+      UrlModel.findByIdAndRemove({ _id: uuid }, (err, status) =>{
+        if(err)reject(err);
+        resolve(status);
+      });
+    });
   },
   create: function(obj){
-    obj.id = "newId";
-    return Promise.resolve(obj);
+    return new Promise(function(resolve, reject) {
+      var urlObj = new UrlModel(obj);
+      urlObj.save((err, _url) =>{
+        if(err)reject(err);
+        resolve(_url);
+      });
+    });
   }
 }
 
