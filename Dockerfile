@@ -10,7 +10,8 @@ FROM node:latest
 RUN apt-get update && \
     apt-get install -y apt-utils && \
     apt-get install -y sudo && \
-    apt-get install -y nano 
+    apt-get install -y nano && \
+    apt-get install net-tools
 
 # create user, permissions, folders
 # user aka 'docker'' has sudo permissions
