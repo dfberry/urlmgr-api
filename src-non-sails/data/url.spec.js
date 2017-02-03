@@ -10,12 +10,21 @@ describe('url model ', function() {
 
     it('should save 1 url', function(done){
 
-      var testString = "this is a test " + Date();
-      var urlObj = new Url({url:testString});
+      let timestamp = new Date;
+
+      var testData = {
+        name: "My RSS Site " + timestamp,
+        url: "http://mochatest.com/" + timestamp,
+        title: "Learn about RSS " + timestamp,
+        html: {status: 200, statusMessage: "OK", headers: { "content-length":1020}},
+        feeds: [{feed:1},{feed:2},{feed:3}]
+
+      };
+      var urlObj = new Url(testData);
 
       urlObj.save((err, _url) =>{
          expect(err).to.be.null;
-         _url.url.should.be.eql(testString);
+         _url.url.should.be.eql(testData.url);
          done();
       });
     });
