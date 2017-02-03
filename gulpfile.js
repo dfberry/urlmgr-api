@@ -51,6 +51,6 @@ gulp.task('test', () =>
         .pipe(mocha({reporter: 'nyan'}))
 );
 
-gulp.task('default', ['develop'], function () {
+gulp.task('default', ['lint','test'], function () {
     // This will only run if the lint task is successful...
 });

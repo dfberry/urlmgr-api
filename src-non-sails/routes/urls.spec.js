@@ -23,7 +23,6 @@ describe('urls', function() {
             res.should.have.status(200);
             res.body.should.be.a('array');
             res.body.length.should.be.above(0);
-            console.log("urls get length = " + res.body.length);
             done();
           });
     });
