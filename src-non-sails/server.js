@@ -5,9 +5,17 @@ var express = require('express'),
     cors = require('cors'),
     favicon = require('serve-favicon'),
     config = require('./config/config.json'),
-    urls = require('./routes/urls');
+    urls = require('./routes/urls'),
+    users = require('./routes/users');
 
 var app = express();
+
+global.name = "help";
+
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+var db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
+mongoose.connect(db);
 
 // Attach middleware
 app.use(require('morgan')('combined'));
@@ -20,6 +28,12 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50
 // Attach routes
 app.get("/", (req, res) => res.json({message: "Welcome to the app!"}));
 app.use('/v1/urls',urls);
-app.listen(config.port);
+app.use('/v1/users',users);
+
+mongoose.connection.on('open', function() {
+    console.log('Connected to Mongoose');
+    app.listen(config.port);
+});
+
 
 module.exports = app;

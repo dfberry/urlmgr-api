@@ -1,8 +1,23 @@
 {
-  "port": 3000,
+  "api-server":{
+    "port": 3000
+  },
   "db": {
+    "username": "user",
+    "password": "pwd",
     "db": "mydbname",
     "host": "localhost",
-    "port": "27017"
-  }
+    "port": "27017",
+    "dialect": "mongo"
+  },
+    "jwt": {
+    "issuer": "auth.dfberry.io",
+    "secret": "Test1234"
+  },
+  "security": {
+      "adminIps": [
+        "127.0.0.1",
+        "::1"
+      ]
+    }  
 }
