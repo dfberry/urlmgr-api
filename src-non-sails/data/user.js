@@ -3,6 +3,7 @@ const loadClass = require('mongoose-class-wrapper');
 const uuid = require('node-uuid'),
     bcrypt = require('bcrypt'),
     SALT_WORK_FACTOR = 10;
+db.Promise = require('bluebird');
 
 var userSchema = new db.Schema({
   firstName: {type: String},
