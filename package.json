@@ -10,10 +10,10 @@
     "node": ">=6.8.0"
   },
   "scripts": {
-    "start": "cd src-non-sails && node --debug=5858 index.js",
+    "start": "cd src && node --debug=5858 index.js",
     "lint": "gulp lint",
     "coverage": "istanbul cover _mocha -- -R spec",
-    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 20000 src-non-sails/**/*.spec.js"
+    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 20000 src/**/*.spec.js"
   },
   "keywords": [],
   "author": "",

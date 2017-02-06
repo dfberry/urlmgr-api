@@ -12,7 +12,7 @@
             "outDir": null,
             "localRoot": "${workspaceRoot}",
             "remoteRoot": "/home/docker/urlmgr-api",
-            "args": ["--debug=5858", "node_modules/mocha/bin/_mocha", "src-non-sails/**/*.spec.js", "--no-timeouts"],
+            "args": ["--debug=5858", "node_modules/mocha/bin/_mocha", "src/**/*.spec.js", "--no-timeouts"],
             "skipFiles": [
                 "node_modules/**/*.js"
             ]
@@ -26,8 +26,8 @@
             "restart": false,
             "sourceMaps": false,
             "outDir": null,
-            "localRoot": "${workspaceRoot}/src-non-sails",
-            "remoteRoot": "/home/docker/urlmgr-api/src-non-sails",
+            "localRoot": "${workspaceRoot}/src",
+            "remoteRoot": "/home/docker/urlmgr-api/src",
             "skipFiles": [
                 "node_modules/**/*.js"
             ]

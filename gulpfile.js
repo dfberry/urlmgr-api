@@ -3,9 +3,9 @@ const eslint = require('gulp-eslint');
 const nodemon = require('gulp-nodemon');
 const mocha = require('gulp-mocha');
 
-const MAIN_ENTRY = './src-non-sails/index.js';
-const SRC_CODE = './src-non-sails/**/*.js';
-const SRC_TEST = './src-non-sails/**/*.spec.js';
+const MAIN_ENTRY = './src/index.js';
+const SRC_CODE = './src/**/*.js';
+const SRC_TEST = './src/**/*.spec.js';
 const IGNORE_CHANGES_ARRAY = [];
 
 const LINT_OPTIONS = {};
