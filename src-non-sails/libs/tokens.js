@@ -6,23 +6,29 @@ var Tokens = {
   create: function(user, jwtConfig){
     return new Promise(function(resolve, reject) {
 
-    var claims = { email: user.email, 
-                   role: user.role || 'none',
-                   uuid: user.id,
-                   random: Math.random()
-                  },
-        options = { expiresIn: "7 days",
-                    issuer: jwtConfig.issuer },
-        token = { userUuid: user.id, 
-                  token: jwt.sign(claims, jwtConfig.secret, options) };
 
-      var tokenObj = new TokenModel(token);
+      if(!user) return reject("user is not found");
+      if(!jwtConfig) return reject("jwtConfig");
 
+      let claims = { email: user.email, 
+                    role: user.role || 'none',
+                    userUuid: user._id,     
+                    random: Math.random()
+                  };
+                  
+      let options = { expiresIn: "7 days",
+                      issuer: jwtConfig.issuer };
 
-      tokenObj.save((err, _token) =>{
-        if(err)return reject(err);
-        resolve(_token);
-      });
+       let token = { userUuid: user._id,
+                    role: user.role || 'none',
+                    revoked: false,
+                    token: jwt.sign(claims, jwtConfig.secret, options) };
+        var tokenObj = new TokenModel(token);
+
+        tokenObj.save((err, _token) =>{
+          if(err)return reject(err);
+          resolve(_token);
+        });
     });
   },
 
