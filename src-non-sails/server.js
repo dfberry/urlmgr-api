@@ -6,7 +6,8 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     config = require('./config/config.json'),
     urls = require('./routes/urls'),
-    users = require('./routes/users');
+    users = require('./routes/users'),
+    auth = require('./routes/authentication');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50
 app.get("/", (req, res) => res.json({message: "Welcome to the app!"}));
 app.use('/v1/urls',urls);
 app.use('/v1/users',users);
+app.use('/v1/auth',auth);
 
 mongoose.connection.on('open', function() {
     console.log('Connected to Mongoose');

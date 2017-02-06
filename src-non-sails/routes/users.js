@@ -20,14 +20,28 @@ router.post('/',  function(req, res) {
 router.get("/:id",  function(req, res) {
   var id = req.params.id;
 
-  usersLib.getById(req.db, id)
+  usersLib.getById(id)
   .then( (results) => {
-    res.status(200).send();
+    res.status(200).send(results);
   }).catch(err => {
     res.status(500).send({ error: err.message });
   });
 
 });
+
+// get 1  
+router.get("/email/:email",  function(req, res) {
+  var email = req.params.email;
+
+  usersLib.getByEmail(email)
+  .then( (results) => {
+    res.status(200).send(results);
+  }).catch(err => {
+    res.status(500).send({ error: err.message });
+  });
+
+});
+
 
 // Revokes a User's token
 /*

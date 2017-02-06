@@ -6,3 +6,6 @@ node --inspect=5858 src-non-sails/index.js
 
 
 netstat -tulpn
+
+Node latest 6.8.0 issues
+parameter destructuring doesn't seem to be supported

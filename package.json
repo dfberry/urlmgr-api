@@ -13,7 +13,7 @@
     "start": "cd src-non-sails && node --debug=5858 index.js",
     "lint": "gulp lint",
     "coverage": "istanbul cover _mocha -- -R spec",
-    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 10000 src-non-sails/**/*.spec.js"
+    "test": "node --debug=5858 node_modules/mocha/bin/_mocha -t 20000 src-non-sails/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
@@ -24,12 +24,14 @@
     "body-parser": "^1.16.0",
     "cors": "^2.8.1",
     "express": "^4.14.1",
+    "jsonwebtoken": "^7.2.1",
     "mongodb": "^2.2.22",
     "mongoose": "^4.8.1",
     "mongoose-class-wrapper": "^0.8.1",
     "morgan": "^1.7.0",
     "node-uuid": "^1.4.7",
-    "serve-favicon": "^2.3.2"
+    "serve-favicon": "^2.3.2",
+    "sinon": "^1.17.7"
   },
   "devDependencies": {
     "chai": "^3.5.0",
