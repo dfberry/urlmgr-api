@@ -1,3 +1,4 @@
+"use strict"
 var validator = require('validator');
 var util = require('util');
 var TokenModel = require('../data/token');

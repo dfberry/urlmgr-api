@@ -1,3 +1,5 @@
+"use strict"
+
 const db = require('mongoose');
 const loadClass = require('mongoose-class-wrapper');
 const uuid = require('node-uuid');
