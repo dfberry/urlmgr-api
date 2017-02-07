@@ -1,7 +1,7 @@
 "use strict";
 
 var UserModel = require('../data/user');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 //var TokenModel = require('../data/token');
 
 var Users = {

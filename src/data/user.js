@@ -2,7 +2,7 @@
 const db = require('mongoose');
 const loadClass = require('mongoose-class-wrapper');
 const uuid = require('node-uuid'),
-  bcrypt = require('bcrypt'),
+  bcrypt = require('bcryptjs'),
   SALT_WORK_FACTOR = 10;
 db.Promise = require('bluebird');
 
