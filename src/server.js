@@ -32,10 +32,4 @@ app.use('/v1/urls',urls);
 app.use('/v1/users',users);
 app.use('/v1/auth',auth);
 
-mongoose.connection.on('open', function() {
-    console.log('Connected to Mongoose');
-    app.listen(config.port);
-});
-
-
 module.exports = app;

@@ -1,6 +1,6 @@
 'use strict';
 
-var app = require('./server')(),
+var app = require('./server'),
     http = require('http'),
     port = process.env.SB_PORT || 3000,
     host = process.env.SB_HOST || undefined,
