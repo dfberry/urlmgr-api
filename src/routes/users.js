@@ -1,14 +1,17 @@
 "use strict";
 
+var libError = require('../libs/error');
+var libAuthorization = require('../libs/authorization');
+var libUsers = require('../libs/users');
 var express = require('express');
 var router = express.Router();
-var usersLib = require('../libs/users');
+var uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
 
 // create 1
 router.post('/',  function(req, res) {
   var data = req.body;
 
-  usersLib.create(data)
+  libUsers.create(data)
   .then( (results) => {
     res.status(200).json(results);
   }).catch(err => {
@@ -16,47 +19,34 @@ router.post('/',  function(req, res) {
   });
 });
 
-// get 1  
-router.get("/:id",  function(req, res) {
+router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
-
-  usersLib.getById(id)
-  .then( (results) => {
-    res.status(200).send(results);
-  }).catch(err => {
-    res.status(500).send({ error: err.message });
+  
+  libUsers.get(id).then(function(results) {
+    res.send(results);
+  }).catch(function(err) {
+    libError.send(res, err);
   });
-
 });
 
-// get 1  
-router.get("/email/:email",  function(req, res) {
-  var email = req.params.email;
+/* Revokes a User's token
 
-  usersLib.getByEmail(email)
-  .then( (results) => {
-    res.status(200).send(results);
-  }).catch(err => {
-    res.status(500).send({ error: err.message });
-  });
+   This supports active user logout, where it makes sense to 
+   invalidate the token they were using, since it will no longer
+   be available to their device. 
+   
+   Notes:
+     *  If no token is passed then it deletes ALL the user's tokens
 
-});
-
-
-// Revokes a User's token
-/*
-router.delete("/:id/tokens",  function(req, res) {
+*/
+router.delete("/:id(" + uuidV4Regex + ")/tokens", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var token = req.query.token;
-
-  usersLib.logout(req.db, id, token)
-  .then( results => {
-    res.status(200).json(results);
-  }).catch(err => {
-    res.status(500).send({ error: err.message });
+  libUsers.logout(id, token).then(function() {
+    res.send();
+  }).catch(function(err) {
+    libError.send(res, err);
   });
-
 });
-*/
 
 module.exports = router;

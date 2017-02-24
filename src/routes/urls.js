@@ -40,7 +40,7 @@ router.get("/",  function(req, res) {
 
 });
 
-// get all - id is guid
+// delete 1
 router.delete("/:id",  function(req, res) {
   var id = req.params.id;
   urlLib.deleteById(id)

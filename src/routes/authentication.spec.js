@@ -20,6 +20,7 @@ describe('authentication', function() {
         password: "testPassword"
       };
 
+      // create user
       chai.request(server)
           .post('/v1/users')
           .send(testUser)
@@ -43,13 +44,16 @@ describe('authentication', function() {
                 .send(authUser)
                 .end((_err, _res) => {            
                   if(_err)return done(_err);
+
                   _res.should.have.status(200);
                   _res.body.should.be.a('object');
                   _res.body.token.length.should.be.above(200);
+
+                  // make sure entire db record is NOT returned
+                  _res.body.should.not.have.property("revoked");
+
                   done();
-                });
-                
-                
+                });   
           });
     });
 });

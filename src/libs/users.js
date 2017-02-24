@@ -17,31 +17,25 @@ var Users = {
   getByEmail: function(email) {
     return new Promise(function(resolve, reject) {
       let query = { email: email };
-      UserModel.findOne(query,(err, status) =>{
-        if(err)return reject(err);
-        resolve(status);
-      });
+      try{
+        UserModel.findOne(query,(err, status) =>{
+          if(err)return reject(err);
+          resolve(status);
+        }).catch(err => {
+          console.log("err = " + err);
+        });
+      } catch (err ){
+        console.log(err);
+      };
     });
   },
-  // if token is empty, removes all tokens for user
-  // if user has a token for each device, they will have to login to each device after this
-  /*
-  logout: function(uuid, token){
-    return new Promise(function(resolve, reject) {
-      if(token) {
-        TokenModel.remove({ user: uuid, _id: token }, (err, status) =>{
-          if(err)reject(err);
-          resolve(status);
-        });
-      } else {
-        TokenModel.remove({user: uuid}, (err, status) => {
-          if(err)reject(err);
-          resolve(status);
-        });
-      }
-    });
+  get: function(uuid) {
+    return data.users.get(uuid);
   },
-  */
+
+  logout: function(userUuid, token) {
+    return data.tokens.revoke(userUuid, token);
+  },
   create: function(user){
     return new Promise(function(resolve, reject) {
       var userObj = new UserModel(user);

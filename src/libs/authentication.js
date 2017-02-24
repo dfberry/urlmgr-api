@@ -58,9 +58,11 @@ var Authentication = {
       if (!validate(email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
       Users.checkPassword(email, password).then(function(user) {
         if (!user) throw new Error("Authentication Failed: No such user.");
-        _user = JSON.parse(JSON.stringify(user))
+        let _user = JSON.parse(JSON.stringify(user))
         // Store JWT in DB for logout/revocation
-        return Tokens.create(_user, config.jwt);
+        var token = getToken(email, _user, config.jwt);
+
+        return Tokens.insert(token);
       }).then(function(dbtoken) {
         resolve(dbtoken);
       }).catch(function(error) {
@@ -80,6 +82,22 @@ function validate(email, password) {
   if (!validator.isEmail(email)) return false;
 
   return true; 
+}
+
+function getToken(email, user, jwtConfig) {
+  var role, claims, jwt;
+
+  if (!user) {
+    claims = { email: email, role: 'none', uuid: undefined }; 
+  }else{
+    role = user.role;
+    claims = { email: email, role: user.role, uuid: user._id }; 
+  }
+      
+  // Generate a JWT based on result
+  jwt = Tokens.create(claims, config.jwt);
+
+  return jwt;
 }
 
 /** EXPORT **/

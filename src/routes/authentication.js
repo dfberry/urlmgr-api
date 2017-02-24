@@ -2,7 +2,7 @@
 
 var config = require('../config/config.json');
 var libAuthentication = require('../libs/authentication');
-//var libError = require('../libs/error');
+var libError = require('../libs/error');
 var express = require('express');
 var router = express.Router();
 
@@ -37,3 +37,4 @@ router.post('/', function(req, res) {
 });
 
 module.exports = router;
+
