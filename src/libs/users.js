@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 var Users = {
 
   getById: function(id) {
+    var self = this;
     return new Promise(function(resolve, reject) {
       UserModel.findById(id,(err, status) =>{
         if(err)return reject(err);
@@ -15,6 +16,7 @@ var Users = {
     });
   },
   getByEmail: function(email) {
+    var self = this;
     return new Promise(function(resolve, reject) {
       let query = { email: email };
       try{
@@ -30,17 +32,18 @@ var Users = {
     });
   },
   get: function(uuid) {
-    return data.users.get(uuid);
+    return getById(uuid);
   },
 
   logout: function(userUuid, token) {
     return data.tokens.revoke(userUuid, token);
   },
   create: function(user){
+    var self = this;
     return new Promise(function(resolve, reject) {
       var userObj = new UserModel(user);
       userObj.save((err, _user) => {
-        if(err)return reject(err);
+        if(err)return reject(err);       
         resolve(_user);
       });
     });

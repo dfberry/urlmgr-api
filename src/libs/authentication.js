@@ -66,7 +66,7 @@ var Authentication = {
       }).then(function(dbtoken) {
         resolve(dbtoken);
       }).catch(function(error) {
-        reject(error);
+        reject("User & password did not match");
       });
 
     });

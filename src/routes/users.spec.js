@@ -30,7 +30,7 @@ describe('users', function() {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.email.should.be.eql(testUser.email);
-            res.body.password.should.not.be.eql(testUser.password);
+            res.body.should.not.have.property("password");
             done();
           });
     });
@@ -54,14 +54,16 @@ describe('users', function() {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.email.should.be.eql(testUser.email);
-            res.body.password.should.not.be.eql(testUser.password);
+            res.body.should.not.have.property("password");
 
             agent.get('/v1/users/email/' + testUser.email)
               .end((err2, res2) => {
                 if (err2) return done(err2);
                 res2.should.have.status(200);
-                res2.body.email.should.be.eql(res.body.email);
+                res2.body.firstName.should.be.eql(testUser.firstName);
+                res2.body.lastName.should.be.eql(testUser.lastName);
                 res2.body.email.should.be.eql(testUser.email);
+                res2.body.should.not.have.property("password");
                 done();
           });
         });

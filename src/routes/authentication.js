@@ -25,13 +25,17 @@ router.post('/', function(req, res) {
 
   var email = req.body.email,
       password = req.body.password;
+
+	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
  
   libAuthentication.authenticate(email, password)
 	.then(result => {
 		// don't return everything!!!
     res.send({token:result.token});
   }).catch(function(err) {
-		res.status(500).send({ error: err.message });
+
+		if(err==='User & password did not match') return res.status(422).send(err);
+		return res.status(500).send({ error: err.message });
   });
 
 });

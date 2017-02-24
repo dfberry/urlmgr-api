@@ -13,17 +13,27 @@ router.post('/',  function(req, res) {
 
   libUsers.create(data)
   .then( (results) => {
-    res.status(200).json(results);
+    res.status(200).json(removePassword(results));
   }).catch(err => {
     res.status(500).send({ error: err.message });
   });
 });
 
+router.get("/email/:email", function(req, res) {
+  var email = req.params.email;
+
+  libUsers.getByEmail(email).then(function(results) {
+    res.send(removePassword(results));
+  }).catch(function(err) {
+    libError.send(res, err);
+  });
+});
+
 router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
-  
+
   libUsers.get(id).then(function(results) {
-    res.send(results);
+    res.send(removePassword(results));
   }).catch(function(err) {
     libError.send(res, err);
   });
@@ -48,5 +58,11 @@ router.delete("/:id(" + uuidV4Regex + ")/tokens", libAuthorization.AdminOrId, fu
     libError.send(res, err);
   });
 });
+function removePassword(user){
+    let newUserObj = JSON.parse(JSON.stringify(user));
+    newUserObj.password = null;
+    delete newUserObj['password'];
+    return newUserObj;
+}
 
 module.exports = router;
