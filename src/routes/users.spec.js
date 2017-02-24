@@ -68,4 +68,67 @@ describe('users', function() {
           });
         });
     });
+    it('should logout user', function(done) {
+
+      let testUser = { 
+        lastName: "berry",
+        firstName: "dina",
+        email: Math.floor(new Date().getTime()) + "@test.com",
+        password: "testPassword"
+      };
+
+      // create user
+      chai.request(server)
+          .post('/v1/users')
+          .send(testUser)
+          .end((err, res) => {
+
+            if(err) return done(err);
+
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.email.should.be.eql(testUser.email);
+            res.body.should.not.have.property("password");
+
+            testUser.id = res.body._id;
+
+            let authUser = {
+              email: testUser.email,
+              password: testUser.password
+            }
+
+            // user is created, get token
+            chai.request(server)
+                .post('/v1/auth')
+                .send(authUser)
+                .end((_err, _res) => {            
+                  if(_err)return done(_err);
+                  _res.should.have.status(200);
+                  _res.body.should.be.a('object');
+                  _res.body.token.length.should.be.above(200);
+
+                  testUser.token =  _res.body.token;
+
+                  // make sure entire db record is NOT returned
+                  _res.body.should.not.have.property("revoked");
+
+                  //         'x-access-token': self.token.jwt
+
+
+
+
+                  chai.request(server)
+                  .delete('/v1/users/' + testUser.id + "/tokens")
+                  .set('x-access-token', testUser.token)
+                  .end((err3, res3) => {
+                    if(err3) return done(err3);
+
+                    // TODO: make sure item is gone from database
+                    done();
+                  });
+
+                  
+                });   
+          });
+    });
 });

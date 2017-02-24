@@ -1,6 +1,7 @@
 "use strict";
 
 var UserModel = require('../data/user');
+var Tokens = require('./tokens');
 const bcrypt = require('bcryptjs');
 //var TokenModel = require('../data/token');
 
@@ -36,7 +37,7 @@ var Users = {
   },
 
   logout: function(userUuid, token) {
-    return data.tokens.revoke(userUuid, token);
+    return Tokens.revoke(userUuid, token);
   },
   create: function(user){
     var self = this;

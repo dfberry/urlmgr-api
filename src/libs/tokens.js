@@ -40,6 +40,21 @@ var Tokens = {
     } catch (err) {
       throw err;
     }
+  },
+  // not setting revoke, just deleting it
+  // TBD: why have revoke on the token then
+  revoke: function(userUuid, token){
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      var conditions = {
+        userUuid: userUuid,
+        token: token
+      };
+      TokenModel.remove(conditions, (err) => {
+        if(err)return reject(err);
+        resolve();
+      });
+    });
   }
 };
 
