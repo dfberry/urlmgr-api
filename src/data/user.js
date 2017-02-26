@@ -24,6 +24,10 @@ var userSchema = new db.Schema({
     type: String,
     required: true
   },
+  lastLogin: {
+    type: Date,
+    default: Date.now
+  },
   created: {
     type: Date,
     default: Date.now

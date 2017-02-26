@@ -7,6 +7,7 @@ var express = require('express'),
     config = require('./config/config.json'),
     urls = require('./routes/urls'),
     users = require('./routes/users'),
+    libClaims = require('./libs/claims'),
     auth = require('./routes/authentication');
 
 // for coverage of apis
@@ -36,6 +37,7 @@ app.use(cors());
 //http://stackoverflow.com/questions/19917401/error-request-entity-too-large
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
+app.use(libClaims);
 
 // Attach routes
 app.get("/", (req, res) => res.json({message: "Welcome to the app!"}));

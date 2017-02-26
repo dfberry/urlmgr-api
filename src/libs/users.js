@@ -3,7 +3,7 @@
 var UserModel = require('../data/user');
 var Tokens = require('./tokens');
 const bcrypt = require('bcryptjs');
-//var TokenModel = require('../data/token');
+var moment = require('moment');
 
 var Users = {
 
@@ -48,17 +48,18 @@ var Users = {
         resolve(_user);
       });
     });
-  },/*,
+  },
   setLastLogin: function(id){
     return new Promise(function(resolve, reject) {
+      
+      let lastLogin = new Date(moment().format());
 
-      UserModel.findByIdAndUpdate(id, { $set: { lastLogin: moment }}, { new: true }, (err, newUser) => {
+      UserModel.findByIdAndUpdate(id, { $set: { lastLogin: lastLogin}}, { new: true }, (err, newUser) => {
         if (err) reject(err);
         resolve(newUser);
       });
     });
   },
-  */
   checkPassword: function(email, candidatePassword){
     var self = this;
     return new Promise(function(resolve, reject) {

@@ -16,20 +16,27 @@ var Authentication = {
    Verifies token exists in DB and is not revoked
    Sets Last Login time
   */
-  getClaims: function(dbconnection, tokenUuid, ipAddr) {
+  getClaims: function(token, ipAddr) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
       // decode token
       if (!token) return resolve();
-      
+
+         
+
+        let query = {
+          "token": token
+        };
+
         // Check for the token in the DB
-        TokenModel.findById(tokenUuid).then(function(token) {
+        // if it isn't found - it definitely isn't authorized
+        TokenModel.find(query).then(function(tokenDoc) {
 
-          if (!token) throw new Error("Token has been revoked, as a result of deletion.");
-          if (token.revoked) throw new Error("Token has been revoked.");
+          if (!tokenDoc) throw new Error("Token has been revoked, as a result of deletion.");
+          if (tokenDoc.revoked) throw new Error("Token has been revoked.");
 
-          var decoded = token.verify(config.jwt);
+          var decoded = Tokens.verify(token,config.jwt);
           
           // ISSUE: don't care when promise is returned, don't care if error is thrown
           if (decoded.uuid) Users.setLastLogin(decoded.uuid).catch((error) => { console.log(error); });

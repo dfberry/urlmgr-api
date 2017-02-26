@@ -74,7 +74,7 @@ var authorization = {
 };
 
 function isId(req) {
-  if (req.claims.id === req.params.id) return true;
+  if (req.claims.uuid === req.params.id) return true;
   return false;
 }
 

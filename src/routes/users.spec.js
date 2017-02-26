@@ -56,6 +56,7 @@ describe('users', function() {
             res.body.email.should.be.eql(testUser.email);
             res.body.should.not.have.property("password");
 
+            // get user by email returns token
             agent.get('/v1/users/email/' + testUser.email)
               .end((err2, res2) => {
                 if (err2) return done(err2);
@@ -112,11 +113,7 @@ describe('users', function() {
                   // make sure entire db record is NOT returned
                   _res.body.should.not.have.property("revoked");
 
-                  //         'x-access-token': self.token.jwt
-
-
-
-
+                  // logoff
                   chai.request(server)
                   .delete('/v1/users/' + testUser.id + "/tokens")
                   .set('x-access-token', testUser.token)
@@ -126,8 +123,6 @@ describe('users', function() {
                     // TODO: make sure item is gone from database
                     done();
                   });
-
-                  
                 });   
           });
     });

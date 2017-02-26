@@ -38,7 +38,7 @@ describe('authentication', function() {
               password: testUser.password
             }
 
-            // user is created, now authenticate user back to same password
+            // user is created, now authenticate user back with same password
             chai.request(server)
                 .post('/v1/auth')
                 .send(authUser)
