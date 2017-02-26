@@ -49,7 +49,7 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
      *  If no token is passed then it deletes ALL the user's tokens
 
 */
-router.delete("/:id/tokens"/*, libAuthorization.AdminOrId*/, function(req, res) {
+router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var token = req.headers['x-access-token'];
   libUsers.logout(id, token).then(function() {
