@@ -11,27 +11,31 @@ var express = require('express'),
     auth = require('./routes/authentication');
 
 // for coverage of apis
-var im = require('istanbul-middleware'),
+var im = undefined, 
+    isCoverageEnabled = false;
+
+if (config.env === 'development'){
     isCoverageEnabled = (process.env.COVERAGE == "true"); 
 
-if (isCoverageEnabled) {
-    console.log('Hook loader for coverage - ensure this is not production!');
-    im.hookLoader(__dirname);
-        // cover all files except under node_modules 
-        // see API for other options 
+    if (isCoverageEnabled) {
+        im = require('istanbul-middleware'),
+        console.log('Hook loader for coverage - ensure this is not production!');
+        im.hookLoader(__dirname);
+            // cover all files except under node_modules 
+            // see API for other options 
+    }
 }
 
 var app = express();
-
-global.name = "help";
-
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
 mongoose.connect(db);
 
 
-app.set('env', config.env);
+app.set('env', config.env || 'development');
+app.set('port', config.port || 3000);
+console.log("environment = " + config.env);
 
 // Attach middleware
 app.use(require('morgan')('combined'));
@@ -49,7 +53,7 @@ app.use('/v1/users',users);
 app.use('/v1/auth',auth);
 
 // test/coverage only
-if (isCoverageEnabled) {
+if ((config.env === 'development') && isCoverageEnabled) {
     //enable coverage endpoints under /coverage 
     app.use('/coverage', im.createHandler());
 }
