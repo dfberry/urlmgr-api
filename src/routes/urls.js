@@ -22,10 +22,16 @@ router.post('/', libAuthorization.AdminOrId, function(req, res) {
 // get 1  
 router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
+  var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getById(id)
+  urlLib.getById(id,  userUuid)
   .then( (results) => {
-    res.status(200).send();
+
+    // don't send back all the meta from mongo
+    if(results && results.length>0) return res.status(200).json(results[0]._doc);
+
+    // if nothing found, still return empty obj
+    return res.status(200).json({});
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -37,7 +43,9 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //TODO = pass in uuid for all requests
   //so only urls associated with user are returned
   //req.claims.uuid
-  urlLib.getAll()
+  var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
+
+  urlLib.getAll(userUuid)
   .then( (results) => {
     res.status(200).json(results);
   }).catch(function(err) {

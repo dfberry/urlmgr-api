@@ -1,12 +1,16 @@
 "use strict";
 
 var UrlModel = require('../data/url.js');
+var authorization = require('./authorization.js');
 
 var Urls = {
 
-  getById: function(id) {
+  getById: function(id,userUuid) {
     return new Promise(function(resolve, reject) {
-      UrlModel.findById(id, (err, status) =>{
+
+      let query = userUuid ? {_id: id, userUuid:userUuid} : {_id:id};
+
+      UrlModel.find(query, (err, status) =>{
         if(err)reject(err);
         resolve(status);
       });

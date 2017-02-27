@@ -25,7 +25,7 @@ describe('urls', function() {
 
     beforeEach(function(done) {
         testUser = { 
-            lastName: "urls",
+            lastName: "before urls",
             firstName: "spec",
             email: Math.floor(new Date().getTime()) + "@urls.spec.com",
             password: "testPassword"
@@ -62,7 +62,7 @@ describe('urls', function() {
 
   describe('auth success', function() {
 
-
+    // TODO - make this test more meaningful
     it('should return array of urls', function(done) {
         chai.request(server)
           .get('/v1/urls')
@@ -81,8 +81,8 @@ describe('urls', function() {
 
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
       let testUrl = {
-        name: new Date + " mocha test",
-        title: "test title",
+        name: Math.floor(new Date().getTime())+ " mocha test should return 1 url",
+        title: "test title - should return 1 url",
         url: url,
         html: {},
         feeds: []
@@ -105,6 +105,7 @@ describe('urls', function() {
             .end((err, res2) => {
               should.not.exist(err);
               res2.should.have.status(200);
+              res2.body.name.should.be.eq(testUrl.name);
               done();
             });
         });
@@ -114,8 +115,8 @@ describe('urls', function() {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
       let testUrl = {
-        name: new Date + " mocha test",
-        title: "test title",
+        name: Math.floor(new Date().getTime()) + " mocha test - should create 1 url",
+        title: "test title - should create 1 url",
         url: url,
         html: {},
         feeds: []
@@ -133,6 +134,7 @@ describe('urls', function() {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.url.should.be.eql(url);
+          res.body.name.should.be.eql(testUrl.name);
           done();
         });
     });
@@ -142,8 +144,8 @@ describe('urls', function() {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
       let testUrl = {
-        name: "my mocha test name",
-        title: "test title",
+        name: Math.floor(new Date().getTime()) + "my mocha test name - should delete 1 url",
+        title: "test title - should delete 1 url",
         url: url,
         html: {},
         feeds: []
@@ -169,6 +171,7 @@ describe('urls', function() {
               res.should.have.status(200);
               res.body.should.be.a('object');
               res.body._id.should.be.eql(createdUUID);
+              res.body.name.should.be.eql(testUrl.name);
               done();
             });
         });
@@ -188,8 +191,8 @@ describe('urls', function() {
     it('should NOT return 1 url', function(done) {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
       let testUrl = {
-        name: new Date + " mocha test",
-        title: "test title",
+        name: Math.floor(new Date().getTime()) + " mocha test - should NOT return 1 url",
+        title: "test title - should NOT return 1 url",
         url: url,
         html: {},
         feeds: []
@@ -217,8 +220,8 @@ describe('urls', function() {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
       let testUrl = {
-        name: new Date + " mocha test",
-        title: "test title",
+        name: Math.floor(new Date().getTime()) + " mocha test - should NOT create 1 url",
+        title: "test title - should NOT create 1 url",
         url: url,
         html: {},
         feeds: []
@@ -239,8 +242,8 @@ describe('urls', function() {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
       let testUrl = {
-        name: "my mocha test name",
-        title: "test title",
+        name: Math.floor(new Date().getTime()) + "my mocha test name - should NOT delete 1 url",
+        title: "test title - should NOT delete 1 url",
         url: url,
         html: {},
         feeds: []
