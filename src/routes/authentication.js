@@ -2,7 +2,6 @@
 
 var config = require('../config/config.json');
 var libAuthentication = require('../libs/authentication');
-var libError = require('../libs/error');
 var express = require('express');
 var router = express.Router();
 
@@ -17,7 +16,7 @@ var router = express.Router();
 	}
 
 	Both email and password are mandatory. Password is matched against hash
-	held in database. If both match then a JWT is issued. Otherwise a 401 is
+	held in database. If both match then a JWT is issued. Otherwise an error is
 	returned.
 
 */

@@ -1,7 +1,6 @@
 "use strict";
 
 var config = require('../config/config.json');
-var libError = require('./error');
 var libAuthentication = require('./authentication');
 
 module.exports = function(req, res, next) {
@@ -18,7 +17,7 @@ module.exports = function(req, res, next) {
         next();
       }).catch(function(error) {
         // If a bad token is supplied probably best to stop right there
-        libError.send(error);
+        res.send(500).send("CLAIM_ERROR " + error);
       });
     }else{
       // Continue without any rights

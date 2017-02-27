@@ -84,7 +84,7 @@ describe('users', function() {
           .send(testUser)
           .end((err, res) => {
 
-            if(err) return done(err);
+            should.not.exist(err);
 
             res.should.have.status(200);
             res.body.should.be.a('object');
@@ -103,7 +103,7 @@ describe('users', function() {
                 .post('/v1/auth')
                 .send(authUser)
                 .end((_err, _res) => {            
-                  if(_err)return done(_err);
+                  should.not.exist(_err);
                   _res.should.have.status(200);
                   _res.body.should.be.a('object');
                   _res.body.token.length.should.be.above(200);
@@ -116,9 +116,10 @@ describe('users', function() {
                   // logoff
                   chai.request(server)
                   .delete('/v1/users/' + testUser.id + "/tokens")
+                  .query({user: testUser.id})
                   .set('x-access-token', testUser.token)
                   .end((err3, res3) => {
-                    if(err3) return done(err3);
+                    should.not.exist(err3);
 
                     // TODO: make sure item is gone from database
                     done();

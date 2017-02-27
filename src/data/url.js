@@ -9,6 +9,7 @@ var urlSchema = new db.Schema({
   name: {type: String},
   title: {type: String},
   url: {type: String},
+  userUuid: {type: String},
   html: {type : db.Schema.Types.Mixed},
   feeds: {type: Array},
   created: {type: Date, default: Date.now}

@@ -1,6 +1,5 @@
 "use strict";
 
-var libError = require('../libs/error');
 var libAuthorization = require('../libs/authorization');
 var libUsers = require('../libs/users');
 var express = require('express');
@@ -25,7 +24,7 @@ router.get("/email/:email", function(req, res) {
   libUsers.getByEmail(email).then(function(results) {
     res.send(removePassword(results));
   }).catch(function(err) {
-    libError.send(res, err);
+    res.status(500).send(err);
   });
 });
 
@@ -35,7 +34,7 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
   libUsers.get(id).then(function(results) {
     res.send(removePassword(results));
   }).catch(function(err) {
-    libError.send(res, err);
+    res.status(500).send(err);
   });
 });
 
@@ -55,7 +54,7 @@ router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
   libUsers.logout(id, token).then(function() {
     res.send();
   }).catch(function(err) {
-    libError.send(res, err);
+    res.status(500).send(err);
   });
 });
 function removePassword(user){

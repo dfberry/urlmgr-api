@@ -30,6 +30,9 @@ mongoose.Promise = require('bluebird');
 var db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
 mongoose.connect(db);
 
+
+app.set('env', config.env);
+
 // Attach middleware
 app.use(require('morgan')('combined'));
 app.use(cors());
@@ -50,5 +53,33 @@ if (isCoverageEnabled) {
     //enable coverage endpoints under /coverage 
     app.use('/coverage', im.createHandler());
 }
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);  
+});
+
+// error handlers
+app.use(function (err, req, res, next) {
+
+  let errorStack = (app.get('env') === 'development') ? err : {};
+
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({
+        message : err.message,
+        error: errorStack
+    });
+  } else if (err.message.indexOf("AuthFailure") >= 0){
+    res.status(422).json({
+        message: err.message,
+        error: errorStack
+    });
+  } else 
+    next(err);
+});
+
 
 module.exports = app;

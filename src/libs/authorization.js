@@ -1,13 +1,17 @@
 "use strict";
+//http://www.scotchmedia.com/tutorials/express/authentication/2/05
+
+const noAuthPresented = "AuthFailure: No Authorization presented";
+const notAuthorized = "AuthFailure: User is not authorized";
 
 var authorization = {
 
   admin: function(req, res, next) {
     // User must make some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
+    if (!authorizationPresented(req))  throw new Error(noAuthPresented);
 
     // User must be in the role of Administrator
-    if (!isAdmin(req)) throw new Error("User is not an Administrator");
+    if (!isAdmin(req)) throw new Error(notAuthorized);
 
     // Otherwise carry on
     next();
@@ -15,10 +19,10 @@ var authorization = {
 
   support: function(req, res, next) {
     // User must makes some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
+    if (!authorizationPresented(req)) throw new Error(noAuthPresented);
   
     // User must in the role of support
-    if (!isSupport(req)) throw new Error("User is not an authorized Support technician");
+    if (!isSupport(req)) throw new Error(notAuthorized); 
 
     // Otherwise carry on
     next();
@@ -26,10 +30,10 @@ var authorization = {
 
   supportOrAdmin: function(req, res, next) {
     // User must makes some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
+    if (!authorizationPresented(req)) throw new Error(noAuthPresented);
   
     // User must in the role of support
-    if (!isSupport(req) && !isAdmin(req)) throw new Error("User is not an authorized Support technician or Administrator");
+    if (!isSupport(req) && !isAdmin(req)) throw new Error(notAuthorized); 
 
     // Otherwise carry on
     next();
@@ -37,10 +41,10 @@ var authorization = {
 
   viewerOrAdmin: function(req, res, next) {
     // User must makes some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
+    if (!authorizationPresented(req)) throw new Error(noAuthPresented);
   
     // User must in the role of support
-    if (!isViewer(req) && !isAdmin(req)) throw new Error("User is not an authorized Viewer or Administrator");
+    if (!isViewer(req) && !isAdmin(req)) throw new Error(notAuthorized);
 
     // Otherwise carry on
     next();
@@ -48,10 +52,10 @@ var authorization = {
 
   hasRole: function(req, res, next) {
     // User must makes some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
+    if (!authorizationPresented(req)) throw new Error(noAuthPresented);
   
     // User must in the role of support
-    if (!isSupport(req) && !isAdmin(req) && !isViewer(req)) throw new Error("User is not an authorized Viewer, Support technician or Administrator");
+    if (!isSupport(req) && !isAdmin(req) && !isViewer(req)) throw new Error(notAuthorized);
 
     // Otherwise carry on
     next();
@@ -64,17 +68,20 @@ var authorization = {
   */
   AdminOrId: function(req, res, next) {
      // User must makes some claims
-    if (!authorizationPresented(req)) throw new Error("No Authorization presented");
- 
+    if (!authorizationPresented(req)) throw new Error(noAuthPresented);
+
     // User must either be the user or an Admin
-    if (!isAdmin(req) && !isId(req)) throw new Error("User is not authorized to view this data"); 
+    if (!isAdmin(req) && !isId(req)) throw new Error(notAuthorized);
   
     next();
   }
 };
-
+// claims.uuid - was decoded from token
 function isId(req) {
-  if (req.claims.uuid === req.params.id) return true;
+
+  let uuid = req.body.user || req.query.user || req.headers['user'];
+
+  if (req.claims.uuid === uuid) return true;
   return false;
 }
 
