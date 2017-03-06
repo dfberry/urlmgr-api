@@ -9,10 +9,11 @@ var uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[
 // create 1
 router.post('/',  function(req, res) {
   var data = req.body;
-
+  
   libUsers.create(data)
   .then( (results) => {
-    res.status(200).json(removePassword(results));
+    let userToReturn = libUsers.createReturnableUser(results);
+    res.status(200).json(userToReturn);
   }).catch(err => {
     res.status(500).send({ error: err.message });
   });
@@ -22,7 +23,8 @@ router.get("/email/:email", function(req, res) {
   var email = req.params.email;
 
   libUsers.getByEmail(email).then(function(results) {
-    res.send(removePassword(results));
+    let userToReturn = libUsers.createReturnableUser(results);
+    res.status(200).send(userToReturn);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -32,7 +34,8 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
   var id = req.params.id;
 
   libUsers.get(id).then(function(results) {
-    res.send(removePassword(results));
+    let userToReturn = libUsers.createReturnableUser(results);
+    res.send(removePassword(userToReturn));
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -57,11 +60,5 @@ router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
     res.status(500).send(err);
   });
 });
-function removePassword(user){
-    let newUserObj = JSON.parse(JSON.stringify(user));
-    newUserObj.password = null;
-    delete newUserObj['password'];
-    return newUserObj;
-}
 
 module.exports = router;

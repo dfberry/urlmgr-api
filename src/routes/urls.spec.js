@@ -39,8 +39,8 @@ describe('urls', function() {
                 res.should.have.status(200);
                 res.body.email.should.be.eql(testUser.email);
 
-                testUser.id = res.body._id;
 
+                testUser.id = res.body.id;
                 let authUser = {
                   email: testUser.email,
                   password: testUser.password

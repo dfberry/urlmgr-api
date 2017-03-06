@@ -2,6 +2,8 @@
 
 var config = require('../config/config.json');
 var libAuthentication = require('../libs/authentication');
+var libUser = require('../libs/users');
+
 var express = require('express');
 var router = express.Router();
 
@@ -26,11 +28,18 @@ router.post('/', function(req, res) {
       password = req.body.password;
 
 	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
- 
-  libAuthentication.authenticate(email, password)
+
+	var user = libUser.getByEmail(email);
+	var auth = libAuthentication.authenticate(email, password);
+
+	Promise.all([auth, user])
 	.then(result => {
-		// don't return everything!!!
-    res.send({token:result.token});
+		let authResults = result[0];
+		let userResults = result[1];
+		
+		let returnObj = libUser.createReturnableUser(userResults, authResults.token);
+
+    res.status(200).send(returnObj);
   }).catch(function(err) {
 
 		if(err==='User & password did not match') return res.status(422).send(err);

@@ -11,7 +11,7 @@ let should = chai.should();
 
 describe('authentication', function() {
 
-    it('should authenticate 1 user to password', function(done) {
+    it('should authenticate 1 user to password - login', function(done) {
 
       let testUser = { 
         lastName: "berry",
@@ -26,12 +26,15 @@ describe('authentication', function() {
           .send(testUser)
           .end((err, res) => {
 
-            if(err) return done(err);
+            should.not.exist(err);
 
             res.should.have.status(200);
+
             res.body.should.be.a('object');
+
             res.body.email.should.be.eql(testUser.email);
-            res.body.should.not.have.property("password");
+
+            testUser.id = res.body.id;
 
             let authUser = {
               email: testUser.email,
@@ -42,14 +45,22 @@ describe('authentication', function() {
             chai.request(server)
                 .post('/v1/auth')
                 .send(authUser)
-                .end((_err, _res) => {            
-                  if(_err)return done(_err);
+                .end((_err, _res) => {   
+
+                  should.not.exist(_err);
 
                   _res.should.have.status(200);
                   _res.body.should.be.a('object');
                   _res.body.token.length.should.be.above(200);
 
-                  // make sure entire db record is NOT returned
+                  _res.body.should.have.property("id");
+                  _res.body.should.have.property("firstName");
+                  _res.body.should.have.property("lastName");
+                  _res.body.should.have.property("email");
+                  _res.body.should.have.property("lastLogin");
+                  _res.body.should.have.property("token");
+
+                  _res.body.should.not.have.property("password");
                   _res.body.should.not.have.property("revoked");
 
                   done();
@@ -72,7 +83,7 @@ describe('authentication', function() {
           .send(testUser)
           .end((err, res) => {
 
-            if(err) return done(err);
+            should.not.exist(err);
 
             res.should.have.status(200);
             res.body.should.be.a('object');
@@ -88,7 +99,8 @@ describe('authentication', function() {
             chai.request(server)
                 .post('/v1/auth')
                 .send(authUser)
-                .end((_err, _res) => {            
+                .end((_err, _res) => {  
+
                   _res.status.should.be.eq(422);
                   _err.message.should.be.eq("Unprocessable Entity");
                   done();

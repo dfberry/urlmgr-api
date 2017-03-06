@@ -21,14 +21,12 @@ var Users = {
     return new Promise(function(resolve, reject) {
       let query = { email: email };
       try{
-        UserModel.findOne(query,(err, status) =>{
-          if(err)return reject(err);
+        return UserModel.findOne(query,(err, status) =>{
+          if(err) throw (err);
           resolve(status);
-        }).catch(err => {
-          console.log("err = " + err);
         });
       } catch (err ){
-        console.log(err);
+        reject(err);
       };
     });
   },
@@ -85,6 +83,17 @@ var Users = {
         resolve (isMatch);
       });
     });
+  },
+  createReturnableUser(user, token){
+    let returnObj = {
+			id: user.id,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			email: user.email,
+			lastLogin: user.lastLogin.toDateString()
+		};
+    if(token) returnObj.token = token;
+    return returnObj;
   }
 }
 
