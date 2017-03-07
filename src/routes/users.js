@@ -55,7 +55,7 @@ router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var token = req.headers['x-access-token'];
   libUsers.logout(id, token).then(function() {
-    res.send();
+    res.status(200).send();
   }).catch(function(err) {
     res.status(500).send(err);
   });
