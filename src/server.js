@@ -29,8 +29,11 @@ if (config.env === 'development'){
 var app = express();
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+
+var mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
 var db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
-mongoose.connect(db);
+mongoose.connect(db, mongooseOptions);
 
 
 app.set('env', config.env || 'development');

@@ -40,6 +40,23 @@ var Urls = {
         resolve(_url);
       });
     });
+  },
+  createReturnableUrl(url){
+
+    return {
+      id: url._id,
+      url: url.url,
+      userId: url.userUuid,
+      added: url.created.toDateString()
+    };
+  },
+  createReturnableUrlArray(urls){
+    let newArray = [];
+    urls.forEach(url => {
+      console.log("forEach = " + JSON.stringify(url));
+      newArray.push(createReturnableUrl(url));
+    });
+    console.log("forEach done");
   }
 }
 

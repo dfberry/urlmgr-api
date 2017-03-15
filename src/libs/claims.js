@@ -5,6 +5,10 @@ var libAuthentication = require('./authentication');
 
 module.exports = function(req, res, next) {
 
+    console.log("claims - body = " + JSON.stringify(req.body));
+    console.log("claims - query = " + JSON.stringify(req.query));
+    console.log("claims - headers = " + JSON.stringify(req.headers));
+
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'],
         ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;

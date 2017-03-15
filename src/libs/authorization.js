@@ -4,7 +4,19 @@
 const noAuthPresented = "AuthFailure: No Authorization presented";
 const notAuthorized = "AuthFailure: User is not authorized";
 
+var getDebugValues = function(req){
+    console.log("claims - body = " + JSON.stringify(req.body));
+    console.log("claims - query = " + JSON.stringify(req.query));
+    console.log("claims - headers = " + JSON.stringify(req.headers));
+}
+
 var authorization = {
+
+    getDebugValues:  function(req){
+        console.log("claims - body = " + JSON.stringify(req.body));
+        console.log("claims - query = " + JSON.stringify(req.query));
+        console.log("claims - headers = " + JSON.stringify(req.headers));
+    },
 
   admin: function(req, res, next) {
     // User must make some claims
@@ -67,6 +79,9 @@ var authorization = {
 
   */
   AdminOrId: function(req, res, next) {
+
+    getDebugValues(req);
+
      // User must makes some claims
     if (!authorizationPresented(req)) throw new Error(noAuthPresented);
 
