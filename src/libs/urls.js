@@ -16,9 +16,20 @@ var Urls = {
       });
     });
   },
+  /*
   getAll: function(){
     return new Promise(function(resolve, reject) {
       UrlModel.find({}, (err, status) =>{
+        if(err)reject(err);
+        resolve(status);
+      });
+    });
+  },
+  */
+  getAllByUser: function(userUuid){
+    return new Promise(function(resolve, reject) {
+      if (!userUuid) reject("userUuid is undefined");
+      UrlModel.find({userUuid:userUuid}, (err, status) =>{
         if(err)reject(err);
         resolve(status);
       });

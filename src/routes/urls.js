@@ -45,7 +45,7 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //req.claims.uuid
   var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getAll(userUuid)
+  urlLib.getAllByUser(userUuid)
   .then( (results) => {
     res.status(200).json(results);
   }).catch(function(err) {

@@ -79,7 +79,7 @@ describe('urls', function() {
     });
     it('should return 1 url', function(done) {
 
-      let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
+      let url = 'http://www.shouldReturn1UrlTest.com/';
       let testUrl = {
         name: Math.floor(new Date().getTime())+ " mocha test should return 1 url",
         title: "test title - should return 1 url",
@@ -88,6 +88,7 @@ describe('urls', function() {
         feeds: []
       };
 
+      // insert url
       chai.request(server)
         .post('/v1/urls')
         .query({user: testUser.id})
@@ -98,6 +99,7 @@ describe('urls', function() {
           
           should.not.exist(err);
 
+          // fetch url
           chai.request(server)
             .get('/v1/urls/' + res1.body._id)
             .query({user: testUser.id})

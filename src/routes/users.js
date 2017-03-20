@@ -15,7 +15,6 @@ router.post('/',  function(req, res) {
     let userToReturn = libUsers.createReturnableUser(results);
     res.status(200).json(userToReturn);
   }).catch(err => {
-    //debugger;
     if(err.message.indexOf("duplicate key error collection")) return  res.status(403).send({error: "user already exists"});
     res.status(500).send({ error: err.message });
   });
