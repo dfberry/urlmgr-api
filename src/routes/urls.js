@@ -19,6 +19,20 @@ router.post('/', libAuthorization.AdminOrId, function(req, res) {
   });
 });
 
+router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
+  var data = req.body;
+  //data.userUuid = req.claims.uuid;
+
+  var url = data.url ? data.url : undefined;
+ 
+  urlLib.getMetadata(url)
+  .then( (results) => {
+    res.status(200).json(results);
+  }).catch(function(err) {
+    res.status(500).send(err);
+  });
+});
+
 // get 1  
 router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;

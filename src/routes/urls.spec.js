@@ -13,14 +13,6 @@ const expect = chai.expect();
 
 let testUser;
 
-/*
-var getToken = function() {
-
-  
-} 
-*/
-
-
 describe('urls', function() {
 
     beforeEach(function(done) {
@@ -110,6 +102,26 @@ describe('urls', function() {
               res2.body.name.should.be.eq(testUrl.name);
               done();
             });
+        });
+    });
+    it('should return metadata for url', function(done) {
+      let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
+
+      // insert url
+      chai.request(server)
+        .post('/v1/urls/meta')
+        .set('x-access-token', testUser.token)
+        .send({
+          user: testUser.id,
+          url: url
+        })
+        .end((err, res) => {
+          should.not.exist(err);
+          res.status.should.eq(200);
+          res.body.title.should.be.eql('Project 31-A');
+          res.body.feeds.should.be.a('array');
+          res.body.feeds.length.should.be.eql(3);
+          done();
         });
     });
     it('should create 1 url', function(done) {

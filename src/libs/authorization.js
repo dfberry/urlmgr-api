@@ -5,17 +5,17 @@ const noAuthPresented = "AuthFailure: No Authorization presented";
 const notAuthorized = "AuthFailure: User is not authorized";
 
 var getDebugValues = function(req){
-    console.log("claims - body = " + JSON.stringify(req.body));
-    console.log("claims - query = " + JSON.stringify(req.query));
-    console.log("claims - headers = " + JSON.stringify(req.headers));
+    //console.log("claims - body = " + JSON.stringify(req.body));
+    //console.log("claims - query = " + JSON.stringify(req.query));
+    //console.log("claims - headers = " + JSON.stringify(req.headers));
 }
 
 var authorization = {
 
     getDebugValues:  function(req){
-        console.log("claims - body = " + JSON.stringify(req.body));
-        console.log("claims - query = " + JSON.stringify(req.query));
-        console.log("claims - headers = " + JSON.stringify(req.headers));
+        //console.log("claims - body = " + JSON.stringify(req.body));
+        //console.log("claims - query = " + JSON.stringify(req.query));
+        //console.log("claims - headers = " + JSON.stringify(req.headers));
     },
 
   admin: function(req, res, next) {

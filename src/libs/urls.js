@@ -2,6 +2,7 @@
 
 var UrlModel = require('../data/url.js');
 var authorization = require('./authorization.js');
+var htmlLib = require('./html.js');
 
 var Urls = {
 
@@ -52,7 +53,7 @@ var Urls = {
       });
     });
   },
-  createReturnableUrl(url){
+  createReturnableUrl: function(url){
 
     return {
       id: url._id,
@@ -61,13 +62,29 @@ var Urls = {
       added: url.created.toDateString()
     };
   },
-  createReturnableUrlArray(urls){
+  createReturnableUrlArray: function(urls){
     let newArray = [];
     urls.forEach(url => {
-      console.log("forEach = " + JSON.stringify(url));
       newArray.push(createReturnableUrl(url));
     });
-    console.log("forEach done");
+  },
+
+// return feed and title
+  getMetadata: function(url){
+    var self = this;
+    return new Promise(function(resolve, reject) {
+
+        if(!url) throw new Error("url is empty");
+
+        htmlLib.getHtml(url).
+        then(htmlReturned => {
+          let feeds = htmlLib.getFeeds(htmlReturned);
+          let title = htmlLib.getTitle(htmlReturned);
+          resolve({ feeds: feeds, title: title });
+        }).catch(err => {
+          reject(err);
+        });
+    });
   }
 }
 
