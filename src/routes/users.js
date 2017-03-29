@@ -5,15 +5,18 @@ var libUsers = require('../libs/users');
 var express = require('express');
 var router = express.Router();
 var uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
+var libMeta = require('../libs/meta');
 
 // create 1
 router.post('/',  function(req, res) {
   var data = req.body;
   
-  libUsers.create(data)
-  .then( (results) => {
-    let userToReturn = libUsers.createReturnableUser(results);
-    res.status(200).json(userToReturn);
+  libUsers.create(data).then(results => {
+    return libUsers.createReturnableUser(results);
+  }).then( userObj => {
+    return libMeta.mergeWithMeta(libMeta.removePassword(userObj));
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(err => {
     if(err.message.indexOf("duplicate key error collection")) return  res.status(403).send({error: "user already exists"});
     res.status(500).send({ error: err.message });
@@ -24,8 +27,11 @@ router.get("/email/:email", function(req, res) {
   var email = req.params.email;
 
   libUsers.getByEmail(email).then(function(results) {
-    let userToReturn = libUsers.createReturnableUser(results);
-    res.status(200).send(userToReturn);
+    return libUsers.createReturnableUser(results);
+  }).then( userObj => {
+    return libMeta.mergeWithMeta(libMeta.removePassword(userObj));
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -35,8 +41,11 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
   var id = req.params.id;
 
   libUsers.get(id).then(function(results) {
-    let userToReturn = libUsers.createReturnableUser(results);
-    res.send(removePassword(userToReturn));
+    return libUsers.createReturnableUser(results);
+  }).then( userObj => {
+    return libMeta.mergeWithMeta(libMeta.removePassword((userObj)));
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -56,7 +65,9 @@ router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var token = req.headers['x-access-token'];
   libUsers.logout(id, token).then(function() {
-    res.status(200).send();
+		return libMeta.mergeWithMeta({id: id});
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });

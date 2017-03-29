@@ -4,16 +4,17 @@ var express = require('express');
 var router = express.Router();
 var urlLib = require('../libs/urls');
 var libAuthorization = require('../libs/authorization');
-
+var libMeta = require('../libs/meta');
 
 // create 1
 router.post('/', libAuthorization.AdminOrId, function(req, res) {
   var data = req.body;
   data.userUuid = req.claims.uuid;
 
-  urlLib.create(data)
-  .then( (results) => {
-    res.status(200).json(results);
+  urlLib.create(data).then(results => {
+		return libMeta.mergeWithMeta(results);
+	}).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -25,9 +26,10 @@ router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
 
   var url = data.url ? data.url : undefined;
  
-  urlLib.getMetadata(url)
-  .then( (results) => {
-    res.status(200).json(results);
+  urlLib.getMetadata(url).then(results => {
+		return libMeta.mergeWithMeta(results);
+	}).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -38,14 +40,13 @@ router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getById(id,  userUuid)
-  .then( (results) => {
+  urlLib.getById(id, userUuid).then(results => {
 
-    // don't send back all the meta from mongo
-    if(results && results.length>0) return res.status(200).json(results[0]._doc);
+   //if(results && results.length>0) return libMeta.mergeWithMeta(results[0]._doc); 
 
-    // if nothing found, still return empty obj
-    return res.status(200).json({});
+		return libMeta.mergeWithMeta(results);
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -59,9 +60,10 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //req.claims.uuid
   var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getAllByUser(userUuid)
-  .then( (results) => {
-    res.status(200).json(results);
+  urlLib.getAllByUser(userUuid).then(results => {
+		return libMeta.mergeWithMeta(results);
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });
@@ -71,9 +73,10 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
 // delete 1
 router.delete("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
-  urlLib.deleteById(id)
-  .then( results => {
-    res.status(200).json(results);
+  urlLib.deleteById(id).then(results => {
+		return libMeta.mergeWithMeta(results);
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
   }).catch(function(err) {
     res.status(500).send(err);
   });

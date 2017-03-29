@@ -65,13 +65,12 @@ var Urls = {
   createReturnableUrlArray: function(urls){
     let newArray = [];
     urls.forEach(url => {
-      newArray.push(createReturnableUrl(url));
+      newArray.push(this.createReturnableUrl(url));
     });
   },
 
 // return feed and title
   getMetadata: function(url){
-    var self = this;
     return new Promise(function(resolve, reject) {
 
         if(!url) throw new Error("url is empty");

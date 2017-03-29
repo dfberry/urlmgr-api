@@ -3,7 +3,7 @@
 var config = require('../config/config.json');
 var libAuthentication = require('../libs/authentication');
 var libUser = require('../libs/users');
-
+var libMeta = require('../libs/meta');
 var express = require('express');
 var router = express.Router();
 
@@ -37,9 +37,11 @@ router.post('/', function(req, res) {
 		let authResults = result[0];
 		let userResults = result[1];
 		
-		let returnObj = libUser.createReturnableUser(userResults, authResults.token);
-
-    res.status(200).send(returnObj);
+		return libUser.createReturnableUser(userResults, authResults.token);
+	}).then( returnableObj => {
+		return libMeta.mergeWithMeta(returnableObj);
+	}).then ( finalObj => {
+    res.status(200).send(finalObj);
   }).catch(function(err) {
 
 		if(err==='User & password did not match') return res.status(422).send(err);

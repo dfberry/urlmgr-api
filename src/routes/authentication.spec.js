@@ -26,13 +26,15 @@ describe('authentication', function() {
           .send(testUser)
           .end((err, res) => {
 
+            // success must have
             should.not.exist(err);
-
             res.should.have.status(200);
-
             res.body.should.be.a('object');
+            res.body.should.have.property("data");
+            res.body.should.have.property("commit");
+            res.body.should.have.property("branch");
 
-            res.body.email.should.be.eql(testUser.email);
+            res.body.data.email.should.be.eql(testUser.email);
 
             testUser.id = res.body.id;
 
@@ -47,18 +49,22 @@ describe('authentication', function() {
                 .send(authUser)
                 .end((_err, _res) => {   
 
+                  // meta
                   should.not.exist(_err);
-
                   _res.should.have.status(200);
                   _res.body.should.be.a('object');
-                  _res.body.token.length.should.be.above(200);
+                  _res.body.should.have.property("data");
+                  _res.body.should.have.property("commit");
+                  _res.body.should.have.property("branch");
 
-                  _res.body.should.have.property("id");
-                  _res.body.should.have.property("firstName");
-                  _res.body.should.have.property("lastName");
-                  _res.body.should.have.property("email");
-                  _res.body.should.have.property("lastLogin");
-                  _res.body.should.have.property("token");
+                  // data
+                  _res.body.data.should.have.property("id");
+                  _res.body.data.should.have.property("firstName");
+                  _res.body.data.should.have.property("lastName");
+                  _res.body.data.should.have.property("email");
+                  _res.body.data.should.have.property("lastLogin");
+                  _res.body.data.should.have.property("token");
+                  _res.body.data.token.length.should.be.above(200);
 
                   _res.body.should.not.have.property("password");
                   _res.body.should.not.have.property("revoked");
@@ -83,12 +89,17 @@ describe('authentication', function() {
           .send(testUser)
           .end((err, res) => {
 
+            // meta
             should.not.exist(err);
-
             res.should.have.status(200);
             res.body.should.be.a('object');
-            res.body.email.should.be.eql(testUser.email);
-            res.body.should.not.have.property("password");
+            res.body.should.have.property("data");
+            res.body.should.have.property("commit");
+            res.body.should.have.property("branch");
+
+            // data
+            res.body.data.email.should.be.eql(testUser.email);
+            res.body.data.should.not.have.property("password");
 
             let authUser = {
               email: testUser.email,

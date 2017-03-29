@@ -28,11 +28,19 @@ describe('urls', function() {
               .post('/v1/users')
               .send(testUser)
               .end((err, res) => {
+
+                // meta
+                should.not.exist(err);
                 res.should.have.status(200);
-                res.body.email.should.be.eql(testUser.email);
+                res.body.should.be.a('object');
+                res.body.should.have.property("data");
+                res.body.should.have.property("commit");
+                res.body.should.have.property("branch");
 
+                // data
+                res.body.data.email.should.be.eql(testUser.email);
 
-                testUser.id = res.body.id;
+                testUser.id = res.body.data.id;
                 let authUser = {
                   email: testUser.email,
                   password: testUser.password
@@ -43,10 +51,20 @@ describe('urls', function() {
                     .post('/v1/auth')
                     .send(authUser)
                     .end((_err, _res) => { 
-                      _res.should.have.status(200);
-                      _res.body.token.length.should.be.above(200);
 
-                      testUser.token =  _res.body.token;
+                      // meta
+                      should.not.exist(_err);
+                      _res.should.have.status(200);
+                      _res.body.should.be.a('object');
+                      _res.body.should.have.property("data");
+                      _res.body.should.have.property("commit");
+                      _res.body.should.have.property("branch");
+
+                      // data
+                      _res.body.data.should.have.property("token");
+                      _res.body.data.token.length.should.be.above(200);
+
+                      testUser.token =  _res.body.data.token;
                       done();
                 });
             });
@@ -62,10 +80,16 @@ describe('urls', function() {
           .set('x-access-token', testUser.token)
           .end((err, res) => {
         
+            // meta
             should.not.exist(err);
-
             res.should.have.status(200);
-            res.body.should.be.a('array');
+            res.body.should.be.a('object');
+            res.body.should.have.property("data");
+            res.body.should.have.property("commit");
+            res.body.should.have.property("branch");
+
+            // data
+            res.body.data.should.be.a('array');
             done();
           });
     });
@@ -87,19 +111,36 @@ describe('urls', function() {
         .set('x-access-token', testUser.token)
         .send(testUrl)
         .end((err, res1) => {
-
           
-          should.not.exist(err);
+            // meta
+            should.not.exist(err);
+            res1.should.have.status(200);
+            res1.body.should.be.a('object');
+            res1.body.should.have.property("data");
+            res1.body.should.have.property("commit");
+            res1.body.should.have.property("branch");
+
+            let id = res1.body.data._id;
+
+            should.exist(id);
 
           // fetch url
           chai.request(server)
-            .get('/v1/urls/' + res1.body._id)
+            .get('/v1/urls/' + id)
             .query({user: testUser.id})
             .set('x-access-token', testUser.token)
             .end((err, res2) => {
+
+              // meta
               should.not.exist(err);
               res2.should.have.status(200);
-              res2.body.name.should.be.eq(testUrl.name);
+              res2.body.should.be.a('object');
+              res2.body.should.have.property("data");
+              res2.body.should.have.property("commit");
+              res2.body.should.have.property("branch");
+
+              // data
+              res2.body.data[0].name.should.be.eq(testUrl.name);
               done();
             });
         });
@@ -116,11 +157,19 @@ describe('urls', function() {
           url: url
         })
         .end((err, res) => {
+
+          // meta
           should.not.exist(err);
-          res.status.should.eq(200);
-          res.body.title.should.be.eql('Project 31-A');
-          res.body.feeds.should.be.a('array');
-          res.body.feeds.length.should.be.eql(3);
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property("data");
+          res.body.should.have.property("commit");
+          res.body.should.have.property("branch");
+
+          // data
+          res.body.data.title.should.be.eql('Project 31-A');
+          res.body.data.feeds.should.be.a('array');
+          res.body.data.feeds.length.should.be.eql(3);
           done();
         });
     });
@@ -143,12 +192,17 @@ describe('urls', function() {
         .send(testUrl)
         .end((err, res) => {
 
+          // meta
           should.not.exist(err);
-
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.url.should.be.eql(url);
-          res.body.name.should.be.eql(testUrl.name);
+          res.body.should.have.property("data");
+          res.body.should.have.property("commit");
+          res.body.should.have.property("branch");
+
+          // data
+          res.body.data.url.should.be.eql(url);
+          res.body.data.name.should.be.eql(testUrl.name);
           done();
         });
     });
@@ -172,20 +226,33 @@ describe('urls', function() {
         .send(testUrl)
         .end((err, res) => {
 
+          // meta
           should.not.exist(err);
-          let createdUUID = res.body._id;
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property("data");
+          res.body.should.have.property("commit");
+          res.body.should.have.property("branch");
+
+          let createdUUID = res.body.data._id;
 
           chai.request(server)
-            .delete('/v1/urls/' + res.body._id)
+            .delete('/v1/urls/' + res.body.data._id)
             .query({user: testUser.id})
             .set('x-access-token', testUser.token)
             .end((err, res) => {
-              should.not.exist(err);
 
+              // meta
+              should.not.exist(err);
               res.should.have.status(200);
               res.body.should.be.a('object');
-              res.body._id.should.be.eql(createdUUID);
-              res.body.name.should.be.eql(testUrl.name);
+              res.body.should.have.property("data");
+              res.body.should.have.property("commit");
+              res.body.should.have.property("branch");
+
+              // data
+              res.body.data._id.should.be.eql(createdUUID);
+              res.body.data.name.should.be.eql(testUrl.name);
               done();
             });
         });
@@ -219,10 +286,19 @@ describe('urls', function() {
         .set('x-access-token', testUser.token)
         .end((err, res1) => {
 
+          // meta
+          should.not.exist(err);
           res1.should.have.status(200);
+          res1.body.should.be.a('object');
+          res1.body.should.have.property("data");
+          res1.body.should.have.property("commit");
+          res1.body.should.have.property("branch");
+
+          let id = res1.body.data._id;
+          should.exist(id);
 
           chai.request(server)
-            .get('/v1/urls/' + res1.body._id)
+            .get('/v1/urls/' + id)
             .end((err, res2) => {
               res2.should.have.status(422);
               done();
@@ -270,11 +346,19 @@ describe('urls', function() {
         .send(testUrl)
         .end((err, res) => {
 
+          // meta
+          should.not.exist(err);
           res.should.have.status(200);
-          let createdUUID = res.body._id;
+          res.body.should.be.a('object');
+          res.body.should.have.property("data");
+          res.body.should.have.property("commit");
+          res.body.should.have.property("branch");
+
+          let createdUUID = res.body.data._id;
+          should.exist(createdUUID);
 
           chai.request(server)
-            .delete('/v1/urls/' + res.body._id)
+            .delete('/v1/urls/' + createdUUID)
             .end((err, res) => {
               res.should.have.status(422);
               done();

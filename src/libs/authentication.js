@@ -57,7 +57,7 @@ var Authentication = {
 
   */
   authenticate: function(email, password) {
-    var self = this;
+    //var self = this;
   
     return new Promise(function(resolve, reject) {
 
@@ -90,14 +90,13 @@ function validate(email, password) {
 
   return true; 
 }
-
+// TODO: what is jwtConfig for?
 function getToken(email, user, jwtConfig) {
-  var role, claims, jwt;
+  var claims, jwt;
 
   if (!user) {
     claims = { email: email, role: 'none', uuid: undefined }; 
   }else{
-    role = user.role;
     claims = { email: email, role: user.role, uuid: user._id }; 
   }
       
