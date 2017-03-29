@@ -32,7 +32,12 @@ gitCommit: function (){
           resolve(stdout.trim())
         });
     });
-  }
+  }/*
+
+  function for commit date
+  git show -s --format=%ci 82a5d19f
+
+  */
 
 };
 
