@@ -36,6 +36,7 @@ gitCommit: function (){
 
   function for commit date
   git show -s --format=%ci 82a5d19f
+  or change to use npm package https://github.com/rwjblue/git-repo-info
 
   */
 
