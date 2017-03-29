@@ -1,6 +1,5 @@
 "use strict"
 var validator = require('validator');
-var util = require('util');
 var TokenModel = require('../data/token');
 var Tokens = require('./tokens');
 var Users = require('./users');
@@ -16,14 +15,12 @@ var Authentication = {
    Verifies token exists in DB and is not revoked
    Sets Last Login time
   */
+  // TODO: what was ipAddr for?
   getClaims: function(token, ipAddr) {
-    var self = this;
 
     return new Promise(function(resolve, reject) {
       // decode token
       if (!token) return resolve();
-
-         
 
         let query = {
           "token": token
@@ -67,12 +64,14 @@ var Authentication = {
         if (!user) throw new Error("Authentication Failed: No such user.");
         let _user = JSON.parse(JSON.stringify(user))
         // Store JWT in DB for logout/revocation
+
         var token = getToken(email, _user, config.jwt);
 
         return Tokens.insert(token);
       }).then(function(dbtoken) {
         resolve(dbtoken);
       }).catch(function(error) {
+        console.log(error);
         reject("User & password did not match");
       });
 
@@ -101,7 +100,7 @@ function getToken(email, user, jwtConfig) {
   }
       
   // Generate a JWT based on result
-  jwt = Tokens.create(claims, config.jwt);
+  jwt = Tokens.create(claims, jwtConfig);
 
   return jwt;
 }
