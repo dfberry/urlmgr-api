@@ -4,10 +4,12 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     favicon = require('serve-favicon'),
+    path = require('path'),
     config = require('./config/config.json'),
     urls = require('./routes/urls'),
     users = require('./routes/users'),
     libClaims = require('./libs/claims'),
+    libMeta = require('./libs/meta'),
     auth = require('./routes/authentication');
 
 // for coverage of apis
@@ -43,6 +45,7 @@ console.log("environment = " + config.env);
 // Attach middleware
 app.use(require('morgan')('combined'));
 app.use(cors());
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 //http://stackoverflow.com/questions/19917401/error-request-entity-too-large
 app.use(bodyParser.json({limit: '50mb'}));
@@ -50,7 +53,13 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50
 app.use(libClaims);
 
 // Attach routes
-app.get("/", (req, res) => res.json({message: "Welcome to the app!"}));
+app.get("/", (req, res) => {
+    libMeta.mergeWithMeta({message: "Welcome to the app!"}).then(response => {
+        res.json(response);
+    }).catch(err => {
+        res.json({error: err});
+    });
+});
 app.use('/v1/urls',urls);
 app.use('/v1/users',users);
 app.use('/v1/auth',auth);
@@ -66,7 +75,7 @@ if ((config.env === 'development') && isCoverageEnabled) {
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
-    next(err);  
+    res.status(404).send(err);  
 });
 
 // error handlers
