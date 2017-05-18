@@ -24,6 +24,8 @@ var router = express.Router();
 */
 router.post('/', function(req, res) {
 
+  console.log(req.body);
+
   var email = req.body.email,
       password = req.body.password;
 
@@ -44,7 +46,7 @@ router.post('/', function(req, res) {
     res.status(200).send(finalObj);
   }).catch(function(err) {
 
-		if(err==='User & password did not match') return res.status(422).send(err);
+		if((err==='User & password did not match') || (err==='Authentication failed: Invalid email and/or password supplied.')) return res.status(422).send({error:'User & password did not match'});
 		return res.status(500).send({ error: err.message });
   });
 
