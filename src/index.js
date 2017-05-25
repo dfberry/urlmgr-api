@@ -4,7 +4,7 @@ var app = require('./server'),
     http = require('http');
 
 let port = process.env.SB_PORT || app.get('port'),
-    host = process.env.SB_HOST || undefined,
+    host = process.env.SB_HOST || "0.0.0.0",
     server; 
 
 server = http.createServer(app);

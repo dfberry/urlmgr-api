@@ -173,6 +173,38 @@ describe('urls', function() {
           done();
         });
     });
+    it('should return metadata for url', function(done) {
+      let url = 'https://www.hanselman.com/';
+
+      // insert url
+      chai.request(server)
+        .post('/v1/urls/meta')
+        .set('x-access-token', testUser.token)
+        .send({
+          user: testUser.id,
+          url: url
+        })
+        .end((err, res) => {
+
+          console.log(res.body);
+
+          // meta
+          should.not.exist(err);
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property("data");
+          res.body.should.have.property("commit");
+          res.body.should.have.property("branch");
+
+          // data
+          //res.body.data.title.should.be.eql('Project 31-A');
+          res.body.data.feeds.should.be.a('array');
+
+          // if this fails, check what the length is
+          res.body.data.feeds.length.should.be.above(0);
+          done();
+        });
+    });
     it('should create 1 url', function(done) {
 
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';

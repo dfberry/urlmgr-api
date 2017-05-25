@@ -11,7 +11,7 @@ let should = chai.should();
 
 describe('root', function() {
 
-    it.only('request should return meta data', function(done) {
+    it('request should return meta data', function(done) {
 
       // create user
       chai.request(server)
