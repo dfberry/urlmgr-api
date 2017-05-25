@@ -33,7 +33,20 @@ var Users = {
   get: function(uuid) {
     return getById(uuid);
   },
-
+  getAll: function(){
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      try{
+        return UserModel.find({},(err, users) =>{
+          if(err) throw (err);
+          self.createReturnableUserArray(users);
+          resolve(users);
+        });
+      } catch (err ){
+        reject(err);
+      };
+    });
+  },
   logout: function(userUuid, token) {
     return Tokens.revoke(userUuid, token);
   },
@@ -84,17 +97,25 @@ var Users = {
       });
     });
   },
+  /* doesn't copy over Mongo-ish id or password */
   createReturnableUser(user, token){
     let returnObj = {
 			id: user.id,
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,
-			lastLogin: user.lastLogin.toDateString()
+			lastLogin: user.lastLogin.toDateString(),
+      roles: user.roles
 		};
     if(token) returnObj.token = token;
     return returnObj;
+  },
+  createReturnableUserArray(userArray){
+    return userArray.forEach(function(user, i, collection) {
+        userArray[i] = this.createReturnableUser(user, null);
+      }, this);
   }
+
 }
 
 module.exports = Users;

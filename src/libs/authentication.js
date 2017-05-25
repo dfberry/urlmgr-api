@@ -94,9 +94,9 @@ function getToken(email, user, jwtConfig) {
   var claims, jwt;
 
   if (!user) {
-    claims = { email: email, role: 'none', uuid: undefined }; 
+    claims = { email: email, roles: 'none', uuid: undefined }; 
   }else{
-    claims = { email: email, role: user.role, uuid: user._id }; 
+    claims = { email: email, role: user.roles, uuid: user._id }; 
   }
       
   // Generate a JWT based on result

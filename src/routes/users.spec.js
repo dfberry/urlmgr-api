@@ -8,6 +8,10 @@ const server = require('../server.js');
 
 chai.use(chaiHttp);
 let should = chai.should();
+var expect = require('chai').expect;
+
+let adminUser;
+let adminUserToken;
 
 describe('users', function() {
 
@@ -32,11 +36,66 @@ describe('users', function() {
             res.body.should.have.property("data");
             res.body.should.have.property("commit");
             res.body.should.have.property("branch");
+            
 
             // data
             res.body.data.email.should.be.eql(testUser.email);
             res.body.data.should.not.have.property("password");
+            res.body.data.should.have.property("roles");
+            res.body.data.roles.should.be.a('array');
             done();
+          });
+    });
+    it('should create 1 administrator  & get auth token - register & auth', function(done) {
+
+      let testUser = { 
+        lastName: "berry",
+        firstName: "dina",
+        email: Math.floor(new Date().getTime()) + "@test.com",
+        password: "testPassword",
+        roles:['admin','user']
+      };
+
+      chai.request(server)
+          .post('/v1/users')
+          .send(testUser)
+          .end((err, res) => {
+
+            // meta
+            should.not.exist(err);
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property("data");
+            res.body.should.have.property("commit");
+            res.body.should.have.property("branch");
+            
+            // keep admin user for other tests
+            adminUser = res.body.data;
+
+            // data
+            res.body.data.email.should.be.eql(testUser.email);
+            res.body.data.should.not.have.property("password");
+            res.body.data.should.have.property("roles");
+            res.body.data.roles.should.be.a('array');
+            
+            expect(res.body.data.roles.sort()).to.deep.equal(['admin','user']);
+
+            // build obj to get authentication token
+            let authUser = {
+              email: testUser.email,
+              password: testUser.password
+            }
+
+            var agent = chai.request.agent(server);
+            agent.post('/v1/auth')
+                .send(authUser)
+                .end((_err, _res) => {            
+
+                  adminUserToken =  _res.body.data.token;
+                  adminUserToken.length.should.be.above(200);
+
+                  done();
+                });
           });
     });
     it('should get 1 user by email', function(done) {
@@ -114,6 +173,33 @@ describe('users', function() {
               });
         });
     });
+
+    it('should get all users for Admin user', function(done) {
+
+      // make sure these are valid before beginning the test
+      //adminUser.should.not.eql(undefined);
+      //adminUserToken.should.not.eql(undefined);
+      var agent = chai.request.agent(server)
+
+        // get user by email returns token
+        agent.get('/v1/users/')
+          .set('x-access-token', adminUserToken)
+          .end((err, res) => {
+
+            // meta
+            should.not.exist(err);
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property("data");
+            res.body.should.have.property("commit");
+            res.body.should.have.property("branch");
+
+            // data
+             done();
+        });
+
+    });
+  
     it('should logout user', function(done) {
 
       let testUser = { 

@@ -37,6 +37,19 @@ router.get("/email/:email", function(req, res) {
   });
 });
 
+// get all
+router.get("/", libAuthorization.admin, function(req, res) {
+
+  libUsers.getAll().then(function(users) {
+    return libMeta.mergeWithMeta(users);
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
+  }).catch(function(err) {
+    res.status(500).send(err);
+  });
+});
+
+// get by id
 router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
 

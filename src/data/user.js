@@ -31,6 +31,10 @@ var userSchema = new db.Schema({
   created: {
     type: Date,
     default: Date.now
+  },
+  roles: {
+    type: [],
+    default: ['user']
   }
 });
 
