@@ -3,9 +3,12 @@
 var config = require('../config/config.json');
 var libAuthentication = require('../libs/authentication');
 var libUser = require('../libs/users');
-var libMeta = require('../libs/meta');
+var libResponse = require('../libs/response');
 var express = require('express');
 var router = express.Router();
+var _ = require('underscore');
+
+var api = { name: "authenticate"};
 
 /* Authenticates a user based on a username and password. Returns a JWT.
 
@@ -24,7 +27,7 @@ var router = express.Router();
 */
 router.post('/', function(req, res) {
 
-  console.log(req.body);
+	api.action = "verify";
 
   var email = req.body.email,
       password = req.body.password;
@@ -36,12 +39,12 @@ router.post('/', function(req, res) {
 
 	Promise.all([auth, user])
 	.then(result => {
-		let authResults = result[0];
+		let tokenResults = result[0];
 		let userResults = result[1];
-		
-		return libUser.createReturnableUser(userResults, authResults.token);
-	}).then( returnableObj => {
-		return libMeta.mergeWithMeta(returnableObj);
+
+		userResults.token = tokenResults;
+
+		return libResponse.buildResponseSuccess(req, api, {}, {user: userResults});
 	}).then ( finalObj => {
     res.status(200).send(finalObj);
   }).catch(function(err) {

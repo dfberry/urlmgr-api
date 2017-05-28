@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken');
 var Tokens = {
   create: function(user, jwtConfig) {
     // Create JWT including claims (i.e. role, user info)
+    // TBD: why is token role none?
     var claims = { email: user.email, 
                    role: user.role,
                    uuid: user.uuid,

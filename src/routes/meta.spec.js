@@ -5,28 +5,25 @@
 const chai = require('chai'),
   chaiHttp = require('chai-http');
 const server = require('../server.js');
+var utils = require('../utilities/test.utils');
 
 chai.use(chaiHttp);
 let should = chai.should();
 
-describe('root', function() {
+describe('meta', function() {
 
-    it('request should return meta data', function(done) {
+    it('should return meta info for request', function(done) {
 
       // create user
       chai.request(server)
-          .get('/')
+          .get('/v1/meta')
           .end((err, res) => {
 
             // success must have
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            utils.expectSuccessResponse(res);
 
             done();
- });
- });
+          });
+    });
 });

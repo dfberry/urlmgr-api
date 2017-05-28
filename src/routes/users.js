@@ -6,15 +6,18 @@ var express = require('express');
 var router = express.Router();
 var uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
 var libMeta = require('../libs/meta');
+var responseLib = require('../libs/response.js');
 
-// create 1
+var api = { route: "user"};
+
+// create 1 - registration
 router.post('/',  function(req, res) {
   var data = req.body;
-  
-  libUsers.create(data).then(results => {
-    return libUsers.createReturnableUser(results);
-  }).then( userObj => {
-    return libMeta.mergeWithMeta(libMeta.removePassword(userObj));
+
+  api.action="create";
+
+  libUsers.create(data).then( userObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(err => {
@@ -26,10 +29,10 @@ router.post('/',  function(req, res) {
 router.get("/email/:email", function(req, res) {
   var email = req.params.email;
 
-  libUsers.getByEmail(email).then(function(results) {
-    return libUsers.createReturnableUser(results);
-  }).then( userObj => {
-    return libMeta.mergeWithMeta(libMeta.removePassword(userObj));
+  api.action = "get user by email";
+
+  libUsers.getByEmail(email).then( userObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -40,8 +43,10 @@ router.get("/email/:email", function(req, res) {
 // get all
 router.get("/", libAuthorization.admin, function(req, res) {
 
-  libUsers.getAll().then(function(users) {
-    return libMeta.mergeWithMeta(users);
+  api.action = "get all users";
+
+  libUsers.getAll().then( usersObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {users: usersObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -53,10 +58,10 @@ router.get("/", libAuthorization.admin, function(req, res) {
 router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
 
-  libUsers.get(id).then(function(results) {
-    return libUsers.createReturnableUser(results);
-  }).then( userObj => {
-    return libMeta.mergeWithMeta(libMeta.removePassword((userObj)));
+  api.action = "get user by id";
+
+  libUsers.get(id).then( userObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {users: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -76,9 +81,13 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
 */
 router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
+
+  api.action = "delete user by token";
+
   var token = req.headers['x-access-token'];
-  libUsers.logout(id, token).then(function() {
-		return libMeta.mergeWithMeta({id: id});
+
+  libUsers.logout(id, token).then( userObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {users: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {

@@ -54,30 +54,39 @@ var Authentication = {
 
   */
   authenticate: function(email, password) {
-    //var self = this;
-  
+    var self = this;
+
     return new Promise(function(resolve, reject) {
 
       // Validate email and password
       if (!validate(email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
       Users.checkPassword(email, password).then(function(user) {
         if (!user) throw new Error("Authentication Failed: No such user.");
-        let _user = JSON.parse(JSON.stringify(user))
+        let _user = JSON.parse(JSON.stringify(user));
         // Store JWT in DB for logout/revocation
 
         var token = getToken(email, _user, config.jwt);
 
         return Tokens.insert(token);
       }).then(function(dbtoken) {
-        resolve(dbtoken);
+        resolve(dbtoken.token);
       }).catch(function(error) {
-        console.log(error);
         reject("User & password did not match");
       });
 
     });
-  }
+  },
+  createReturnableToken(token){
 
+    if(!token) return {};
+
+    let returnToken = {
+			user: token.userUuid,
+			revoked: token.revoked,
+			token: token.token
+		};
+    return returnToken;
+  },
 };
 
 /** PRIVATE FUNCTIONS **/

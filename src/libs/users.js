@@ -6,14 +6,31 @@ const bcrypt = require('bcryptjs');
 var moment = require('moment');
 
 var Users = {
-
+  deleteAllUsersRaw: function(){
+    UserModel.remove().exec();
+  },
   getById: function(id) {
     var self = this;
     return new Promise(function(resolve, reject) {
-      UserModel.findById(id,(err, status) =>{
+      UserModel.findById(id,(err, user) =>{
         if(err)return reject(err);
-        resolve(status);
+        resolve(self.createReturnableUser(user));
       });
+    });
+  },
+  /* returns password hash */
+  getByEmailRaw: function(email) {
+    var self = this;
+    return new Promise(function(resolve, reject) {
+      let query = { email: email };
+      try{
+        return UserModel.findOne(query,(err, user) =>{
+          if(err) throw (err);
+          resolve(user);
+        });
+      } catch (err ){
+        reject(err);
+      }
     });
   },
   getByEmail: function(email) {
@@ -21,30 +38,29 @@ var Users = {
     return new Promise(function(resolve, reject) {
       let query = { email: email };
       try{
-        return UserModel.findOne(query,(err, status) =>{
+        return UserModel.findOne(query,(err, user) =>{
           if(err) throw (err);
-          resolve(status);
+          resolve(self.createReturnableUser(user));
         });
       } catch (err ){
         reject(err);
-      };
+      }
     });
   },
   get: function(uuid) {
-    return getById(uuid);
+    return this.getById(uuid);
   },
   getAll: function(){
     var self = this;
     return new Promise(function(resolve, reject) {
       try{
-        return UserModel.find({},(err, users) =>{
+        UserModel.find({},(err, users) =>{
           if(err) throw (err);
-          self.createReturnableUserArray(users);
-          resolve(users);
+          resolve(self.createReturnableUserArray(users));
         });
       } catch (err ){
         reject(err);
-      };
+      }
     });
   },
   logout: function(userUuid, token) {
@@ -56,7 +72,7 @@ var Users = {
       var userObj = new UserModel(user);
       userObj.save((err, _user) => {
         if(err)return reject(err);       
-        resolve(_user);
+        resolve(self.createReturnableUser(_user));
       });
     });
   },
@@ -75,7 +91,7 @@ var Users = {
     var self = this;
     return new Promise(function(resolve, reject) {
 
-      self.getByEmail(email)
+      self.getByEmailRaw(email)
       .then( user => {
         if ( !user ) throw new Error("User does not exist");
         var _user = Promise.resolve(user);
@@ -84,9 +100,7 @@ var Users = {
       }).then( (result) => {
         if (!result[0]) throw new Error("Password doesn't match");
         resolve(result[1]);
-      }).catch(function(error) {
-        reject(error);
-      });
+      }).catch(reject);
     });
   },
   verifyPassword: function(candidatePassword, hashedPassword) {
@@ -98,22 +112,32 @@ var Users = {
     });
   },
   /* doesn't copy over Mongo-ish id or password */
-  createReturnableUser(user, token){
+  createReturnableUser(user){
+
+    let token = user.token ? user.token : "";
+
     let returnObj = {
 			id: user.id,
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,
 			lastLogin: user.lastLogin.toDateString(),
-      roles: user.roles
+      roles: user.roles,
+      token: token
 		};
-    if(token) returnObj.token = token;
     return returnObj;
   },
   createReturnableUserArray(userArray){
-    return userArray.forEach(function(user, i, collection) {
-        userArray[i] = this.createReturnableUser(user, null);
+    let safeUserArray = [];
+
+    userArray.forEach(function(user, i, collection) {
+        safeUserArray.push(this.createReturnableUser(user));
       }, this);
+
+      //console.log("safeUserArray");
+      //console.log(safeUserArray);
+
+    return safeUserArray;
   }
 
 }

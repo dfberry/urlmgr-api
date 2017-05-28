@@ -5,15 +5,20 @@
 const chai = require('chai'),
   chaiHttp = require('chai-http');
 const server = require('../server.js');
+const testUtils = require('../utilities/test.utils');
+const testUsers = require('../utilities/test.users');
 
 chai.use(chaiHttp);
 let should = chai.should();
 var expect = require('chai').expect;
 
-let adminUser;
-let adminUserToken;
 
-describe('users', function() {
+describe.only('users', function() {
+
+    beforeEach(function(done) {
+      testUsers.deleteAllUsers();
+      done();
+    });
 
     it('should create 1 user - register', function(done) {
 
@@ -29,20 +34,11 @@ describe('users', function() {
           .send(testUser)
           .end((err, res) => {
 
-            // meta
-            should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
-            
+            testUtils.expectSuccessResponse(res);
 
-            // data
-            res.body.data.email.should.be.eql(testUser.email);
-            res.body.data.should.not.have.property("password");
-            res.body.data.should.have.property("roles");
-            res.body.data.roles.should.be.a('array');
+            res.body.data.user.email.should.be.eql(testUser.email);
+            res.body.data.user.roles.should.have.length(1);
+            res.body.data.user.roles[0].should.be.eql('user');
             done();
           });
     });
@@ -61,24 +57,11 @@ describe('users', function() {
           .send(testUser)
           .end((err, res) => {
 
-            // meta
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
-            
-            // keep admin user for other tests
-            adminUser = res.body.data;
+            testUtils.expectSuccessResponse(res);
 
-            // data
-            res.body.data.email.should.be.eql(testUser.email);
-            res.body.data.should.not.have.property("password");
-            res.body.data.should.have.property("roles");
-            res.body.data.roles.should.be.a('array');
-            
-            expect(res.body.data.roles.sort()).to.deep.equal(['admin','user']);
+            res.body.data.user.email.should.be.eql(testUser.email);
+            expect(res.body.data.user.roles.sort()).to.deep.equal(['admin','user']);
 
             // build obj to get authentication token
             let authUser = {
@@ -91,8 +74,9 @@ describe('users', function() {
                 .send(authUser)
                 .end((_err, _res) => {            
 
-                  adminUserToken =  _res.body.data.token;
-                  adminUserToken.length.should.be.above(200);
+                  testUtils.expectSuccessResponse(_res);
+
+                  _res.body.data.user.email.should.be.eql(testUser.email);
 
                   done();
                 });
@@ -100,179 +84,85 @@ describe('users', function() {
     });
     it('should get 1 user by email', function(done) {
 
-      var agent = chai.request.agent(server)
+      let user=undefined;
+      let isAdmin=true;
+      var agent = chai.request.agent(server);
 
-      let testUser = { 
-        lastName: "berry",
-        firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
-        password: "testPassword"
-      };
-
-      agent.post('/v1/users/')
-          .send(testUser)
-          .end((err, res) => {
+      testUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
+ 
+        // get user by email returns token
+        agent.get('/v1/users/email/' + user.email)
+          .set('x-access-token', user.token)
+          .end((err2, res2) => {
 
             // meta
-            should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            should.not.exist(err2);
+            testUtils.expectSuccessResponse(res2);
 
-            //data 
-            res.body.data.email.should.be.eql(testUser.email);
-            res.body.data.should.not.have.property("password");
-
-            let authUser = {
-              email: testUser.email,
-              password: testUser.password
-            }
-
-            // user is created, get token
-            agent.post('/v1/auth')
-                .send(authUser)
-                .end((_err, _res) => {            
-
-                  // meta
-                  should.not.exist(err);
-                  res.should.have.status(200);
-                  res.body.should.be.a('object');
-                  res.body.should.have.property("data");
-                  res.body.should.have.property("commit");
-                  res.body.should.have.property("branch");
-
-                  _res.body.data.token.length.should.be.above(200);
-
-                  testUser.token =  _res.body.data.token;
-
-                  // make sure entire db record is NOT returned
-                  _res.body.data.should.not.have.property("revoked");
-
-                  // get user by email returns token
-                  agent.get('/v1/users/email/' + testUser.email)
-                    .set('x-access-token', testUser.token)
-                    .end((err2, res2) => {
-
-                      // meta
-                      should.not.exist(err2);
-                      res2.should.have.status(200);
-                      res2.body.should.be.a('object');
-                      res2.body.should.have.property("data");
-                      res2.body.should.have.property("commit");
-                      res2.body.should.have.property("branch");
-
-                      // data
-                      res2.body.data.firstName.should.be.eql(testUser.firstName);
-                      res2.body.data.lastName.should.be.eql(testUser.lastName);
-                      res2.body.data.email.should.be.eql(testUser.email);
-                      res2.body.data.should.not.have.property("password");
-                      done();
-                  });
-              });
+            // data
+            res2.body.data.user.firstName.should.be.eql(user.firstName);
+            res2.body.data.user.lastName.should.be.eql(user.lastName);
+            res2.body.data.user.email.should.be.eql(user.email);
+            done();
         });
+      });
+
     });
 
     it('should get all users for Admin user', function(done) {
 
-      // make sure these are valid before beginning the test
-      //adminUser.should.not.eql(undefined);
-      //adminUserToken.should.not.eql(undefined);
+      // get a duplicate key error for mongo collection every once in a while
+      // this is completely test related due to speed of inserts
+
       var agent = chai.request.agent(server)
 
+      for(let i=0;i<10;i++){
+        testUsers.createUser();
+      }
+
+      let user=undefined;
+      let isAdmin=true;
+
+      testUsers.createAuthenticatedUser(user, isAdmin).then(admin => {
         // get user by email returns token
         agent.get('/v1/users/')
-          .set('x-access-token', adminUserToken)
-          .end((err, res) => {
+          .set('x-access-token', admin.token)
+          .end((err1, res1) => {
 
             // meta
-            should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            should.not.exist(err1);
+            testUtils.expectSuccessResponse(res1);
 
-            // data
-             done();
+            res1.body.data.users.length.should.be.above(9);
+
+            done();
         });
-
+      });
     });
   
     it('should logout user', function(done) {
 
-      let testUser = { 
-        lastName: "berry",
-        firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
-        password: "testPassword"
-      };
+      let user = null;
+      let isAdmin = true;
 
-      // create user
-      chai.request(server)
-          .post('/v1/users')
-          .send(testUser)
-          .end((err, res) => {
+      testUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
+        // get user by email returns token
+        chai.request(server)
+          .delete('/v1/users/' + user.id + "/tokens")
+          .query({user: user.id})
+          .set('x-access-token', user.token)
+          .end((err3, res3) => {
 
             // meta
-            should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            should.not.exist(err3);
+            testUtils.expectSuccessResponse(res3);
 
-            res.body.data.email.should.be.eql(testUser.email);
-            res.body.data.should.not.have.property("password");
+            res3.body.api.route = "user";
+            res3.body.api.action = "delete user by token";
 
-            testUser.id = res.body.data.id;
-
-            let authUser = {
-              email: testUser.email,
-              password: testUser.password
-            }
-
-            // user is created, get token
-            chai.request(server)
-                .post('/v1/auth')
-                .send(authUser)
-                .end((_err, _res) => {            
-
-                  // meta
-                  should.not.exist(_err);
-                  _res.should.have.status(200);
-                  _res.body.should.be.a('object');
-                  _res.body.should.have.property("data");
-                  _res.body.should.have.property("commit");
-                  _res.body.should.have.property("branch");
-
-                  _res.body.data.token.length.should.be.above(200);
-
-                  testUser.token =  _res.body.data.token;
-
-                  // make sure entire db record is NOT returned
-                  _res.body.data.should.not.have.property("revoked");
-                        
-                  // logoff
-                  chai.request(server)
-                  .delete('/v1/users/' + testUser.id + "/tokens")
-                  .query({user: testUser.id})
-                  .set('x-access-token', testUser.token)
-                  .end((err3, res3) => {
-
-                    // meta
-                    should.not.exist(err3);
-                    res3.should.have.status(200);
-                    res3.body.should.be.a('object');
-                    res3.body.should.have.property("data");
-                    res3.body.should.have.property("commit");
-                    res3.body.should.have.property("branch");
-
-                    // TODO: make sure item is gone from database
-                    done();
-                  });
-                });   
+            // TODO: make sure item is gone from database
+            done();
           });
+        });
     });
 });
