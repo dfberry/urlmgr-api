@@ -13,10 +13,10 @@
     "install-prod": "npm install --production",
     "install-dev": "npm install",
     "start": "cd src && node index.js",
-    "start-dev": "cd src && node --debug=5858 index.js ",
+    "start-dev": "cd src && node --inspect --debug-brk index.js ",
     "lint": "gulp lint",
     "coverage": "set COVERAGE=true && istanbul cover node_modules/mocha/bin/_mocha  src/**/*.spec.js -R spec",
-    "test": "set NODE_ENV=test && node --debug=5858 node_modules/mocha/bin/_mocha -t 20000 src/**/*.spec.js"
+    "test": "set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 src/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
