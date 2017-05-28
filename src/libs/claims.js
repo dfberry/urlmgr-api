@@ -16,7 +16,7 @@ module.exports = function(req, res, next) {
         next();
       }).catch(function(error) {
         // If a bad token is supplied probably best to stop right there
-        res.send(500).send("CLAIM_ERROR " + error);
+        res.sendStatus(500).send("CLAIM_ERROR " + error);
       });
     }else{
       // Continue without any rights
