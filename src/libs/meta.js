@@ -12,9 +12,7 @@ var Meta = {
    *  git branch
    */
   git: function (){
-
        return new Promise(function(resolve, reject) {
-
           var version = {
             branch: "",
             commit: ""
@@ -33,25 +31,7 @@ var Meta = {
 
        });
   },
-  mergeWithMeta: function(json){
-    var self = this;
-    return new Promise(function(resolve, reject) {
 
-      if(!json)reject("parameter is empty");
-
-      json = { data: json};
-
-      self.git().then(meta => {
-        resolve((_.extend({}, json, meta)));
-      }).catch(reject);
-    });
-  },
-  removePassword: function(jsonObj){
-    Object.keys(jsonObj).forEach(function(key) {
-      if(key === 'password') delete jsonObj[key]; 
-    });
-    return jsonObj;
-  }
 };
 
 module.exports = Meta;

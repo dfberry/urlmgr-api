@@ -10,6 +10,8 @@ var express = require('express'),
     users = require('./routes/users'),
     libClaims = require('./libs/claims'),
     libMeta = require('./libs/meta'),
+    libResponse = require('./libs/response'),
+    meta = require('./routes/meta'),
     auth = require('./routes/authentication');
 
 // for coverage of apis
@@ -40,6 +42,8 @@ mongoose.connect(db, mongooseOptions);
 
 app.set('env', config.env || 'development');
 app.set('port', config.port || 3000);
+app.locals.container = config.db.db;
+
 console.log("environment = " + config.env);
 
 // Attach middleware
@@ -54,7 +58,7 @@ app.use(libClaims);
 
 // Attach routes
 app.get("/", (req, res) => {
-    libMeta.mergeWithMeta({message: "Welcome to the app!"}).then(response => {
+    libMeta.libResponse(req, { route: 'root'}, {}, {}).then(response => {
         res.json(response);
     }).catch(err => {
         res.json({error: err});
@@ -63,6 +67,7 @@ app.get("/", (req, res) => {
 app.use('/v1/urls',urls);
 app.use('/v1/users',users);
 app.use('/v1/auth',auth);
+app.use('/v1/meta', meta);
 
 // test/coverage only
 if ((config.env === 'development') && isCoverageEnabled) {
