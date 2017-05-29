@@ -60,7 +60,9 @@ var Urls = {
       id: url._id,
       url: url.url,
       userId: url.userUuid,
-      added: url.created.toDateString()
+      added: url.created.toDateString(),
+      feeds: url.feeds,
+      title: url.title
     };
   },
   createReturnableUrlArray: function(urls){

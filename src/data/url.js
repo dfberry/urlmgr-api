@@ -6,12 +6,12 @@ const uuid = require('node-uuid');
 db.Promise = require('bluebird');
 
 var urlSchema = new db.Schema({
-  name: {type: String},
-  title: {type: String},
+  name: {type: String, default: ""},
+  title: {type: String, default: ""},
   url: {type: String},
   userUuid: {type: String},
   html: {type : db.Schema.Types.Mixed},
-  feeds: {type: Array},
+  feeds: {type: Array, default: []},
   created: {type: Date, default: Date.now}
 });
 
