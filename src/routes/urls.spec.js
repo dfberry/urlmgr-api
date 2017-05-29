@@ -5,6 +5,10 @@
 const chai = require('chai'),
   chaiHttp = require('chai-http');
 
+const testUtils = require('../utilities/test.utils');
+const TestUsers = require('../utilities/test.users');
+const TestUrls = require('../utilities/test.urls');
+
 const server = require('../server.js');
 
 chai.use(chaiHttp);
@@ -16,64 +20,35 @@ let testUser;
 describe('urls', function() {
 
     beforeEach(function(done) {
-        testUser = { 
-            lastName: "before urls",
-            firstName: "spec",
-            email: Math.floor(new Date().getTime()) + "@urls.spec.com",
-            password: "testPassword"
-          };
 
-          // create user
-          chai.request(server)
-              .post('/v1/users')
-              .send(testUser)
-              .end((err, res) => {
+      let user = undefined;
+      let isAdmin = true;
 
-                // meta
-                should.not.exist(err);
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property("data");
-                res.body.should.have.property("commit");
-                res.body.should.have.property("branch");
+      TestUrls.deleteAllUrls();
+      TestUsers.deleteAllUsers();
 
-                // data
-                res.body.data.email.should.be.eql(testUser.email);
+      TestUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
+        testUser = user;
+        done();
+      }).catch(err => {
+        console.log("can't create test user - " + JSON.stringify(err));
+      });
 
-                testUser.id = res.body.data.id;
-                let authUser = {
-                  email: testUser.email,
-                  password: testUser.password
-                }
 
-                // user is created, get token
-                chai.request(server)
-                    .post('/v1/auth')
-                    .send(authUser)
-                    .end((_err, _res) => { 
-
-                      // meta
-                      should.not.exist(_err);
-                      _res.should.have.status(200);
-                      _res.body.should.be.a('object');
-                      _res.body.should.have.property("data");
-                      _res.body.should.have.property("commit");
-                      _res.body.should.have.property("branch");
-
-                      // data
-                      _res.body.data.should.have.property("token");
-                      _res.body.data.token.length.should.be.above(200);
-
-                      testUser.token =  _res.body.data.token;
-                      done();
-                });
-            });
+      
     });
 
   describe('auth success', function() {
 
     // TODO - make this test more meaningful
-    it('should return array of urls', function(done) {
+    it.only('should return array of urls for this user', function(done) {
+
+        for(let i=0;i<10;i++){
+          console.log("insert");
+          TestUrls.createUrl(testUser, {userUuid: testUser.id, url:'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com'});
+        }
+        //done();
+
         chai.request(server)
           .get('/v1/urls')
           .query({user: testUser.id})
@@ -82,27 +57,23 @@ describe('urls', function() {
         
             // meta
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            testUtils.expectSuccessResponse(res);
+
+            console.log(res.body);
 
             // data
-            res.body.data.should.be.a('array');
+            res.body.data.urls.should.be.a('array');
+            console.log(res.body.data.urls.length);
+            res.body.data.urls.length.should.be.eql(10);
+
+            
+
             done();
           });
     });
     it('should return 1 url', function(done) {
 
-      let url = 'http://www.shouldReturn1UrlTest.com/';
-      let testUrl = {
-        name: Math.floor(new Date().getTime())+ " mocha test should return 1 url",
-        title: "test title - should return 1 url",
-        url: url,
-        html: {},
-        feeds: []
-      };
+      let testUrl = { url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com', title: 'Project 31-A'};
 
       // insert url
       chai.request(server)
@@ -114,33 +85,23 @@ describe('urls', function() {
           
             // meta
             should.not.exist(err);
-            res1.should.have.status(200);
-            res1.body.should.be.a('object');
-            res1.body.should.have.property("data");
-            res1.body.should.have.property("commit");
-            res1.body.should.have.property("branch");
+            testUtils.expectSuccessResponse(res1);
 
-            let id = res1.body.data._id;
-
-            should.exist(id);
+            should.exist(res1.body.data.url.id);
 
           // fetch url
           chai.request(server)
-            .get('/v1/urls/' + id)
-            .query({user: testUser.id})
+            .get('/v1/urls/' + res1.body.data.url.id)
+            .query({user: res1.body.data.url.userId})
             .set('x-access-token', testUser.token)
             .end((err, res2) => {
 
               // meta
               should.not.exist(err);
-              res2.should.have.status(200);
-              res2.body.should.be.a('object');
-              res2.body.should.have.property("data");
-              res2.body.should.have.property("commit");
-              res2.body.should.have.property("branch");
+              testUtils.expectSuccessResponse(res2);
 
               // data
-              res2.body.data[0].name.should.be.eq(testUrl.name);
+              res2.body.data.url.title.should.be.eq(testUrl.title);
               done();
             });
         });
@@ -148,7 +109,7 @@ describe('urls', function() {
     it('should return metadata for url', function(done) {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
-      // insert url
+      // get meta
       chai.request(server)
         .post('/v1/urls/meta')
         .set('x-access-token', testUser.token)
@@ -160,48 +121,12 @@ describe('urls', function() {
 
           // meta
           should.not.exist(err);
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property("data");
-          res.body.should.have.property("commit");
-          res.body.should.have.property("branch");
+          testUtils.expectSuccessResponse(res);
 
           // data
-          res.body.data.title.should.be.eql('Project 31-A');
-          res.body.data.feeds.should.be.a('array');
-          res.body.data.feeds.length.should.be.eql(3);
-          done();
-        });
-    });
-    it('should return metadata for url', function(done) {
-      let url = 'https://www.hanselman.com/';
-
-      // insert url
-      chai.request(server)
-        .post('/v1/urls/meta')
-        .set('x-access-token', testUser.token)
-        .send({
-          user: testUser.id,
-          url: url
-        })
-        .end((err, res) => {
-
-          console.log(res.body);
-
-          // meta
-          should.not.exist(err);
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property("data");
-          res.body.should.have.property("commit");
-          res.body.should.have.property("branch");
-
-          // data
-          //res.body.data.title.should.be.eql('Project 31-A');
-          res.body.data.feeds.should.be.a('array');
-
-          // if this fails, check what the length is
-          res.body.data.feeds.length.should.be.above(0);
+          res.body.data.url.title.should.be.eql('Project 31-A');
+          res.body.data.url.feeds.should.be.a('array');
+          res.body.data.url.feeds.length.should.be.eql(3);
           done();
         });
     });
@@ -209,90 +134,66 @@ describe('urls', function() {
 
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
-      let testUrl = {
-        name: Math.floor(new Date().getTime()) + " mocha test - should create 1 url",
-        title: "test title - should create 1 url",
-        url: url,
-        html: {},
-        feeds: []
-      };
-
       chai.request(server)
         .post('/v1/urls')
         .query({user: testUser.id})
         .set('x-access-token', testUser.token)
-        .send(testUrl)
+        .send({ userUuid: testUser.id, url: url})
         .end((err, res) => {
 
           // meta
           should.not.exist(err);
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property("data");
-          res.body.should.have.property("commit");
-          res.body.should.have.property("branch");
+          testUtils.expectSuccessResponse(res);
 
           // data
-          res.body.data.url.should.be.eql(url);
-          res.body.data.name.should.be.eql(testUrl.name);
+          res.body.data.url.url.should.be.eql(url);
+          res.body.data.url.userId.should.be.eql(testUser.id);
+          res.body.data.url.feeds.should.be.a('array');
+          res.body.data.url.title.should.be.eql('Project 31-A');
           done();
         });
     });
     it('should delete 1 url', function(done) {
 
+      let testUrl = { url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com', title: 'Project 31-A'};
 
-      let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
-
-      let testUrl = {
-        name: Math.floor(new Date().getTime()) + "my mocha test name - should delete 1 url",
-        title: "test title - should delete 1 url",
-        url: url,
-        html: {},
-        feeds: []
-      };
-
+      // insert url
       chai.request(server)
         .post('/v1/urls')
         .query({user: testUser.id})
         .set('x-access-token', testUser.token)
         .send(testUrl)
         .end((err, res) => {
+          
+            // meta
+            should.not.exist(err);
+            testUtils.expectSuccessResponse(res);
 
-          // meta
-          should.not.exist(err);
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property("data");
-          res.body.should.have.property("commit");
-          res.body.should.have.property("branch");
+            should.exist(res.body.data.url.id);
 
-          let createdUUID = res.body.data._id;
+            // delete url
+            chai.request(server)
+              .delete('/v1/urls/' + res.body.data.url.id)
+              .query({user: testUser.id})
+              .set('x-access-token', testUser.token)
+              .end((err2, res2) => {
 
-          chai.request(server)
-            .delete('/v1/urls/' + res.body.data._id)
-            .query({user: testUser.id})
-            .set('x-access-token', testUser.token)
-            .end((err, res) => {
+                // meta
+                should.not.exist(err2);
+                testUtils.expectSuccessResponse(res2);
+                res2.body.api.route.should.be.eql("url");
 
-              // meta
-              should.not.exist(err);
-              res.should.have.status(200);
-              res.body.should.be.a('object');
-              res.body.should.have.property("data");
-              res.body.should.have.property("commit");
-              res.body.should.have.property("branch");
+                res2.body.api.action.should.be.eql("delete by id");
+                res2.body.data.url.id.should.be.eql(res.body.data.url.id);
 
-              // data
-              res.body.data._id.should.be.eql(createdUUID);
-              res.body.data.name.should.be.eql(testUrl.name);
-              done();
-            });
+                done();
+              });
         });
     });
 
   });
   describe('auth fail', function() {
-    it('should NOT return array of urls', function(done) {
+    it('should NOT return array of urls if not auth presented', function(done) {
 
       chai.request(server)
         .get('/v1/urls')
@@ -303,41 +204,35 @@ describe('urls', function() {
     });
     it('should NOT return 1 url', function(done) {
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
-      let testUrl = {
-        name: Math.floor(new Date().getTime()) + " mocha test - should NOT return 1 url",
-        title: "test title - should NOT return 1 url",
-        url: url,
-        html: {},
-        feeds: []
-      };
 
-      chai.request(server)
+        // insert correctly 
+        chai.request(server)        
         .post('/v1/urls')
-        .send(testUrl)
         .query({user: testUser.id})
         .set('x-access-token', testUser.token)
+        .send({ userUuid: testUser.id, url: url})
         .end((err, res1) => {
 
           // meta
           should.not.exist(err);
-          res1.should.have.status(200);
-          res1.body.should.be.a('object');
-          res1.body.should.have.property("data");
-          res1.body.should.have.property("commit");
-          res1.body.should.have.property("branch");
+          testUtils.expectSuccessResponse(res1);
 
-          let id = res1.body.data._id;
-          should.exist(id);
+          should.exist(res1.body.data.url.id);
 
+          // request url get without sending auth
           chai.request(server)
-            .get('/v1/urls/' + id)
+            .get('/v1/urls/' + res1.body.data.url.id)
+            .query({user: res1.body.data.url.userId})
+            // commented out on purpose as part of test
+            //.set('x-access-token', testUser.token)
             .end((err, res2) => {
+
               res2.should.have.status(422);
               done();
             });
         });
     });
-    it('should NOT create 1 url', function(done) {
+    it('should NOT create 1 url because not user auth', function(done) {
 
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
 
@@ -351,14 +246,14 @@ describe('urls', function() {
 
       chai.request(server)
         .post('/v1/urls')
-        .send(testUrl)
+        .send({testUrl})
         .end((err, res) => {
 
           res.should.have.status(422);
           done();
         });
     });
-    it('should NOT delete 1 url', function(done) {
+    it('should NOT delete 1 url without auth', function(done) {
 
 
       let url = 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com/';
@@ -380,13 +275,9 @@ describe('urls', function() {
 
           // meta
           should.not.exist(err);
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property("data");
-          res.body.should.have.property("commit");
-          res.body.should.have.property("branch");
+          testUtils.expectSuccessResponse(res);
 
-          let createdUUID = res.body.data._id;
+          let createdUUID = res.body.data.url.id;
           should.exist(createdUUID);
 
           chai.request(server)

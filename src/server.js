@@ -58,7 +58,7 @@ app.use(libClaims);
 
 // Attach routes
 app.get("/", (req, res) => {
-    libMeta.libResponse(req, { route: 'root'}, {}, {}).then(response => {
+    libResponse.buildResponseSuccess(req, { route: 'root'}, {}, {}).then(response => {
         res.json(response);
     }).catch(err => {
         res.json({error: err});

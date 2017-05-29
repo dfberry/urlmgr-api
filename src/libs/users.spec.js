@@ -11,7 +11,7 @@ var expect = require('chai').expect;
 
 describe('users lib', function() {
 
-    it.only('should create returnable array of users (no password, no id)', function(done) {
+    it('should create returnable array of users (no password, no id)', function(done) {
 
       let testUser = { 
         lastName: "berry",

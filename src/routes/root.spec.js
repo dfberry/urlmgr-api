@@ -8,6 +8,7 @@ const server = require('../server.js');
 
 chai.use(chaiHttp);
 let should = chai.should();
+const testUtils = require('../utilities/test.utils');
 
 describe('root', function() {
 
@@ -18,13 +19,11 @@ describe('root', function() {
           .get('/')
           .end((err, res) => {
 
+
+
             // success must have
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            testUtils.expectSuccessResponse(res);
 
             done();
  });

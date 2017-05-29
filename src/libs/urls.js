@@ -1,7 +1,7 @@
 "use strict";
 
 var UrlModel = require('../data/url.js');
-var authorization = require('./authorization.js');
+//var authorization = require('./authorization.js');
 var htmlLib = require('./html.js');
 
 var Urls = {
@@ -84,7 +84,11 @@ var Urls = {
           reject(err);
         });
     });
+  },
+  deleteAllUrlsRaw: function(){
+    UrlModel.remove().exec();
   }
+
 }
 
 module.exports = Urls;

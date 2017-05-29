@@ -30,13 +30,14 @@ describe('authentication', function() {
             should.not.exist(err);
             res.should.have.status(200);
             res.body.should.be.a('object');
+
             res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
+            res.body.should.have.property("meta");
+            res.body.should.have.property("api");
 
-            res.body.data.email.should.be.eql(testUser.email);
+            res.body.data.user.email.should.be.eql(testUser.email);
 
-            testUser.id = res.body.id;
+            testUser.id = res.body.data.user.id;
 
             let authUser = {
               email: testUser.email,
@@ -49,25 +50,27 @@ describe('authentication', function() {
                 .send(authUser)
                 .end((_err, _res) => {   
 
+                  console.log(_err);
+
                   // meta
                   should.not.exist(_err);
                   _res.should.have.status(200);
                   _res.body.should.be.a('object');
                   _res.body.should.have.property("data");
-                  _res.body.should.have.property("commit");
-                  _res.body.should.have.property("branch");
+                  _res.body.should.have.property("meta");
+                  _res.body.should.have.property("api");
 
                   // data
-                  _res.body.data.should.have.property("id");
-                  _res.body.data.should.have.property("firstName");
-                  _res.body.data.should.have.property("lastName");
-                  _res.body.data.should.have.property("email");
-                  _res.body.data.should.have.property("lastLogin");
-                  _res.body.data.should.have.property("token");
-                  _res.body.data.token.length.should.be.above(200);
+                  _res.body.data.user.should.have.property("id");
+                  _res.body.data.user.should.have.property("firstName");
+                  _res.body.data.user.should.have.property("lastName");
+                  _res.body.data.user.should.have.property("email");
+                  _res.body.data.user.should.have.property("lastLogin");
+                  _res.body.data.user.should.have.property("token");
+                  _res.body.data.user.token.length.should.be.above(200);
 
-                  _res.body.should.not.have.property("password");
-                  _res.body.should.not.have.property("revoked");
+                  _res.body.data.user.should.not.have.property("password");
+                  _res.body.data.user.should.not.have.property("revoked");
 
                   done();
                 });   
@@ -93,13 +96,13 @@ describe('authentication', function() {
             should.not.exist(err);
             res.should.have.status(200);
             res.body.should.be.a('object');
+            res.body.should.have.property("meta");
+            res.body.should.have.property("api");
             res.body.should.have.property("data");
-            res.body.should.have.property("commit");
-            res.body.should.have.property("branch");
 
             // data
-            res.body.data.email.should.be.eql(testUser.email);
-            res.body.data.should.not.have.property("password");
+            res.body.data.user.email.should.be.eql(testUser.email);
+            res.body.data.user.should.not.have.property("password");
 
             let authUser = {
               email: testUser.email,

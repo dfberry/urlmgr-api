@@ -4,15 +4,21 @@ var express = require('express');
 var router = express.Router();
 var urlLib = require('../libs/urls');
 var libAuthorization = require('../libs/authorization');
-var libMeta = require('../libs/meta');
+var libResponse = require('../libs/response');
+
+
+var api = { route: "url"};
 
 // create 1
 router.post('/', libAuthorization.AdminOrId, function(req, res) {
+  // { userUuid: 'xcv', url: 'http://sdfsf'}
   var data = req.body;
   data.userUuid = req.claims.uuid;
 
-  urlLib.create(data).then(results => {
-		return libMeta.mergeWithMeta(results);
+  api.action="create";
+
+  urlLib.createWithMeta(data).then(url => {
+		return libResponse.buildResponseSuccess(req, api, {}, {url: url});
 	}).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -22,12 +28,13 @@ router.post('/', libAuthorization.AdminOrId, function(req, res) {
 
 router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
   var data = req.body;
-  //data.userUuid = req.claims.uuid;
 
   var url = data.url ? data.url : undefined;
  
+  api.action="get url's feeds and title";
+
   urlLib.getMetadata(url).then(results => {
-		return libMeta.mergeWithMeta(results);
+		return libResponse.buildResponseSuccess(req, api, {}, {url: results});
 	}).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -40,11 +47,10 @@ router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
   var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getById(id, userUuid).then(results => {
+  api.action="get by id";
 
-   //if(results && results.length>0) return libMeta.mergeWithMeta(results[0]._doc); 
-
-		return libMeta.mergeWithMeta(results);
+  urlLib.getById(id, userUuid).then(url => {
+		return libResponse.buildResponseSuccess(req, api, {}, {url: url});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -60,8 +66,12 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //req.claims.uuid
   var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
-  urlLib.getAllByUser(userUuid).then(results => {
-		return libMeta.mergeWithMeta(results);
+  api.action="get all by user";
+  api.userUuid = userUuid;
+
+  urlLib.getAllByUser(userUuid).then(urls => {
+    console.log(urls);
+		return libResponse.buildResponseSuccess(req, api, {}, {urls: urls});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -73,8 +83,11 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
 // delete 1
 router.delete("/:id", libAuthorization.AdminOrId, function(req, res) {
   var id = req.params.id;
+
+  api.action="delete by id";
+
   urlLib.deleteById(id).then(results => {
-		return libMeta.mergeWithMeta(results);
+		return libResponse.buildResponseSuccess(req, api, {}, {url: results});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {

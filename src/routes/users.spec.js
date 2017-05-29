@@ -13,7 +13,7 @@ let should = chai.should();
 var expect = require('chai').expect;
 
 
-describe.only('users', function() {
+describe('users', function() {
 
     beforeEach(function(done) {
       testUsers.deleteAllUsers();
