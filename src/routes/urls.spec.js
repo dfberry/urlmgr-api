@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 const should = chai.should();
 const expect = chai.expect();
 
-let testUser;
+let testUser, testUser2;
 
 describe('urls', function() {
 
@@ -29,6 +29,13 @@ describe('urls', function() {
 
       TestUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
         testUser = user;
+
+        testUser2 = JSON.parse(JSON.stringify(user));
+        testUser2.email = 'ABC.' + testUser2.email;
+
+        return TestUsers.createAuthenticatedUser(testUser2, !isAdmin);
+      }).then(user2 => {
+        testUser2 = user2;
         done();
       }).catch(err => {
         console.log("can't create test user - " + JSON.stringify(err));
@@ -38,13 +45,19 @@ describe('urls', function() {
   describe('auth success', function() {
 
     // TODO - make this test more meaningful
-    it.only('should return array of urls for this user', function(done) {
+    it.only('should return array of urls for this user only', function(done) {
 
-        for(let i=0;i<10;i++){
-          console.log("insert");
+        let arrLength=3;
+
+        // testUser has 10 urls
+        for(let i=0;i<arrLength;i++){
           TestUrls.createUrl(testUser, {userUuid: testUser.id, url:'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com'});
         }
-        //done();
+
+        // testUser2 has 10 urls
+        for(let i=0;i<arrLength;i++){
+          TestUrls.createUrl(testUser2, {userUuid: testUser2.id, url:'http://www.dfberry.io'});
+        }
 
         chai.request(server)
           .get('/v1/urls')
@@ -58,7 +71,7 @@ describe('urls', function() {
 
             // data
             res.body.data.urls.should.be.a('array');
-            res.body.data.urls.length.should.be.eql(10);
+            res.body.data.urls.length.should.be.eql(arrLength);
 
             done();
           });

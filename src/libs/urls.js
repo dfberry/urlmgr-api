@@ -3,6 +3,7 @@
 var UrlModel = require('../data/url.js');
 //var authorization = require('./authorization.js');
 var htmlLib = require('./html.js');
+var _ = require('underscore');
 
 var Urls = {
 
@@ -47,10 +48,10 @@ var Urls = {
   create: function(obj){
     return new Promise(function(resolve, reject) {
       var urlObj = new UrlModel(obj);
-      urlObj.save((err, _url) =>{
-        if(err)reject(err);
-        resolve(_url);
-      });
+        urlObj.save((err, _url) =>{
+          if(err)reject(err);
+          resolve(_url);
+        });
     });
   },
   createReturnableUrl: function(url){
