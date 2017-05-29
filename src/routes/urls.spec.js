@@ -33,9 +33,6 @@ describe('urls', function() {
       }).catch(err => {
         console.log("can't create test user - " + JSON.stringify(err));
       });
-
-
-      
     });
 
   describe('auth success', function() {
@@ -59,14 +56,9 @@ describe('urls', function() {
             should.not.exist(err);
             testUtils.expectSuccessResponse(res);
 
-            console.log(res.body);
-
             // data
             res.body.data.urls.should.be.a('array');
-            console.log(res.body.data.urls.length);
             res.body.data.urls.length.should.be.eql(10);
-
-            
 
             done();
           });

@@ -87,7 +87,26 @@ var Urls = {
   },
   deleteAllUrlsRaw: function(){
     UrlModel.remove().exec();
-  }
+  },
+  createWithMeta(url){
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      if (!url || !url.url || !url.userUuid) reject("urls.createWithMeta - invalid arguments");
+
+      self.getMetadata(url.url).then(meta => {
+
+        var urlObj = new UrlModel(_.extend(url, meta));
+
+        urlObj.save((err, returnedUrlObj) =>{
+
+          if(err)reject(err);
+          resolve(self.createReturnableUrl(returnedUrlObj));
+        });
+      }).catch(reject);
+
+
+    });
+  },
 
 }
 
