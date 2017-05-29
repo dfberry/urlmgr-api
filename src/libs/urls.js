@@ -29,11 +29,12 @@ var Urls = {
   },
   */
   getAllByUser: function(userUuid){
+    let self = this;
     return new Promise(function(resolve, reject) {
       if (!userUuid) reject("userUuid is undefined");
       UrlModel.find({userUuid:userUuid}, (err, status) =>{
         if(err)reject(err);
-        resolve(status);
+        resolve(self.createReturnableUrlArray(status));
       });
     });
   },
@@ -46,11 +47,12 @@ var Urls = {
     });
   },
   create: function(obj){
+    let self = this;
     return new Promise(function(resolve, reject) {
       var urlObj = new UrlModel(obj);
         urlObj.save((err, _url) =>{
           if(err)reject(err);
-          resolve(_url);
+          resolve(self.createReturnableUrl(_url));
         });
     });
   },
@@ -70,6 +72,7 @@ var Urls = {
     urls.forEach(url => {
       newArray.push(this.createReturnableUrl(url));
     });
+    return newArray;
   },
 
 // return feed and title
