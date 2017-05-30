@@ -2,6 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Tests",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": ["--no-timeouts", "./src/routes/urls.spec.js"],
+            "runtimeArgs": ["--nolazy"],
+            "cwd": "${workspaceRoot}"
+        },
+        {
             "name": "Mocha 5858",
             "type": "node",
             "request": "attach",
