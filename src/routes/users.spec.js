@@ -35,7 +35,7 @@ describe('users', function() {
           .end((err, res) => {
 
             testUtils.expectSuccessResponse(res);
-
+            testUtils.wellFormedUser(res.body.data.user);
             res.body.data.user.email.should.be.eql(testUser.email);
             res.body.data.user.roles.should.have.length(1);
             res.body.data.user.roles[0].should.be.eql('user');
@@ -61,6 +61,7 @@ describe('users', function() {
             testUtils.expectSuccessResponse(res);
 
             res.body.data.user.email.should.be.eql(testUser.email);
+            testUtils.wellFormedUser(res.body.data.user);
             expect(res.body.data.user.roles.sort()).to.deep.equal(['admin','user']);
 
             // build obj to get authentication token
@@ -75,7 +76,7 @@ describe('users', function() {
                 .end((_err, _res) => {            
 
                   testUtils.expectSuccessResponse(_res);
-
+                  testUtils.wellFormedUser(res.body.data.user);
                   _res.body.data.user.email.should.be.eql(testUser.email);
 
                   done();
@@ -98,7 +99,8 @@ describe('users', function() {
             // meta
             should.not.exist(err2);
             testUtils.expectSuccessResponse(res2);
-
+            testUtils.wellFormedUser(res2.body.data.user);
+            
             // data
             res2.body.data.user.firstName.should.be.eql(user.firstName);
             res2.body.data.user.lastName.should.be.eql(user.lastName);
@@ -116,12 +118,14 @@ describe('users', function() {
 
       var agent = chai.request.agent(server)
 
-      for(let i=0;i<10;i++){
-        testUsers.createUser();
+      let numUsers = 3;
+      for(let i=0, max=numUsers;i<max;i++){
+        Promise.resolve(testUsers.createUser());
       }
 
-      let user=undefined;
-      let isAdmin=true;
+      let isAdmin=true, 
+        user=undefined;
+
 
       testUsers.createAuthenticatedUser(user, isAdmin).then(admin => {
         // get user by email returns token
@@ -131,16 +135,21 @@ describe('users', function() {
 
             // meta
             should.not.exist(err1);
+            
             testUtils.expectSuccessResponse(res1);
+            
+            for(let i=0, max=res1.body.data.users.length;i<max;i++){
+              testUtils.wellFormedUser(res1.body.data.users[i]);
+            }
 
-            res1.body.data.users.length.should.be.above(9);
+            res1.body.data.users.length.should.eql(numUsers+1);
 
             done();
         });
       });
     });
   
-    it('should logout user', function(done) {
+    it.only('should logout user', function(done) {
 
       let user = null;
       let isAdmin = true;
@@ -156,7 +165,8 @@ describe('users', function() {
             // meta
             should.not.exist(err3);
             testUtils.expectSuccessResponse(res3);
-
+            res3.body.status.should.eql('success');
+            res3.body.state.should.eql(1);
             res3.body.api.route = "user";
             res3.body.api.action = "delete user by token";
 

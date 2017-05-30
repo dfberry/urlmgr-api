@@ -25,6 +25,7 @@ var Tokens = {
   insert: function(token){
     var self = this;
     return new Promise(function(resolve, reject) {
+      if(!token) reject("can't create token because token is empty");
       var tokenObj = new TokenModel(token);
       tokenObj.save((err, token) => {
         if(err)return reject(err);

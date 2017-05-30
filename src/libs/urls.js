@@ -51,6 +51,7 @@ var Urls = {
   create: function(obj){
     let self = this;
     return new Promise(function(resolve, reject) {
+      if(!obj) reject("can't create url because url is empty");
       var urlObj = new UrlModel(obj);
         urlObj.save((err, _url) =>{
           if(err)reject(err);

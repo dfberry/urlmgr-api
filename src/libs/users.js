@@ -69,6 +69,8 @@ var Users = {
   create: function(user){
     var self = this;
     return new Promise(function(resolve, reject) {
+
+      if(!user) reject("can't create user because user is empty");
       var userObj = new UserModel(user);
       userObj.save((err, _user) => {
         if(err)return reject(err);       

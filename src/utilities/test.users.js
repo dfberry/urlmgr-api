@@ -26,7 +26,7 @@ var TestUsers = {
 
     return authLib.authenticate(email, password);
   },
-    createAuthenticatedUser(user, admin=false){
+  createAuthenticatedUser(user, admin=false){
 
      if(!user) {
         user = { 
