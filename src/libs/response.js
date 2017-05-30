@@ -19,6 +19,17 @@ var Response = {
 
       }).catch(err => {return err});
   },
+  buildFailureSuccess: function(req, api, meta, data){
+
+    return this.buildResponse(req, api, meta, data).then(response => {
+
+      response.status = "failure";
+      response.state = 0;
+
+      return new Promise.resolve(response);
+
+      }).catch(err => {return err});
+  },
   buildResponse: function(req, api, meta, data){
 
     return new Promise(function(resolve, reject) {

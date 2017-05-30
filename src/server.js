@@ -12,7 +12,9 @@ var express = require('express'),
     libMeta = require('./libs/meta'),
     libResponse = require('./libs/response'),
     meta = require('./routes/meta'),
-    auth = require('./routes/authentication');
+    auth = require('./routes/authentication'),
+    libError = require('./routes/errors'),
+    _ = require('underscore');
 
 // for coverage of apis
 var im = undefined, 
@@ -56,6 +58,11 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 app.use(libClaims);
 
+app.use(function(req, res, next) {
+  console.log('method %s url %s path %s', req.method, req.url, req.path);
+  next();
+});
+
 // Attach routes
 app.get("/", (req, res) => {
     libResponse.buildResponseSuccess(req, { route: 'root'}, {}, {}).then(response => {
@@ -83,24 +90,7 @@ app.use(function(req, res, next) {
     res.status(404).send(err);  
 });
 
-// error handlers
-app.use(function (err, req, res, next) {
-
-  let errorStack = (app.get('env') === 'development') ? err : {};
-
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({
-        message : err.message,
-        error: errorStack
-    });
-  } else if (err.message.indexOf("AuthFailure") >= 0){
-    res.status(422).json({
-        message: err.message,
-        error: errorStack
-    });
-  } else 
-    next(err);
-});
-
+// catch all error handlers
+app.use(libError);
 
 module.exports = app;

@@ -41,6 +41,7 @@ router.post('/', function(req, res) {
 	.then(result => {
 		let tokenResults = result[0];
 		let userResults = result[1];
+		let meta = {}; // because it is filled by libResponse
 
 		userResults.token = tokenResults;
 
@@ -49,8 +50,20 @@ router.post('/', function(req, res) {
     res.status(200).send(finalObj);
   }).catch(function(err) {
 
-		if((err==='User & password did not match') || (err==='Authentication failed: Invalid email and/or password supplied.')) return res.status(422).send({error:'User & password did not match'});
-		return res.status(500).send({ error: err.message });
+		if((err==='User & password did not match') || (err==='Authentication failed: Invalid email and/or password supplied.')) {
+			
+			api.error = { type: "authentication failure", message: "User & password did not match"};
+			let data = {}; // because there is an error
+			let meta = {}; // because it is filled by libResponse
+
+			libResponse.buildFailureSuccess(req, api, meta, data).then( finalObj => {
+				return res.status(422).send(finalObj);
+			}).catch(err => {
+				return res.status(500).send({ error: err.message });
+			})
+		} else {
+			return res.status(500).send({ error: err.message });
+		}
   });
 
 });
