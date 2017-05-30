@@ -45,16 +45,16 @@ describe('urls', function() {
   describe('auth success', function() {
 
     // TODO - make this test more meaningful
-    it.only('should return array of urls for this user only', function(done) {
+    it('should return array of urls for this user only', function(done) {
 
         let arrLength=3;
 
-        // testUser has 10 urls
+        // testUser has N urls
         for(let i=0;i<arrLength;i++){
           TestUrls.createUrl(testUser, {userUuid: testUser.id, url:'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com'});
         }
 
-        // testUser2 has 10 urls
+        // testUser2 has N urls
         for(let i=0;i<arrLength;i++){
           TestUrls.createUrl(testUser2, {userUuid: testUser2.id, url:'http://www.dfberry.io'});
         }
@@ -72,6 +72,10 @@ describe('urls', function() {
             // data
             res.body.data.urls.should.be.a('array');
             res.body.data.urls.length.should.be.eql(arrLength);
+
+            res.body.data.urls.forEach(url => {
+              testUtils.wellFormedUrl(url);
+            });
 
             done();
           });
@@ -104,6 +108,7 @@ describe('urls', function() {
               // meta
               should.not.exist(err);
               testUtils.expectSuccessResponse(res2);
+              testUtils.wellFormedUrl(res2.body.data.url);
 
               // data
               res2.body.data.url.title.should.be.eq(testUrl.title);
@@ -155,6 +160,8 @@ describe('urls', function() {
           res.body.data.url.userId.should.be.eql(testUser.id);
           res.body.data.url.feeds.should.be.a('array');
           res.body.data.url.title.should.be.eql('Project 31-A');
+          
+          testUtils.wellFormedUrl(res.body.data.url);
           done();
         });
     });
@@ -189,7 +196,7 @@ describe('urls', function() {
                 res2.body.api.route.should.be.eql("url");
 
                 res2.body.api.action.should.be.eql("delete by id");
-                res2.body.data.url.id.should.be.eql(res.body.data.url.id);
+                testUtils.wellFormedUrl(res2.body.data.url);
 
                 done();
               });

@@ -20,7 +20,6 @@ var TestUrls = {
 
   },
   deleteAllUrls: function(){
-    console.log("deleteAllUrls");
     urlLib.deleteAllUrlsRaw();
   }
 }

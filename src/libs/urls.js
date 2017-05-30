@@ -8,13 +8,14 @@ var _ = require('underscore');
 var Urls = {
 
   getById: function(id,userUuid) {
+    let self = this;
     return new Promise(function(resolve, reject) {
 
       let query = userUuid ? {_id: id, userUuid:userUuid} : {_id:id};
 
-      UrlModel.find(query, (err, status) =>{
+      UrlModel.findOne(query, (err, url) =>{
         if(err)reject(err);
-        resolve(status);
+        resolve(self.createReturnableUrl(url));
       });
     });
   },
@@ -32,17 +33,18 @@ var Urls = {
     let self = this;
     return new Promise(function(resolve, reject) {
       if (!userUuid) reject("userUuid is undefined");
-      UrlModel.find({userUuid:userUuid}, (err, status) =>{
+      UrlModel.find({userUuid:userUuid}, (err, urls) =>{
         if(err)reject(err);
-        resolve(self.createReturnableUrlArray(status));
+        resolve(self.createReturnableUrlArray(urls));
       });
     });
   },
   deleteById: function(uuid){
+    let self = this;
     return new Promise(function(resolve, reject) {
-      UrlModel.findByIdAndRemove({ _id: uuid }, (err, status) =>{
+      UrlModel.findByIdAndRemove({ _id: uuid }, (err, url) =>{
         if(err)reject(err);
-        resolve(status);
+        resolve(self.createReturnableUrl(url));
       });
     });
   },

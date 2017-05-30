@@ -21,8 +21,6 @@ let should = chai.should();
 
             if(err) return done(err);
 
-            console.log(res.body);
-
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.email.should.be.eql(testUser.email);

@@ -70,8 +70,6 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   api.userUuid = userUuid;
 
   urlLib.getAllByUser(userUuid).then(urls => {
-    console.log("url route, url returned");
-    console.log(urls);
 		return libResponse.buildResponseSuccess(req, api, {}, {urls: urls});
   }).then( finalObj => {
     res.status(200).json(finalObj);

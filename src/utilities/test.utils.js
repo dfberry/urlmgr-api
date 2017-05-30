@@ -76,6 +76,22 @@ var TestUtils = {
     if (user && user.token) user.token.length.should.be.above(200);
 
     return this;
+  },
+  wellFormedUrl: function(url){
+
+    url.should.have.property('id');
+    url.should.have.property('url');
+    url.should.have.property('added');
+    url.should.have.property('title');
+    url.should.have.property("feeds");
+    url.should.have.property("userId");
+  
+    url.should.not.have.property('_id');
+    url.should.not.have.property('__v');
+    url.should.not.have.property('userUuid');
+
+
+    return this;
   }
 }
 
