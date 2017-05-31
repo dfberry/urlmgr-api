@@ -1,10 +1,10 @@
 "use strict";
 
-let config = require('../config/config.json');
-let express = require('express');
-let router = express.Router();
-let _ = require('underscore');
-let responseLib = require('../libs/response.js');
+const config = require('../config/config.json'),
+  express = require('express'),
+  router = express.Router(),
+  _ = require('underscore'),
+  responseLib = require('../libs/response.js');
 
 let api = { route: "meta"};
 

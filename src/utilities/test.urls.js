@@ -1,7 +1,7 @@
 "use strict";
 
-let urlLib = require('../libs/urls');
-let testUtils = require('./test.utils');
+const urlLib = require('../libs/urls'),
+  testUtils = require('./test.utils');
 
 
 /* returns raw url objs, not wrapped in api response info */

@@ -3,15 +3,14 @@
 "use strict";
 
 const chai = require('chai'),
-  chaiHttp = require('chai-http');
-const server = require('../server.js');
-const testUtils = require('../utilities/test.utils');
-const testUsers = require('../utilities/test.users');
+  chaiHttp = require('chai-http'),
+  server = require('../server.js'),
+  testUtils = require('../utilities/test.utils'),
+  testUsers = require('../utilities/test.users'),
+  should = chai.should(),
+  expect = require('chai').expect;
 
 chai.use(chaiHttp);
-let should = chai.should();
-let expect = require('chai').expect;
-
 
 describe('users', function() {
 

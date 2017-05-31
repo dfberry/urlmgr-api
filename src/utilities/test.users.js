@@ -1,8 +1,8 @@
 "use strict";
 
-let userLib = require('../libs/users');
-let authLib = require('../libs/authentication');
-let testUtils = require('./test.utils');
+const userLib = require('../libs/users'),
+  authLib = require('../libs/authentication'),
+  testUtils = require('./test.utils');
 
 let TestUsers = {
 

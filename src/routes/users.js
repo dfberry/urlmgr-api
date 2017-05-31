@@ -1,12 +1,11 @@
 "use strict";
 
-let libAuthorization = require('../libs/authorization');
-let libUsers = require('../libs/users');
-let express = require('express');
-let router = express.Router();
-let uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
-let libMeta = require('../libs/meta');
-let responseLib = require('../libs/response.js');
+const libAuthorization = require('../libs/authorization'),
+  libUsers = require('../libs/users'),
+  express = require('express'),
+  router = express.Router(),
+  uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}',
+  responseLib = require('../libs/response.js');
 
 let api = { route: "user"};
 

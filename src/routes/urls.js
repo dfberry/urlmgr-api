@@ -1,11 +1,10 @@
 "use strict";
 
-let express = require('express');
-let router = express.Router();
-let urlLib = require('../libs/urls');
-let libAuthorization = require('../libs/authorization');
-let libResponse = require('../libs/response');
-
+const express = require('express'),
+  router = express.Router(),
+  urlLib = require('../libs/urls'),
+  libAuthorization = require('../libs/authorization'),
+  libResponse = require('../libs/response');
 
 let api = { route: "url"};
 

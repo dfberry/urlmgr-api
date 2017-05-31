@@ -3,12 +3,13 @@
 "use strict";
 
 const chai = require('chai'),
-  chaiHttp = require('chai-http');
-const server = require('../server.js');
-let utils = require('../utilities/test.utils');
+  chaiHttp = require('chai-http'),
+  server = require('../server.js'),
+  utils = require('../utilities/test.utils'),
+  should = chai.should();
 
 chai.use(chaiHttp);
-let should = chai.should();
+
 
 describe('meta', function() {
 

@@ -1,9 +1,9 @@
 "use strict";
 
-let config = require('../config/config.json');
-let express = require('express');
-let _ = require('underscore');
-let libResponse = require('../libs/response.js');
+const config = require('../config/config.json'),
+  express = require('express'),
+  _ = require('underscore'),
+  libResponse = require('../libs/response.js');
 
 function errorHandler(err, req, res, next) {
 
