@@ -1,9 +1,8 @@
 'use strict';
 
-let app = require('./server'),
-    http = require('http');
-
-let port = process.env.SB_PORT || app.get('port'),
+const app = require('./server'),
+    http = require('http'),
+    port = process.env.SB_PORT || app.get('port'),
     host = process.env.SB_HOST || "0.0.0.0",
     server; 
 

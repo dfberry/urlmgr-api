@@ -1,6 +1,6 @@
 'use strict';
 
-let express = require('express'),
+const express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     favicon = require('serve-favicon'),
@@ -14,7 +14,9 @@ let express = require('express'),
     meta = require('./routes/meta'),
     auth = require('./routes/authentication'),
     libError = require('./routes/errors'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    app = express(),
+    mongoose = require('mongoose');
 
 // for coverage of apis
 let im = undefined, 
@@ -32,8 +34,7 @@ if (config.env === 'development'){
     }
 }
 
-let app = express();
-let mongoose = require('mongoose');
+
 mongoose.Promise = require('bluebird');
 
 let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 

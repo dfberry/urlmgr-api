@@ -1,6 +1,6 @@
 "use strict";
 
-let rp = require('request-promise'),
+const rp = require('request-promise'),
     url = require('url'),
     cheerio = require('cheerio');
 

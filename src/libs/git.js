@@ -1,5 +1,5 @@
 "use strict";
-let exec = require('child_process').exec,
+const exec = require('child_process').exec,
   Promise = require("bluebird");
 
 let Git = {

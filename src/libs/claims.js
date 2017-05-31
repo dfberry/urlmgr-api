@@ -1,6 +1,6 @@
 "use strict";
 
-let libAuthentication = require('./authentication');
+const libAuthentication = require('./authentication');
 
 module.exports = function(req, res, next) {
     // check header or url parameters or post parameters for token
