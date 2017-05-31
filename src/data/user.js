@@ -1,12 +1,12 @@
 "use strict"
-const db = require('mongoose');
-const loadClass = require('mongoose-class-wrapper');
-const uuid = require('node-uuid'),
+const db = require('mongoose'),
+  loadClass = require('mongoose-class-wrapper'),
   bcrypt = require('bcryptjs'),
   SALT_WORK_FACTOR = 10;
+
 db.Promise = require('bluebird');
 
-var userSchema = new db.Schema({
+let userSchema = new db.Schema({
   firstName: {
     type: String
   },
@@ -40,7 +40,7 @@ var userSchema = new db.Schema({
 
 // before saving, hash password
 userSchema.pre('save', function(next) {
-  var user = this;
+  let user = this;
 
   // only hash the password if it has been modified (or is new)
   if (!user.isModified('password')) return next();

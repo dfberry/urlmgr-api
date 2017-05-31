@@ -1,10 +1,10 @@
 "use strict";
 
-var userLib = require('../libs/users');
-var authLib = require('../libs/authentication');
-var testUtils = require('./test.utils');
+let userLib = require('../libs/users');
+let authLib = require('../libs/authentication');
+let testUtils = require('./test.utils');
 
-var TestUsers = {
+let TestUsers = {
 
   createUser: function(user){
 

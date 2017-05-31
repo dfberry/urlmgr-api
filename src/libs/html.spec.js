@@ -1,14 +1,14 @@
 /*eslint-env mocha */
 //node --debug=5858 node_modules/mocha/bin/_mocha src-non-sails/**/*.spec.js  
 "use strict";
-var sinon = require('sinon');
+//let sinon = require('sinon');
 
-var Promise = require("bluebird");
-var fs = Promise.promisifyAll(require("fs"));
+let Promise = require("bluebird");
+let fs = Promise.promisifyAll(require("fs"));
 
 const chai = require('chai');
-var should = chai.should();
-var html = require('./html');
+let should = chai.should();
+let html = require('./html');
 
 // from root of project
 const testLinks = [
@@ -37,7 +37,7 @@ describe('html', function() {
     });
     it('should return links ', function(done) {
 
-      for(var i = 0; i<testLinks.length; i++){
+      for(let i = 0; i<testLinks.length; i++){
         
         let path = testLinks[i].path;
         let htmlFound = fs.readFileSync(path, 'utf8');
@@ -50,7 +50,7 @@ describe('html', function() {
     });
     it('should return feed links ', function(done) {
 
-      for(var i = 0; i<testLinks.length; i++){
+      for(let i = 0; i<testLinks.length; i++){
         
         let path = testLinks[i].path;
         let htmlFound = fs.readFileSync(path, 'utf8');
@@ -63,7 +63,7 @@ describe('html', function() {
     });
     it('should return feed links ', function(done) {
 
-      for(var i = 0; i<testLinks.length; i++){
+      for(let i = 0; i<testLinks.length; i++){
         
         let path = testLinks[i].path;
         let htmlFound = fs.readFileSync(path, 'utf8');

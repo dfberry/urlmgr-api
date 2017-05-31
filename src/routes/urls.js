@@ -1,18 +1,18 @@
 "use strict";
 
-var express = require('express');
-var router = express.Router();
-var urlLib = require('../libs/urls');
-var libAuthorization = require('../libs/authorization');
-var libResponse = require('../libs/response');
+let express = require('express');
+let router = express.Router();
+let urlLib = require('../libs/urls');
+let libAuthorization = require('../libs/authorization');
+let libResponse = require('../libs/response');
 
 
-var api = { route: "url"};
+let api = { route: "url"};
 
 // create 1
 router.post('/', libAuthorization.AdminOrId, function(req, res) {
   // { userUuid: 'xcv', url: 'http://sdfsf'}
-  var data = req.body;
+  let data = req.body;
   data.userUuid = req.claims.uuid;
 
   api.action="create";
@@ -27,9 +27,9 @@ router.post('/', libAuthorization.AdminOrId, function(req, res) {
 });
 
 router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
-  var data = req.body;
+  let data = req.body;
 
-  var url = data.url ? data.url : undefined;
+  let url = data.url ? data.url : undefined;
  
   api.action="get url's feeds and title";
 
@@ -44,8 +44,8 @@ router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
 
 // get 1  
 router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
-  var id = req.params.id;
-  var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
+  let id = req.params.id;
+  let userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
   api.action="get by id";
 
@@ -64,7 +64,7 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //TODO = pass in uuid for all requests
   //so only urls associated with user are returned
   //req.claims.uuid
-  var userUuid = req.claims.uuid ? req.claims.uuid : undefined;
+  let userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
   api.action="get all by user";
   api.userUuid = userUuid;
@@ -81,7 +81,7 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
 
 // delete 1
 router.delete("/:id", libAuthorization.AdminOrId, function(req, res) {
-  var id = req.params.id;
+  let id = req.params.id;
 
   api.action="delete by id";
 

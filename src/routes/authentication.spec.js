@@ -5,6 +5,7 @@
 const chai = require('chai'),
   chaiHttp = require('chai-http');
 const server = require('../server.js');
+const testUtils = require('../utilities/test.utils');
 
 chai.use(chaiHttp);
 let should = chai.should();
@@ -28,12 +29,7 @@ describe('authentication', function() {
 
             // success must have
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-
-            res.body.should.have.property("data");
-            res.body.should.have.property("meta");
-            res.body.should.have.property("api");
+            testUtils.expectSuccessResponse(res);
 
             res.body.data.user.email.should.be.eql(testUser.email);
 
@@ -50,27 +46,14 @@ describe('authentication', function() {
                 .send(authUser)
                 .end((_err, _res) => {   
 
-                  console.log(_err);
-
                   // meta
                   should.not.exist(_err);
-                  _res.should.have.status(200);
-                  _res.body.should.be.a('object');
-                  _res.body.should.have.property("data");
-                  _res.body.should.have.property("meta");
-                  _res.body.should.have.property("api");
+                  testUtils.expectSuccessResponse(res);
 
                   // data
-                  _res.body.data.user.should.have.property("id");
-                  _res.body.data.user.should.have.property("firstName");
-                  _res.body.data.user.should.have.property("lastName");
-                  _res.body.data.user.should.have.property("email");
-                  _res.body.data.user.should.have.property("lastLogin");
+                  testUtils.wellFormedUser(_res.body.data.user);
                   _res.body.data.user.should.have.property("token");
                   _res.body.data.user.token.length.should.be.above(200);
-
-                  _res.body.data.user.should.not.have.property("password");
-                  _res.body.data.user.should.not.have.property("revoked");
 
                   done();
                 });   
@@ -94,15 +77,11 @@ describe('authentication', function() {
 
             // meta
             should.not.exist(err);
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property("meta");
-            res.body.should.have.property("api");
-            res.body.should.have.property("data");
+            testUtils.expectSuccessResponse(res);
 
             // data
             res.body.data.user.email.should.be.eql(testUser.email);
-            res.body.data.user.should.not.have.property("password");
+            testUtils.wellFormedUser(res.body.data.user);
 
             let authUser = {
               email: testUser.email,

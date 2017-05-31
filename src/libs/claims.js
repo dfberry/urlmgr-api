@@ -1,11 +1,10 @@
 "use strict";
 
-var config = require('../config/config.json');
-var libAuthentication = require('./authentication');
+let libAuthentication = require('./authentication');
 
 module.exports = function(req, res, next) {
     // check header or url parameters or post parameters for token
-    var token = req.body.token || req.query.token || req.headers['x-access-token'],
+    let token = req.body.token || req.query.token || req.headers['x-access-token'],
         ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     // decode token
@@ -20,7 +19,6 @@ module.exports = function(req, res, next) {
       });
     }else{
       // Continue without any rights
-	  next(); 
+      next(); 
     }
-
 };

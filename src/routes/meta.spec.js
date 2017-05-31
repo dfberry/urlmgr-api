@@ -5,7 +5,7 @@
 const chai = require('chai'),
   chaiHttp = require('chai-http');
 const server = require('../server.js');
-var utils = require('../utilities/test.utils');
+let utils = require('../utilities/test.utils');
 
 chai.use(chaiHttp);
 let should = chai.should();

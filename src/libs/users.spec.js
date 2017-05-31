@@ -7,7 +7,7 @@ let userLib = require('./users');
 const chai = require('chai')
 
 let should = chai.should();
-var expect = require('chai').expect;
+let expect = require('chai').expect;
 
 describe('users lib', function() {
 

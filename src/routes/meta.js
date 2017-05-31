@@ -1,12 +1,12 @@
 "use strict";
 
-var config = require('../config/config.json');
-var express = require('express');
-var router = express.Router();
-var _ = require('underscore');
-var responseLib = require('../libs/response.js');
+let config = require('../config/config.json');
+let express = require('express');
+let router = express.Router();
+let _ = require('underscore');
+let responseLib = require('../libs/response.js');
 
-var api = { route: "meta"};
+let api = { route: "meta"};
 
 router.get('/', function(req, res) {
 		

@@ -1,14 +1,14 @@
 "use strict";
 
-var config = require('../config/config.json');
-var libAuthentication = require('../libs/authentication');
-var libUser = require('../libs/users');
-var libResponse = require('../libs/response');
-var express = require('express');
-var router = express.Router();
-var _ = require('underscore');
+let config = require('../config/config.json');
+let libAuthentication = require('../libs/authentication');
+let libUser = require('../libs/users');
+let libResponse = require('../libs/response');
+let express = require('express');
+let router = express.Router();
+let _ = require('underscore');
 
-var api = { name: "authenticate"};
+let api = { name: "authenticate"};
 
 /* Authenticates a user based on a username and password. Returns a JWT.
 
@@ -29,13 +29,13 @@ router.post('/', function(req, res) {
 
 	api.action = "verify";
 
-  var email = req.body.email,
+  let email = req.body.email,
       password = req.body.password;
 
 	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
 
-	var user = libUser.getByEmail(email);
-	var auth = libAuthentication.authenticate(email, password);
+	let user = libUser.getByEmail(email);
+	let auth = libAuthentication.authenticate(email, password);
 
 	Promise.all([auth, user])
 	.then(result => {

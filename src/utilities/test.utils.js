@@ -1,7 +1,7 @@
 "use strict";
 
 
-var TestUtils = {
+let TestUtils = {
   uniqueString: function(){
     return this.nowAsNumber() + this.randomBetween1And100000();
   },

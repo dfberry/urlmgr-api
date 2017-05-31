@@ -1,10 +1,10 @@
 "use strict";
 //http://www.scotchmedia.com/tutorials/express/authentication/2/05
 
-const noAuthPresented = "AuthFailure: No Authorization presented";
-const notAuthorized = "AuthFailure: User is not authorized";
+const noAuthPresented = "AuthFailure: No Authorization presented",
+  notAuthorized = "AuthFailure: User is not authorized";
 
-var authorization = {
+let authorization = {
 
   admin: function(req, res, next) {
     // User must make some claims

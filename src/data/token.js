@@ -1,14 +1,12 @@
 "use strict"
 
-const db = require('mongoose');
-const loadClass = require('mongoose-class-wrapper');
-const uuid = require('node-uuid');
-var jwt = require('jsonwebtoken');
-var config = require('../config/config.json');
+const db = require('mongoose'),
+  loadClass = require('mongoose-class-wrapper'),
+  uuid = require('node-uuid');
 
 db.Promise = require('bluebird');
 
-var tokenSchema = new db.Schema({
+let tokenSchema = new db.Schema({
   token: { type: String, required:true, default: uuid.v1, index: { unique: true } },
   userUuid: {type: String, required:true, ref: 'User'},
   role: {type: String, required:true, defaultValue: 'none'},

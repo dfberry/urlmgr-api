@@ -1,6 +1,6 @@
 'use strict';
 
-var app = require('./server'),
+let app = require('./server'),
     http = require('http');
 
 let port = process.env.SB_PORT || app.get('port'),

@@ -1,10 +1,10 @@
 "use strict";
 
-var Promise = require("bluebird");
-var metaLib = require('./meta');
-var _ = require('underscore');
+let Promise = require("bluebird");
+let metaLib = require('./meta');
+let _ = require('underscore');
 
-var Response = {
+let Response = {
   /**
    * 
    */

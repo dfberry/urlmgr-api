@@ -1,12 +1,12 @@
 "use strict";
 
-var urlLib = require('../libs/urls');
-var testUtils = require('./test.utils');
+let urlLib = require('../libs/urls');
+let testUtils = require('./test.utils');
 
 
 /* returns raw url objs, not wrapped in api response info */
 
-var TestUrls = {
+let TestUrls = {
 
   // userObj: {id: '', email:'', etc}
   // urlObj: {url: '', userUuid: ''}

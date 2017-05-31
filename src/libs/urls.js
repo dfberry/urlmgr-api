@@ -1,11 +1,11 @@
 "use strict";
 
-var UrlModel = require('../data/url.js');
-//var authorization = require('./authorization.js');
-var htmlLib = require('./html.js');
-var _ = require('underscore');
+let UrlModel = require('../data/url.js');
+//let authorization = require('./authorization.js');
+let htmlLib = require('./html.js');
+let _ = require('underscore');
 
-var Urls = {
+let Urls = {
 
   getById: function(id,userUuid) {
     let self = this;
@@ -52,7 +52,7 @@ var Urls = {
     let self = this;
     return new Promise(function(resolve, reject) {
       if(!obj) reject("can't create url because url is empty");
-      var urlObj = new UrlModel(obj);
+      let urlObj = new UrlModel(obj);
         urlObj.save((err, _url) =>{
           if(err)reject(err);
           resolve(self.createReturnableUrl(_url));
@@ -104,7 +104,7 @@ var Urls = {
 
       self.getMetadata(url.url).then(meta => {
 
-        var urlObj = new UrlModel(_.extend(url, meta));
+        let urlObj = new UrlModel(_.extend(url, meta));
 
         urlObj.save((err, returnedUrlObj) =>{
 

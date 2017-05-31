@@ -10,7 +10,7 @@ const testUsers = require('../utilities/test.users');
 
 chai.use(chaiHttp);
 let should = chai.should();
-var expect = require('chai').expect;
+let expect = require('chai').expect;
 
 
 describe('users', function() {
@@ -70,7 +70,7 @@ describe('users', function() {
               password: testUser.password
             }
 
-            var agent = chai.request.agent(server);
+            let agent = chai.request.agent(server);
             agent.post('/v1/auth')
                 .send(authUser)
                 .end((_err, _res) => {            
@@ -87,7 +87,7 @@ describe('users', function() {
 
       let user=undefined;
       let isAdmin=true;
-      var agent = chai.request.agent(server);
+      let agent = chai.request.agent(server);
 
       testUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
  
@@ -116,7 +116,7 @@ describe('users', function() {
       // get a duplicate key error for mongo collection every once in a while
       // this is completely test related due to speed of inserts
 
-      var agent = chai.request.agent(server)
+      let agent = chai.request.agent(server)
 
       let numUsers = 3;
       for(let i=0, max=numUsers;i<max;i++){
@@ -149,7 +149,7 @@ describe('users', function() {
       });
     });
   
-    it.only('should logout user', function(done) {
+    it('should logout user', function(done) {
 
       let user = null;
       let isAdmin = true;

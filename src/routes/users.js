@@ -1,18 +1,18 @@
 "use strict";
 
-var libAuthorization = require('../libs/authorization');
-var libUsers = require('../libs/users');
-var express = require('express');
-var router = express.Router();
-var uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
-var libMeta = require('../libs/meta');
-var responseLib = require('../libs/response.js');
+let libAuthorization = require('../libs/authorization');
+let libUsers = require('../libs/users');
+let express = require('express');
+let router = express.Router();
+let uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
+let libMeta = require('../libs/meta');
+let responseLib = require('../libs/response.js');
 
-var api = { route: "user"};
+let api = { route: "user"};
 
 // create 1 - registration
 router.post('/',  function(req, res) {
-  var data = req.body;
+  let data = req.body;
 
   api.action="create";
 
@@ -27,7 +27,7 @@ router.post('/',  function(req, res) {
 });
 
 router.get("/email/:email", function(req, res) {
-  var email = req.params.email;
+  let email = req.params.email;
 
   api.action = "get user by email";
 
@@ -56,7 +56,7 @@ router.get("/", libAuthorization.admin, function(req, res) {
 
 // get by id
 router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
-  var id = req.params.id;
+  let id = req.params.id;
 
   api.action = "get user by id";
 
@@ -80,11 +80,11 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
 
 */
 router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
-  var id = req.params.id;
+  let id = req.params.id;
 
   api.action = "delete user by token";
 
-  var token = req.headers['x-access-token'];
+  let token = req.headers['x-access-token'];
 
   libUsers.logout(id, token).then( userObj => {
     return responseLib.buildResponseSuccess(req, api, {}, {users: userObj});

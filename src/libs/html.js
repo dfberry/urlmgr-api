@@ -1,12 +1,10 @@
 "use strict";
 
-//var UrlModel = require('../data/url.js');
-//var authorization = require('./authorization.js');
-var rp = require('request-promise');
-var url = require('url');
-var cheerio = require('cheerio');
+let rp = require('request-promise'),
+    url = require('url'),
+    cheerio = require('cheerio');
 
-var Html = {
+let Html = {
 
   mimeTypes: function(){
     return [
@@ -18,11 +16,9 @@ var Html = {
   },
   getHtml: function(url) {
       return new Promise(function(resolve, reject) {
-      if(!url) reject("url not provided");
+        if(!url) reject("url not provided");
 
-      rp.get(url)
-        .then(resolve)
-        .catch(reject);
+        rp.get(url).then(resolve).catch(reject);
     });
   },
   getLinks: function(html){
@@ -40,8 +36,7 @@ var Html = {
                   href = href.replace('\\"','');
               }
               list.push({type: type, href: href});
-          }
-          
+          }         
       });
       return list.sort();
   },
@@ -52,12 +47,12 @@ var Html = {
   getFeeds: function(html){   
 
     if (!html) return ret;
-    var ret = [];
+    let ret = [];
 
-    var links = this.getLinks(html);
+    let links = this.getLinks(html);
     if (links.length === 0) return ret;
 
-    for(var i = 0; i < links.length; i += 1) {
+    for(let i = 0; i < links.length; i += 1) {
         if(this.mimeTypes().indexOf(links[i].type) > -1){
             let urlReturned = url.parse(links[i].href);
 

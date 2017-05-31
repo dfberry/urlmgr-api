@@ -1,36 +1,30 @@
 "use strict";
-var exec = require('child_process').exec;
+let exec = require('child_process').exec,
+  Promise = require("bluebird");
 
-// "path/to/.git/refs/head<branch name>"
-
-var Promise = require("bluebird");
-//var fs = require("fs");
-
-var Git = {
+let Git = {
   
 gitCommit: function (){
 
-       return new Promise(function(resolve, reject) {
-        //http://stackoverflow.com/questions/19176359/how-to-get-the-last-commit-id-of-a-remote-repo-using-curl-like-command
-        var path = "git log -n1 --format='%h'";
+    return new Promise(function(resolve, reject) {
+      //http://stackoverflow.com/questions/19176359/how-to-get-the-last-commit-id-of-a-remote-repo-using-curl-like-command
+      let path = "git log -n1 --format='%h'";
 
-        exec(path, (error, stdout, stderr) => {
-          if (error) reject(error);
-          if (stderr) reject(stderr);
-          resolve(stdout.trim())
-        });
-       });
+      exec(path, (error, stdout, stderr) => {
+        if (error) reject(error);
+        if (stderr) reject(stderr);
+        resolve(stdout.trim())
+      });
+    });
   },
-  
-
   gitBranch: function(){
-       return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject) {
 
-        exec('git rev-parse --abbrev-ref HEAD', (error, stdout, stderr) => {
-          if (error) reject(error);
-          if (stderr) reject(stderr);
-          resolve(stdout.trim())
-        });
+      exec('git rev-parse --abbrev-ref HEAD', (error, stdout, stderr) => {
+        if (error) reject(error);
+        if (stderr) reject(stderr);
+        resolve(stdout.trim())
+      });
     });
   }/*
 

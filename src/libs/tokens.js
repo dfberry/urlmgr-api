@@ -1,13 +1,13 @@
 "use strict";
-var TokenModel = require('../data/token');
-var jwt = require('jsonwebtoken');
+let TokenModel = require('../data/token');
+let jwt = require('jsonwebtoken');
 
 
-var Tokens = {
+let Tokens = {
   create: function(user, jwtConfig) {
     // Create JWT including claims (i.e. role, user info)
     // TBD: why is token role none?
-    var claims = { email: user.email, 
+    let claims = { email: user.email, 
                    role: user.role,
                    uuid: user.uuid,
                    random: Math.random()
@@ -23,10 +23,10 @@ var Tokens = {
     return token;
   },
   insert: function(token){
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       if(!token) reject("can't create token because token is empty");
-      var tokenObj = new TokenModel(token);
+      let tokenObj = new TokenModel(token);
       tokenObj.save((err, token) => {
         if(err)return reject(err);
         resolve(token);
@@ -37,7 +37,7 @@ var Tokens = {
   },
   verify: function(token, jwtConfig) {
    	try {
-      var decoded = jwt.verify(token, jwtConfig.secret);
+      let decoded = jwt.verify(token, jwtConfig.secret);
       return decoded;
     } catch (err) {
       throw err;
@@ -46,9 +46,9 @@ var Tokens = {
   // not setting revoke, just deleting it
   // TBD: why have revoke on the token then
   revoke: function(userUuid, token){
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
-      var conditions = {
+      let conditions = {
         userUuid: userUuid,
         token: token
       };

@@ -1,11 +1,11 @@
 "use strict"
 
-const db = require('mongoose');
-const loadClass = require('mongoose-class-wrapper');
-const uuid = require('node-uuid');
+const db = require('mongoose'),
+loadClass = require('mongoose-class-wrapper');
+
 db.Promise = require('bluebird');
 
-var urlSchema = new db.Schema({
+let urlSchema = new db.Schema({
   name: {type: String, default: ""},
   title: {type: String, default: ""},
   url: {type: String},

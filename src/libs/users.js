@@ -1,16 +1,16 @@
 "use strict";
 
-var UserModel = require('../data/user');
-var Tokens = require('./tokens');
+let UserModel = require('../data/user');
+let Tokens = require('./tokens');
 const bcrypt = require('bcryptjs');
-var moment = require('moment');
+let moment = require('moment');
 
-var Users = {
+let Users = {
   deleteAllUsersRaw: function(){
     UserModel.remove().exec();
   },
   getById: function(id) {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       UserModel.findById(id,(err, user) =>{
         if(err)return reject(err);
@@ -20,7 +20,7 @@ var Users = {
   },
   /* returns password hash */
   getByEmailRaw: function(email) {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       let query = { email: email };
       try{
@@ -34,7 +34,7 @@ var Users = {
     });
   },
   getByEmail: function(email) {
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       let query = { email: email };
       try{
@@ -51,7 +51,7 @@ var Users = {
     return this.getById(uuid);
   },
   getAll: function(){
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
       try{
         UserModel.find({},(err, users) =>{
@@ -67,11 +67,11 @@ var Users = {
     return Tokens.revoke(userUuid, token);
   },
   create: function(user){
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
 
       if(!user) reject("can't create user because user is empty");
-      var userObj = new UserModel(user);
+      let userObj = new UserModel(user);
       userObj.save((err, _user) => {
         if(err)return reject(err);       
         resolve(self.createReturnableUser(_user));
@@ -90,14 +90,14 @@ var Users = {
     });
   },
   checkPassword: function(email, candidatePassword){
-    var self = this;
+    let self = this;
     return new Promise(function(resolve, reject) {
 
       self.getByEmailRaw(email)
       .then( user => {
         if ( !user ) throw new Error("User does not exist");
-        var _user = Promise.resolve(user);
-        var _verifyPassword = self.verifyPassword(candidatePassword, user.password);
+        let _user = Promise.resolve(user);
+        let _verifyPassword = self.verifyPassword(candidatePassword, user.password);
         return Promise.all([_verifyPassword, _user]);
       }).then( (result) => {
         if (!result[0]) throw new Error("Password doesn't match");

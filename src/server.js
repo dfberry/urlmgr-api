@@ -1,6 +1,6 @@
 'use strict';
 
-var express = require('express'),
+let express = require('express'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     favicon = require('serve-favicon'),
@@ -17,7 +17,7 @@ var express = require('express'),
     _ = require('underscore');
 
 // for coverage of apis
-var im = undefined, 
+let im = undefined, 
     isCoverageEnabled = false;
 
 if (config.env === 'development'){
@@ -32,13 +32,13 @@ if (config.env === 'development'){
     }
 }
 
-var app = express();
-var mongoose = require('mongoose');
+let app = express();
+let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-var mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
-var db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
+let db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
 mongoose.connect(db, mongooseOptions);
 
 
@@ -85,7 +85,7 @@ if ((config.env === 'development') && isCoverageEnabled) {
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    let err = new Error('Not Found');
     err.status = 404;
     res.status(404).send(err);  
 });
