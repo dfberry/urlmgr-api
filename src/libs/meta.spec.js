@@ -1,5 +1,4 @@
-/*eslint-env mocha */
-//node --debug=5858 node_modules/mocha/bin/_mocha src-non-sails/**/*.spec.js  
+/*eslint-env mocha */ 
 "use strict";
 
 const chai = require('chai'),

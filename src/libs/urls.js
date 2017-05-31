@@ -1,9 +1,8 @@
 "use strict";
 
-let UrlModel = require('../data/url.js');
-//let authorization = require('./authorization.js');
-let htmlLib = require('./html.js');
-let _ = require('underscore');
+const UrlModel = require('../data/url.js'),
+  htmlLib = require('./html.js'),
+  _ = require('underscore');
 
 let Urls = {
 
@@ -19,20 +18,12 @@ let Urls = {
       });
     });
   },
-  /*
-  getAll: function(){
-    return new Promise(function(resolve, reject) {
-      UrlModel.find({}, (err, status) =>{
-        if(err)reject(err);
-        resolve(status);
-      });
-    });
-  },
-  */
   getAllByUser: function(userUuid){
     let self = this;
     return new Promise(function(resolve, reject) {
+
       if (!userUuid) reject("userUuid is undefined");
+
       UrlModel.find({userUuid:userUuid}, (err, urls) =>{
         if(err)reject(err);
         resolve(self.createReturnableUrlArray(urls));
@@ -42,6 +33,8 @@ let Urls = {
   deleteById: function(uuid){
     let self = this;
     return new Promise(function(resolve, reject) {
+      if (!uuid) reject("userUuid is undefined");
+
       UrlModel.findByIdAndRemove({ _id: uuid }, (err, url) =>{
         if(err)reject(err);
         resolve(self.createReturnableUrl(url));
@@ -51,15 +44,20 @@ let Urls = {
   create: function(obj){
     let self = this;
     return new Promise(function(resolve, reject) {
+
       if(!obj) reject("can't create url because url is empty");
+
       let urlObj = new UrlModel(obj);
-        urlObj.save((err, _url) =>{
-          if(err)reject(err);
-          resolve(self.createReturnableUrl(_url));
-        });
+
+      urlObj.save((err, _url) =>{
+        if(err)reject(err);
+        resolve(self.createReturnableUrl(_url));
+      });
     });
   },
   createReturnableUrl: function(url){
+
+    if(!url)return {};
 
     return {
       id: url._id,
@@ -71,6 +69,8 @@ let Urls = {
     };
   },
   createReturnableUrlArray: function(urls){
+    if (!urls) return [];
+
     let newArray = [];
     urls.forEach(url => {
       newArray.push(this.createReturnableUrl(url));
@@ -84,8 +84,7 @@ let Urls = {
 
         if(!url) throw new Error("url is empty");
 
-        htmlLib.getHtml(url).
-        then(htmlReturned => {
+        htmlLib.getHtml(url).then(htmlReturned => {
           let feeds = htmlLib.getFeeds(htmlReturned);
           let title = htmlLib.getTitle(htmlReturned);
           resolve({ feeds: feeds, title: title });
@@ -112,11 +111,8 @@ let Urls = {
           resolve(self.createReturnableUrl(returnedUrlObj));
         });
       }).catch(reject);
-
-
     });
   },
-
 }
 
 module.exports = Urls;

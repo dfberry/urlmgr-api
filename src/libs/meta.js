@@ -1,6 +1,6 @@
 "use strict";
 
-let Promise = require("bluebird"),
+const Promise = require("bluebird"),
   git = require('./git');
   
 const Meta = {

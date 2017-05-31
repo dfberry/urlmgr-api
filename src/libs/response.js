@@ -1,8 +1,8 @@
 "use strict";
 
-let Promise = require("bluebird");
-let metaLib = require('./meta');
-let _ = require('underscore');
+const Promise = require("bluebird"),
+metaLib = require('./meta'),
+_ = require('underscore');
 
 let Response = {
   /**
@@ -15,9 +15,9 @@ let Response = {
       response.status = "success";
       response.state = 1;
 
-      return new Promise.resolve(response);
+      return Promise.resolve(response);
 
-      }).catch(err => {return err});
+    }).catch(err => {return Promise.reject(err)});
   },
   buildFailureSuccess: function(req, api, meta, data){
 
@@ -26,9 +26,9 @@ let Response = {
       response.status = "failure";
       response.state = 0;
 
-      return new Promise.resolve(response);
+      return Promise.resolve(response);
 
-      }).catch(err => {return err});
+      }).catch(err => {return Promise.reject(err)});
   },
   buildResponse: function(req, api, meta, data){
 

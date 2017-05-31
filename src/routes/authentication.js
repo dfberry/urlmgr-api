@@ -1,14 +1,13 @@
 "use strict";
 
-let config = require('../config/config.json');
-let libAuthentication = require('../libs/authentication');
-let libUser = require('../libs/users');
-let libResponse = require('../libs/response');
-let express = require('express');
-let router = express.Router();
-let _ = require('underscore');
-
-let api = { name: "authenticate"};
+const config = require('../config/config.json'),
+	libAuthentication = require('../libs/authentication'),
+	libUser = require('../libs/users'),
+	libResponse = require('../libs/response'),
+	express = require('express'),
+	router = express.Router(),
+	_ = require('underscore'),
+	api = { name: "authenticate"};
 
 /* Authenticates a user based on a username and password. Returns a JWT.
 
@@ -37,8 +36,7 @@ router.post('/', function(req, res) {
 	let user = libUser.getByEmail(email);
 	let auth = libAuthentication.authenticate(email, password);
 
-	Promise.all([auth, user])
-	.then(result => {
+	Promise.all([auth, user]).then(result => {
 		let tokenResults = result[0];
 		let userResults = result[1];
 		let meta = {}; // because it is filled by libResponse
@@ -65,7 +63,6 @@ router.post('/', function(req, res) {
 			return res.status(500).send({ error: err.message });
 		}
   });
-
 });
 
 module.exports = router;

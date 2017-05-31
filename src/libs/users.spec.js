@@ -1,13 +1,10 @@
-/*eslint-env mocha */
-//node --debug=5858 node_modules/mocha/bin/_mocha src-non-sails/**/*.spec.js  
+/*eslint-env mocha */ 
 "use strict";
 
-let userLib = require('./users');
-
-const chai = require('chai')
-
-let should = chai.should();
-let expect = require('chai').expect;
+const userLib = require('./users'),
+  chai = require('chai'),
+  should = chai.should(),
+  expect = require('chai').expect;
 
 describe('users lib', function() {
 
@@ -39,6 +36,5 @@ describe('users lib', function() {
       }).catch(err => {
         err.should.not.exist();
       });
-
     });
 });

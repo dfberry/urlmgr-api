@@ -1,14 +1,10 @@
 /*eslint-env mocha */
-//node --debug=5858 node_modules/mocha/bin/_mocha src-non-sails/**/*.spec.js  
 "use strict";
-//let sinon = require('sinon');
-
-let Promise = require("bluebird");
-let fs = Promise.promisifyAll(require("fs"));
-
-const chai = require('chai');
-let should = chai.should();
-let html = require('./html');
+const Promise = require("bluebird"),
+  fs = Promise.promisifyAll(require("fs")),
+  chai = require('chai'),
+  should = chai.should(),
+  html = require('./html');
 
 // from root of project
 const testLinks = [

@@ -1,9 +1,9 @@
 "use strict";
 
-let UserModel = require('../data/user');
-let Tokens = require('./tokens');
-const bcrypt = require('bcryptjs');
-let moment = require('moment');
+const UserModel = require('../data/user'),
+  Tokens = require('./tokens'),
+  bcrypt = require('bcryptjs'),
+  moment = require('moment');
 
 let Users = {
   deleteAllUsersRaw: function(){
@@ -12,6 +12,9 @@ let Users = {
   getById: function(id) {
     let self = this;
     return new Promise(function(resolve, reject) {
+
+      if(!id) reject("empty id");
+
       UserModel.findById(id,(err, user) =>{
         if(err)return reject(err);
         resolve(self.createReturnableUser(user));
@@ -20,8 +23,8 @@ let Users = {
   },
   /* returns password hash */
   getByEmailRaw: function(email) {
-    let self = this;
     return new Promise(function(resolve, reject) {
+      if(!email) reject("empty email");
       let query = { email: email };
       try{
         return UserModel.findOne(query,(err, user) =>{
@@ -36,6 +39,7 @@ let Users = {
   getByEmail: function(email) {
     let self = this;
     return new Promise(function(resolve, reject) {
+      if(!email)reject("empty email");
       let query = { email: email };
       try{
         return UserModel.findOne(query,(err, user) =>{
@@ -80,7 +84,7 @@ let Users = {
   },
   setLastLogin: function(id){
     return new Promise(function(resolve, reject) {
-      
+      if(!id) reject('no id');
       let lastLogin = new Date(moment().format());
 
       UserModel.findByIdAndUpdate(id, { $set: { lastLogin: lastLogin}}, { new: true }, (err, newUser) => {
@@ -93,8 +97,9 @@ let Users = {
     let self = this;
     return new Promise(function(resolve, reject) {
 
-      self.getByEmailRaw(email)
-      .then( user => {
+      if(!email || !candidatePassword) reject("email or password not provided");
+
+      self.getByEmailRaw(email).then( user => {
         if ( !user ) throw new Error("User does not exist");
         let _user = Promise.resolve(user);
         let _verifyPassword = self.verifyPassword(candidatePassword, user.password);
@@ -107,6 +112,7 @@ let Users = {
   },
   verifyPassword: function(candidatePassword, hashedPassword) {
     return new Promise(function(resolve, reject) {
+      if(!candidatePassword || ! hashedPassword) reject("can't verify empty password");
       bcrypt.compare(candidatePassword, hashedPassword, (err, isMatch) => {
         if (err) return reject(err);
         resolve (isMatch);
@@ -135,13 +141,8 @@ let Users = {
     userArray.forEach(function(user, i, collection) {
         safeUserArray.push(this.createReturnableUser(user));
       }, this);
-
-      //console.log("safeUserArray");
-      //console.log(safeUserArray);
-
     return safeUserArray;
   }
-
 }
 
 module.exports = Users;
