@@ -2,6 +2,8 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const nodemon = require('gulp-nodemon');
 const mocha = require('gulp-mocha');
+const ts = require("gulp-typescript");
+let tsProject = ts.createProject("tsconfig.json");
 
 const MAIN_ENTRY = './src/index.js';
 const SRC_CODE = './src/**/*.js';
@@ -50,7 +52,32 @@ gulp.task('test', () =>
         // gulp-mocha needs filepaths so you can't have any plugins before it 
         .pipe(mocha({reporter: 'nyan'}))
 );
-
-gulp.task('default', ['lint','test'], function () {
+gulp.task('copyAssets', ["copyConfig", "copyFavIcon"], function () {
     // This will only run if the lint task is successful...
+    console.log("copy assets done");
+});
+gulp.task('copyConfig', function () {
+    gulp.src('./src/config/config.json')
+        .pipe(gulp.dest('./dist/config'));
+});
+gulp.task('copyFavIcon', function () {
+    gulp.src('./src/public/*.*')
+        .pipe(gulp.dest('./dist/public/'));
+});
+
+gulp.task("transpile", function () {
+    return tsProject.src()
+        .pipe(tsProject())
+        .js.pipe(gulp.dest("dist"));
+});
+
+gulp.task("build", ["copyAssets", "transpile"], function () {
+    // This will only run if the lint task is successful...
+    console.log("build is done");
+});
+
+//gulp.task('default', ['lint','test'], function () {
+gulp.task('default', ['copy', 'transpile'], function () {
+    // This will only run if the lint task is successful...
+    console.log("copy is done");
 });

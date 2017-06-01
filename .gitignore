@@ -7,3 +7,5 @@ npm-debug.log
 example-json
 **/*/config.json
 /coverage
+dist
+*.out.txt
