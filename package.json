@@ -20,7 +20,7 @@
     "tsc": "tsc",
     "gulp-build": "npm run clean && gulp build",
     "coverage": "set COVERAGE=true && istanbul cover node_modules/mocha/bin/_mocha  src/**/*.spec.js -R spec",
-    "test": "set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 src/**/*.spec.js"
+    "test": "npm run gulp-build && set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
