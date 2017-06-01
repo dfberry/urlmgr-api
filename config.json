@@ -1,0 +1,19 @@
+{
+  "env": "production",
+  "port": 8090,
+  "db": {
+    "db": "urlmgr-live",
+    "host": "104.131.155.194",
+    "port": "27017"
+  },
+  "jwt": {
+    "issuer": "auth.dfberry.io",
+    "secret": "Test1234"
+  },
+  "security": {
+      "adminIps": [
+        "127.0.0.1",
+        "::1"
+      ]
+    }  
+}

@@ -10,6 +10,14 @@ const SRC_CODE = './src/**/*.js';
 const SRC_TEST = './src/**/*.spec.js';
 const IGNORE_CHANGES_ARRAY = [];
 
+// copy into dest folder
+const ASSETS = [
+    {src: './config.json',dest:'./dist/config/'},
+    {src: './src/public/*.*',dest:'./dist/public/'},
+    {src: './package.json',dest:'./dist'},
+    {src: './yarn.lock', dest:'./dist'}
+];
+
 const LINT_OPTIONS = {};
 
 gulp.task('lint', () => {
@@ -52,17 +60,11 @@ gulp.task('test', () =>
         // gulp-mocha needs filepaths so you can't have any plugins before it 
         .pipe(mocha({reporter: 'nyan'}))
 );
-gulp.task('copyAssets', ["copyConfig", "copyFavIcon"], function () {
+gulp.task('assets', function () {
     // This will only run if the lint task is successful...
-    console.log("copy assets done");
-});
-gulp.task('copyConfig', function () {
-    gulp.src('./src/config/config.json')
-        .pipe(gulp.dest('./dist/config'));
-});
-gulp.task('copyFavIcon', function () {
-    gulp.src('./src/public/*.*')
-        .pipe(gulp.dest('./dist/public/'));
+        ASSETS.map((file) => {
+            gulp.src(file.src).pipe(gulp.dest(file.dest));
+        });
 });
 
 gulp.task("transpile", function () {
@@ -71,7 +73,7 @@ gulp.task("transpile", function () {
         .js.pipe(gulp.dest("dist"));
 });
 
-gulp.task("build", ["copyAssets", "transpile"], function () {
+gulp.task("build", ["assets", "transpile"], function () {
     // This will only run if the lint task is successful...
     console.log("build is done");
 });
