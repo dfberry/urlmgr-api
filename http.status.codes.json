@@ -1,0 +1,17 @@
+{
+  "403": {
+    "api":"user",
+    "reason":[
+      "attempted registration - email is already registered"
+    ]
+  },
+  "422":{
+    "api":"authentication",
+    "reason":[
+      "user is invalid",
+      "user doesn't exists",
+      "user & password didn't match",
+      "invalid email or password"
+    ]
+  }
+}
