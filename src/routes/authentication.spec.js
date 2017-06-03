@@ -6,6 +6,7 @@ const chai = require('chai'),
   chaiHttp = require('chai-http'),
   server = require('../server.js'),
   testUtils = require('../utilities/test.utils'),
+  testUsers = require('../utilities/test.users'),
   should = chai.should();
 
 chai.use(chaiHttp);
@@ -13,12 +14,17 @@ chai.use(chaiHttp);
 
 describe('authentication', function() {
 
+    beforeEach(function(done) {
+      testUsers.deleteAllUsers();
+      done();
+    });
+
     it('should authenticate 1 user to password - login', function(done) {
 
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword"
       };
 
@@ -41,6 +47,8 @@ describe('authentication', function() {
               password: testUser.password
             }
 
+            console.log("user created");
+
             // user is created, now authenticate user back with same password
             chai.request(server)
                 .post('/v1/auth')
@@ -50,6 +58,8 @@ describe('authentication', function() {
                   // meta
                   should.not.exist(_err);
                   testUtils.expectSuccessResponse(res);
+
+                  console.log(_res.body);
 
                   // data
                   testUtils.wellFormedUser(_res.body.data.user);
@@ -66,7 +76,7 @@ describe('authentication', function() {
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword"
       };
 
@@ -100,5 +110,26 @@ describe('authentication', function() {
                   done();
                 });   
           });
+    });
+
+    it('should NOT authenticate 1 user that is not in db', function(done) {
+
+      let authUser = {
+        email: "userNotInDatabase@test.com",
+        password: "testPassword"
+      }
+
+      // user is created, now authenticate user back to same password
+      chai.request(server)
+          .post('/v1/auth')
+          .send(authUser)
+          .end((_err, _res) => {  
+
+                _res.status.should.be.eq(422);
+                should.exist(_err);
+                _res.body.api.error.message.should.be.eq("User & password did not match");
+                
+                done();
+          });   
     });
 });

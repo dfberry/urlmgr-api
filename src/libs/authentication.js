@@ -39,28 +39,32 @@ let Authentication = {
         }).catch(reject);
     });
   },
-
   /* Authenticates a user 
+
+   in: user Object from mongo untouched
+   out: user Object from mongo with token
 
    Returns either a valid JWT token or throws an error
 
   */
-  authenticate: function(email, password) {
+  authenticate: function(user, password) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
 
+      if(!user || !user.email || !password) reject("user is invalid");
+
       // Validate email and password
-      if (!validate(email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
+      if (!self.validate(user.email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
       
-      Users.checkPassword(email, password).then(function(user) {
-        if (!user) throw new Error("Authentication Failed: No such user.");
+      Users.checkPassword(user.email, password).then(function(user) {
+        if (!user) reject("Authentication Failed: No such user.");
         let _user = JSON.parse(JSON.stringify(user));
         // Store JWT in DB for logout/revocation
 
-        return Tokens.insert(getToken(email, _user, config.jwt));
-      }).then(function(dbtoken) {
-        resolve(dbtoken.token);
+        return Tokens.insert(user, self.getToken(user.email, _user, config.jwt));
+      }).then(function(userWithToken) {
+        resolve(userWithToken);
       }).catch(function(error) {
         reject("User & password did not match");
       });
@@ -78,32 +82,29 @@ let Authentication = {
 		};
     return returnToken;
   },
-};
+  validate: function (email, password) {
+    if (!email) return false;
+    if (!password) return false;
+    if (!validator.isEmail(email)) return false;
 
-/** PRIVATE FUNCTIONS **/
+    return true; 
+  },
+  // TODO: what is jwtConfig for?
+  getToken:function (email, wellFormedUser, jwtConfig) {
+    let claims, jwt;
 
-function validate(email, password) {
-  if (!email) return false;
-  if (!password) return false;
-  if (!validator.isEmail(email)) return false;
+    if (!wellFormedUser) {
+      claims = { email: email, roles: 'none', uuid: undefined }; 
+    }else{
+      claims = { email: email, role: wellFormedUser.roles, uuid: wellFormedUser.id }; 
+    }
+        
+    // Generate a JWT based on result
+    jwt = Tokens.create(claims, jwtConfig);
 
-  return true; 
-}
-// TODO: what is jwtConfig for?
-function getToken(email, user, jwtConfig) {
-  let claims, jwt;
-
-  if (!user) {
-    claims = { email: email, roles: 'none', uuid: undefined }; 
-  }else{
-    claims = { email: email, role: user.roles, uuid: user._id }; 
+    return jwt;
   }
-      
-  // Generate a JWT based on result
-  jwt = Tokens.create(claims, jwtConfig);
-
-  return jwt;
-}
+};
 
 /** EXPORT **/
 

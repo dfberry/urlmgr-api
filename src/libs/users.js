@@ -13,11 +13,11 @@ let Users = {
     let self = this;
     return new Promise(function(resolve, reject) {
 
-      if(!id) reject("empty id");
+      if(!id) return reject("empty id");
 
       UserModel.findById(id,(err, user) =>{
         if(err)return reject(err);
-        resolve(self.createReturnableUser(user));
+        return resolve(self.createReturnableUser(user));
       });
     });
   },
@@ -28,11 +28,11 @@ let Users = {
       let query = { email: email };
       try{
         return UserModel.findOne(query,(err, user) =>{
-          if(err) throw (err);
-          resolve(user);
+          if(err) return reject (err);
+          return resolve(user);
         });
       } catch (err ){
-        reject(err);
+        return reject(err);
       }
     });
   },
@@ -43,11 +43,14 @@ let Users = {
       let query = { email: email };
       try{
         return UserModel.findOne(query,(err, user) =>{
-          if(err) throw (err);
-          resolve(self.createReturnableUser(user));
+          if (err)
+              return reject (err);
+          if (!user)
+              return reject("User doesn't exist");
+          return resolve(self.createReturnableUser(user));
         });
       } catch (err ){
-        reject(err);
+        return reject(err);
       }
     });
   },
@@ -59,11 +62,11 @@ let Users = {
     return new Promise(function(resolve, reject) {
       try{
         UserModel.find({},(err, users) =>{
-          if(err) throw (err);
-          resolve(self.createReturnableUserArray(users));
+          if(err) return reject (err);
+          return resolve(self.createReturnableUserArray(users));
         });
       } catch (err ){
-        reject(err);
+        return reject(err);
       }
     });
   },
@@ -74,25 +77,32 @@ let Users = {
     let self = this;
     return new Promise(function(resolve, reject) {
 
-      if(!user) reject("can't create user because user is empty");
+      if(!user) return reject("can't create user because user is empty");
       let userObj = new UserModel(user);
       userObj.save((err, _user) => {
-        if(err)return reject(err);       
-        resolve(self.createReturnableUser(_user));
+        if(err)return reject(err); 
+        if(!_user) return reject("user not returned");
+
+        // mongoose create is wrapped in another object
+        if(_user && _user._doc)return resolve(self.createReturnableUser(_user._doc));      
+        return resolve(self.createReturnableUser(_user));
       });
     });
   },
   setLastLogin: function(id){
     return new Promise(function(resolve, reject) {
-      if(!id) reject('no id');
+      if(!id) return reject('no id');
       let lastLogin = new Date(moment().format());
 
       UserModel.findByIdAndUpdate(id, { $set: { lastLogin: lastLogin}}, { new: true }, (err, newUser) => {
-        if (err) reject(err);
-        resolve(newUser);
+        if (err) return reject(err);
+        return resolve(newUser);
       });
     });
   },
+  /*
+    returns mongo User object 
+  */
   checkPassword: function(email, candidatePassword){
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -100,22 +110,22 @@ let Users = {
       if(!email || !candidatePassword) reject("email or password not provided");
 
       self.getByEmailRaw(email).then( user => {
-        if ( !user ) throw new Error("User does not exist");
+        if ( !user ) return reject("User does not exist");
         let _user = Promise.resolve(user);
         let _verifyPassword = self.verifyPassword(candidatePassword, user.password);
         return Promise.all([_verifyPassword, _user]);
       }).then( (result) => {
-        if (!result[0]) throw new Error("Password doesn't match");
-        resolve(result[1]);
+        if (!result[0]) return reject("Password doesn't match");
+        return resolve(result[1]);
       }).catch(reject);
     });
   },
   verifyPassword: function(candidatePassword, hashedPassword) {
     return new Promise(function(resolve, reject) {
-      if(!candidatePassword || ! hashedPassword) reject("can't verify empty password");
+      if(!candidatePassword || ! hashedPassword) return reject("can't verify empty password");
       bcrypt.compare(candidatePassword, hashedPassword, (err, isMatch) => {
         if (err) return reject(err);
-        resolve (isMatch);
+        return resolve (isMatch);
       });
     });
   },
@@ -125,7 +135,7 @@ let Users = {
     let token = user.token ? user.token : "";
 
     let returnObj = {
-			id: user.id,
+			id: user._id,
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,

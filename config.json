@@ -1,8 +1,8 @@
 {
   "env": "production",
-  "port": 8090,
+  "port": 3003,
   "db": {
-    "db": "urlmgr-live",
+    "db": "urlmgr-stage",
     "host": "104.131.155.194",
     "port": "27017"
   },

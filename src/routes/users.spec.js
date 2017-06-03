@@ -41,6 +41,39 @@ describe('users', function() {
             done();
           });
     });
+    it('should NOT create user if it already exists- register', function(done) {
+
+      let testUser = { 
+        lastName: "berry",
+        firstName: "dina",
+        email: Math.floor(new Date().getTime()) + "@test.com",
+        password: "testPassword"
+      };
+
+      chai.request(server)
+          .post('/v1/users')
+          .send(testUser)
+          .end((err, res) => {
+
+            testUtils.expectSuccessResponse(res);
+            testUtils.wellFormedUser(res.body.data.user);
+            res.body.data.user.email.should.be.eql(testUser.email);
+            res.body.data.user.roles.should.have.length(1);
+            res.body.data.user.roles[0].should.be.eql('user');
+
+            //now do it again -- but should get error
+            chai.request(server)
+            .post('/v1/users')
+            .send(testUser)
+            .end((err, res) => {
+
+                should.exist(err);
+                res.status.should.be.eq(403);
+                res.body.api.error.message.should.be.eql('Email already exists');
+              done();
+            });
+          });
+    });
     it('should create 1 administrator  & get auth token - register & auth', function(done) {
 
       let testUser = { 
