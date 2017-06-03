@@ -33,28 +33,28 @@ router.post('/', function(req, res) {
 
 	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
 
-	let user = libUser.getByEmail(email);
-	let auth = libAuthentication.authenticate(email, password);
-
-	Promise.all([auth, user]).then(result => {
-		let tokenResults = result[0];
-		let userResults = result[1];
-		let meta = {}; // because it is filled by libResponse
-
-		userResults.token = tokenResults;
-
-		return libResponse.buildResponseSuccess(req, api, {}, {user: userResults});
+	return libUser.getByEmail(email).then(user => {
+		let returnableUser = libUser.createReturnableUser(user);
+		console.log("returnableUser");
+		console.log(returnableUser);
+		return libAuthentication.authenticate(returnableUser, password);
+	}).then(userWithToken => {
+		let meta = {};
+		return libResponse.buildResponseSuccess(req, api, meta, userWithToken);
 	}).then ( finalObj => {
-    res.status(200).send(finalObj);
+    return res.status(200).send(finalObj);
   }).catch(function(err) {
 
-		if((err==='User & password did not match') || (err==='Authentication failed: Invalid email and/or password supplied.')) {
+		if((err==='user is invalid') 
+			|| (err==="User doesn't exist")
+			|| (err==='User & password did not match') 
+			|| (err==='Authentication failed: Invalid email and/or password supplied.')) {
 			
 			api.error = { type: "authentication failure", message: "User & password did not match"};
 			let data = {}; // because there is an error
 			let meta = {}; // because it is filled by libResponse
 
-			libResponse.buildFailureSuccess(req, api, meta, data).then( finalObj => {
+			return libResponse.buildResponseFailure(req, api, meta, data).then( finalObj => {
 				return res.status(422).send(finalObj);
 			}).catch(err => {
 				return res.status(500).send({ error: err.message });
