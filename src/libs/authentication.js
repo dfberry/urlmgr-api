@@ -3,7 +3,7 @@ const validator = require('validator'),
   TokenModel = require('../data/token'),
   Tokens = require('./tokens'),
   Users = require('./users'),
-  config = require('../config/config.json');
+  config = require('../config.js');
 
 /** PUBLIC API **/
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const config = require('../config/config.json'),
+const config = require('../config.js'),
   express = require('express'),
   _ = require('underscore'),
   libResponse = require('../libs/response.js');

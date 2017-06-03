@@ -18,7 +18,7 @@ describe('tokens lib', function() {
 
   beforeEach(function(done) {
     testUsers.deleteAllUsers();
-    testTokens.deleteAllRaw();
+    testTokens.deleteAll();
     done();
   });
 

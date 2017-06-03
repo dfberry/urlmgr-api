@@ -5,7 +5,7 @@ const express = require('express'),
     cors = require('cors'),
     favicon = require('serve-favicon'),
     path = require('path'),
-    config = require('./config/config.json'),
+np    CONFIG = require('./config.js'),
     urls = require('./routes/urls'),
     users = require('./routes/users'),
     libClaims = require('./libs/claims'),
@@ -22,7 +22,7 @@ const express = require('express'),
 let im = undefined, 
     isCoverageEnabled = false;
 
-if (config.env === 'development'){
+if (CONFIG.env === 'development'){
     isCoverageEnabled = (process.env.COVERAGE == "true"); 
 
     if (isCoverageEnabled) {
@@ -39,15 +39,15 @@ mongoose.Promise = require('bluebird');
 
 let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
-let db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
+let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
 mongoose.connect(db, mongooseOptions);
 
 
-app.set('env', config.env || 'development');
-app.set('port', config.port || 3000);
-app.locals.container = config.db.db;
+app.set('env', CONFIG.env || 'development');
+app.set('port', CONFIG.port || 3000);
+app.locals.container = CONFIG.db.db;
 
-console.log("environment = " + config.env);
+console.log("environment = " + CONFIG.env);
 
 // Attach middleware
 app.use(require('morgan')('combined'));
@@ -78,7 +78,7 @@ app.use('/v1/auth',auth);
 app.use('/v1/meta', meta);
 
 // test/coverage only
-if ((config.env === 'development') && isCoverageEnabled) {
+if ((CONFIG.env === 'development') && isCoverageEnabled) {
     //enable coverage endpoints under /coverage 
     app.use('/coverage', im.createHandler());
 }

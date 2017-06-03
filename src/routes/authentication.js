@@ -1,6 +1,6 @@
 "use strict";
 
-const config = require('../config/config.json'),
+const config = require('../config.js'),
 	libAuthentication = require('../libs/authentication'),
 	libUser = require('../libs/users'),
 	libResponse = require('../libs/response'),
