@@ -19,7 +19,7 @@ let Response = {
 
     }).catch(err => {return Promise.reject(err)});
   },
-  buildFailureSuccess: function(req, api, meta, data){
+  buildResponseFailure: function(req, api, meta, data){
 
     return this.buildResponse(req, api, meta, data).then(response => {
 
