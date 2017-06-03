@@ -20,8 +20,19 @@ router.post('/',  function(req, res) {
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(err => {
-    if(err.message.indexOf("duplicate key error collection")) return  res.status(403).send({error: "user already exists"});
-    res.status(500).send({ error: err.message });
+    if(err.message.indexOf("duplicate key error collection")) {
+      let meta={},data={};
+      api.error = { type: "registration failure", message: "Email already exists"};
+      
+      return responseLib.buildResponse(req, api, meta, data).then( obj => {
+        // email already registered
+        return res.status(403).json(obj);
+      }).catch(err => {
+        res.status(500).send(err);
+      });
+      
+    }
+    return res.status(500).send({ error: err.message });
   });
 });
 
