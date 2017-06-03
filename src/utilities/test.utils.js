@@ -1,5 +1,8 @@
 "use strict";
 
+const   chai = require('chai'),
+  should = chai.should(),
+  expect = chai.expect;
 
 let TestUtils = {
   uniqueString: function(){
@@ -66,6 +69,9 @@ let TestUtils = {
 
     // TBD: id and lastLogin - should this always be assumed?
 
+    user.should.have.property('id');
+    expect(user.id).to.not.equal(undefined);
+    expect(user.id).to.not.equal(null);
     user.should.have.property('firstName');
     user.should.have.property('lastName');
     user.should.have.property('email');
@@ -73,7 +79,7 @@ let TestUtils = {
     user.should.have.property("roles");
     user.roles.should.be.a('array');  
 
-    if (user && user.token) user.token.length.should.be.above(200);
+    if (user && user.token) this.wellFormedToken(user.token);
 
     return this;
   },
@@ -92,7 +98,18 @@ let TestUtils = {
 
 
     return this;
-  }
+  },
+  wellFormedToken: function(token){
+
+    token.should.have.property('id');
+    expect(token.id).to.not.equal(undefined);
+    expect(token.id).to.not.equal(null);
+    token.should.have.property('token');
+    token.should.have.property('userUuid');
+    token.should.have.property('revoked');
+
+    return this;
+  },
 }
 
 module.exports = TestUtils;

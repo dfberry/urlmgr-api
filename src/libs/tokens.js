@@ -4,6 +4,25 @@ const TokenModel = require('../data/token'),
 
 
 let Tokens = {
+  deleteAllRaw: function(){
+    TokenModel.remove().exec();
+  },
+  getByUserId: function(userUuid){
+    let self = this;
+    return new Promise(function(resolve, reject) {
+
+      if(!userUuid) return reject("empty user id");
+
+      let query = {userUuid: userUuid};
+      console.log("query");
+      console.log(query);
+
+      TokenModel.find(query,(err, tokens) =>{
+        if(err)return reject(err);
+        return resolve(self.createReturnableToken(tokens));
+      });
+    });
+  },
   create: function(user, jwtConfig) {
     // Create JWT including claims (i.e. role, user info)
     // TBD: why is token role none?
@@ -22,16 +41,19 @@ let Tokens = {
       
     return token;
   },
-  insert: function(token){
+  insert: function(user, token){
+    let self = this;
     return new Promise(function(resolve, reject) {
 
-      if(!token) reject("can't create token because token is empty");
+      if(!user || !token) reject("can't create token because user or token is empty");
 
       let tokenObj = new TokenModel(token);
 
       tokenObj.save((err, token) => {
         if(err)return reject(err);
-        resolve(token);
+        //console.log(token);
+        user.token = self.createReturnableToken(token);
+        resolve(user);
       }).catch(err => {
         reject(err);
       });
@@ -59,6 +81,26 @@ let Tokens = {
         resolve();
       });
     });
+  },
+  createReturnableToken:function(rawToken){
+    return {
+      id: rawToken._id,
+      userUuid:rawToken.userUuid,
+      token: rawToken.token,
+      revoked:rawToken.revoked,
+      role:rawToken.role
+    };
+  },
+  createReturnableTokenArray(tokens){
+    let safeArray = [];
+
+    //console.log("raw tokens");
+    //console.log(tokens)
+
+    tokens.forEach(function(token, i, collection) {
+        safeArray.push(this.createReturnableToken(token));
+      }, this);
+    return safeArray;
   }
 };
 
