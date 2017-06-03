@@ -9,3 +9,4 @@ example-json
 /coverage
 dist
 *.out.txt
+config.json
