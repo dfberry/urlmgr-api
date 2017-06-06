@@ -30,29 +30,32 @@ describe('tokens lib', function() {
 
       testUsers.createUser().then(user => {  
 
-        oneUser = user
+        oneUser = user;
 
+        // create 2 tokens for user
         let token1 = authLib.getToken(user.email, user, jwt);
         let token2 = authLib.getToken(user.email, user, jwt);
 
-        //console.log("token1");
-        //console.log(token1);
-
-        //console.log("token2");
-        //console.log(token2);
-
+        // insert tokens for user
         let insert1 = tokenLib.insert(user, token1);
         let insert2 = tokenLib.insert(user, token2);
 
         return Promise.all([insert1, insert2]);
-      }).then(([usersWithTokens]) => {
-        testUtils.wellFormedUser(usersWithTokens[0]);
-        testUtils.wellFormedUser(usersWithTokens[1]);
-        //console.log(usersWithTokens);
+      }).then(usersWithTokens => {
+
+        // should return user object with token object
+        testUtils.wellFormedToken(usersWithTokens[0]);
+        testUtils.wellFormedToken(usersWithTokens[1]);
+
+        // should return 2 tokens
         return tokenLib.getByUserId(oneUser.id);
       }).then(tokens => {
-        console.log("\n\r final tokens array");
-        console.log(tokens);
+
+        tokens.length.should.be.eql(2);
+        tokens[0].userUuid = oneUser.id;
+        tokens[1].userUuid = oneUser.id;
+        tokens[0].id.should.not.be.eql(tokens[1].id);
+
         done();
       }).catch(err => {  
         console.log(err);

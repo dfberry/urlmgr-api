@@ -14,7 +14,7 @@
     "postinstall": "npm run clean && node createTypingsFiles.js > createTypingsFiles.out.txt",
     "install-prod": "npm install --production",
     "install-dev": "npm install",
-    "start": "cd src && node dist/index.js",
+    "start": "npm run build && node dist/index.js",
     "start-dev": "cd src && node --inspect --debug-brk index.js ",
     "lint": "gulp lint",
     "tsc": "tsc",

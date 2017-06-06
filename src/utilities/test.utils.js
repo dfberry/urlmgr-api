@@ -108,6 +108,10 @@ let TestUtils = {
     token.should.have.property('userUuid');
     token.should.have.property('revoked');
 
+    token.should.not.have.property('_id');
+    token.should.not.have.property('__v');
+
+
     return this;
   },
 }
