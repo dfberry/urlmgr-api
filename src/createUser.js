@@ -11,7 +11,7 @@ let testUser = {
   lastName: "berry",
   firstName: "dina",
   email: "dinaberry@outlook.com",
-  password: "urlmgr"
+  password: "1234"
 };
 
 chai.request(server)
@@ -26,5 +26,6 @@ chai.request(server)
       res.body.data.should.be.a('object');
       
       console.log(res.body);
+      return;
 
     });
