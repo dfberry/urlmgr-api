@@ -35,8 +35,9 @@ router.post('/',  function(req, res) {
     return res.status(500).send({ error: err.message });
   });
 });
-
-router.get("/email/:email", function(req, res) {
+// TBD: when do I use this?
+router.get("/email/:email", libAuthorization.AdminOrId, function(req, res) {
+  
   let email = req.params.email;
 
   api.action = "get user by email";
@@ -66,8 +67,9 @@ router.get("/", libAuthorization.admin, function(req, res) {
 
 // get by id
 router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
-  let id = req.params.id;
-
+  //let id = req.params.id;
+  let id = req.claims.uuid ? req.claims.uuid : undefined;
+  
   api.action = "get user by id";
 
   libUsers.get(id).then( userObj => {

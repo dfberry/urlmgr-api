@@ -47,25 +47,33 @@ let Authentication = {
    Returns either a valid JWT token or throws an error
 
   */
-  authenticate: function(user, password) {
+  authenticate: function(email, password) {
     let self = this;
 
     return new Promise(function(resolve, reject) {
 
-      if(!user || !user.email || !password) reject("user is invalid");
+      let foundToken;
+
+      if(!email || !password) reject("email or password is empty");
 
       // Validate email and password
-      if (!self.validate(user.email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
+      if (!self.validate(email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
       
-      Users.checkPassword(user.email, password).then(function(user) {
+      Users.checkPassword(email, password).then(function(user) {
         if (!user) reject("Authentication Failed: No such user.");
-        let _user = JSON.parse(JSON.stringify(user));
-        // Store JWT in DB for logout/revocation
 
-        return Tokens.insert(user, self.getToken(user.email, _user, config.jwt));
-      }).then(function(userWithToken) {
-        resolve(userWithToken);
+        return Users.createReturnableUser(user);
+      }).then(returnableUser => {
+        // Store JWT in DB for logout/revocation
+        return Tokens.insert(returnableUser, self.getToken(returnableUser.email, returnableUser, config.jwt));
+      }).then(token => {
+        foundToken = token;
+        return Users.getByEmail(email);
+      }).then( user => {
+        user.token = foundToken;
+        return resolve(user);
       }).catch(function(error) {
+        console.log("authentication error = " + error);
         reject("User & password did not match");
       });
 
@@ -94,7 +102,8 @@ let Authentication = {
     let claims, jwt;
 
     if (!wellFormedUser) {
-      claims = { email: email, roles: 'none', uuid: undefined }; 
+      //claims = { email: email, roles: 'none', uuid: undefined }; 
+      throw Error("auth - getToken - not wellFormedUser");
     }else{
       claims = { email: email, role: wellFormedUser.roles, uuid: wellFormedUser.id }; 
     }

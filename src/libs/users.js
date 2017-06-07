@@ -71,7 +71,10 @@ let Users = {
     });
   },
   logout: function(userUuid, token) {
-    return Tokens.revoke(userUuid, token);
+    return new Promise(function(resolve, reject) {
+     if(!userUuid || !token) reject("logout params are not valid");
+      resolve(Tokens.revoke(userUuid, token));
+    });
   },
   create: function(user){
     let self = this;
@@ -86,6 +89,9 @@ let Users = {
         // mongoose create is wrapped in another object
         if(_user && _user._doc)return resolve(self.createReturnableUser(_user._doc));      
         return resolve(self.createReturnableUser(_user));
+      }).catch(err => {
+        console.log("user create error = " + JSON.stringify(err));
+        reject(err);
       });
     });
   },
@@ -135,7 +141,7 @@ let Users = {
     let token = user.token ? user.token : "";
 
     let returnObj = {
-			id: user._id,
+			id: user._id.toString(),
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,

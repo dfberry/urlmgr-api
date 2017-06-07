@@ -2,6 +2,7 @@
 "use strict";
 
 const userLib = require('./users'),
+  testUtils = require('../utilities/test.utils'),
   chai = require('chai'),
   should = chai.should(),
   expect = require('chai').expect;
@@ -13,7 +14,7 @@ describe('users lib', function() {
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword"
       };
 
@@ -24,11 +25,7 @@ describe('users lib', function() {
 
           if(users && users.length>0){
             users.forEach(function(user, i, collection) {
-              users[0].should.have.property("id");
-              users[0].should.have.property("firstName");
-              users[0].should.have.property("lastName");
-              users[0].should.have.property("email");
-              users[0].should.have.property("roles");
+              testUtils.wellFormedUser(user);
             }, this);
           }
                       

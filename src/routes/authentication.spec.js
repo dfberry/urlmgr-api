@@ -47,24 +47,15 @@ describe('authentication', function() {
               password: testUser.password
             }
 
-            console.log("user created");
-
             // user is created, now authenticate user back with same password
             chai.request(server)
                 .post('/v1/auth')
                 .send(authUser)
                 .end((_err, _res) => {   
 
-                  // meta
                   should.not.exist(_err);
-                  testUtils.expectSuccessResponse(res);
-
-                  console.log(_res.body);
-
-                  // data
+                  testUtils.expectSuccessResponse(_res);
                   testUtils.wellFormedUser(_res.body.data.user);
-                  _res.body.data.user.should.have.property("token");
-                  _res.body.data.user.token.length.should.be.above(200);
 
                   done();
                 });   
@@ -89,8 +80,6 @@ describe('authentication', function() {
             // meta
             should.not.exist(err);
             testUtils.expectSuccessResponse(res);
-
-            // data
             res.body.data.user.email.should.be.eql(testUser.email);
             testUtils.wellFormedUser(res.body.data.user);
 

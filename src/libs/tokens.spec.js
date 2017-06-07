@@ -24,7 +24,7 @@ describe('tokens lib', function() {
 
 
 
-    it.only('should create token', function(done) {
+    it('should create token', function(done) {
 
       let oneUser;
 
@@ -48,7 +48,7 @@ describe('tokens lib', function() {
         testUtils.wellFormedToken(usersWithTokens[1]);
 
         // should return 2 tokens
-        return tokenLib.getByUserId(oneUser.id);
+        return tokenLib.getByUserId(oneUser);
       }).then(tokens => {
 
         tokens.length.should.be.eql(2);
@@ -56,9 +56,13 @@ describe('tokens lib', function() {
         tokens[1].userUuid = oneUser.id;
         tokens[0].id.should.not.be.eql(tokens[1].id);
 
+        tokens.forEach((token, id, collection) => {
+            testUtils.wellFormedToken(token);
+        });
+
         done();
       }).catch(err => {  
-        console.log(err);
+        console.log("test error = " + JSON.stringify(err));
         done(err);
       });
 

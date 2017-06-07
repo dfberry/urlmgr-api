@@ -7,6 +7,7 @@ const chai = require('chai'),
   server = require('../server.js'),
   testUtils = require('../utilities/test.utils'),
   testUsers = require('../utilities/test.users'),
+  testTokens = require('../utilities/test.tokens'),
   should = chai.should(),
   expect = require('chai').expect;
 
@@ -16,6 +17,7 @@ describe('users', function() {
 
     beforeEach(function(done) {
       testUsers.deleteAllUsers();
+      testTokens.deleteAll();
       done();
     });
 
@@ -24,7 +26,7 @@ describe('users', function() {
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword"
       };
 
@@ -46,7 +48,7 @@ describe('users', function() {
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword"
       };
 
@@ -79,7 +81,7 @@ describe('users', function() {
       let testUser = { 
         lastName: "berry",
         firstName: "dina",
-        email: Math.floor(new Date().getTime()) + "@test.com",
+        email: testUtils.uniqueString() + "@test.com",
         password: "testPassword",
         roles:['admin','user']
       };
@@ -108,7 +110,7 @@ describe('users', function() {
                 .end((_err, _res) => {            
 
                   testUtils.expectSuccessResponse(_res);
-                  testUtils.wellFormedUser(res.body.data.user);
+                  testUtils.wellFormedUser(_res.body.data.user);
                   _res.body.data.user.email.should.be.eql(testUser.email);
 
                   done();
@@ -117,26 +119,24 @@ describe('users', function() {
     });
     it('should get 1 user by email', function(done) {
 
-      let user=undefined;
       let isAdmin=true;
       let agent = chai.request.agent(server);
 
-      testUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
+      testUsers.createAuthenticatedUser(undefined, !isAdmin).then(userWithToken => {
  
+        testUtils.wellFormedUser(userWithToken);
+
         // get user by email returns token
-        agent.get('/v1/users/email/' + user.email)
-          .set('x-access-token', user.token)
+        agent.get('/v1/users/email/' + userWithToken.email)
+          .query('user=' + userWithToken.id)
+          .set('x-access-token', userWithToken.token.token)
           .end((err2, res2) => {
 
             // meta
             should.not.exist(err2);
             testUtils.expectSuccessResponse(res2);
             testUtils.wellFormedUser(res2.body.data.user);
-            
-            // data
-            res2.body.data.user.firstName.should.be.eql(user.firstName);
-            res2.body.data.user.lastName.should.be.eql(user.lastName);
-            res2.body.data.user.email.should.be.eql(user.email);
+
             done();
         });
       });
@@ -162,7 +162,7 @@ describe('users', function() {
       testUsers.createAuthenticatedUser(user, isAdmin).then(admin => {
         // get user by email returns token
         agent.get('/v1/users/')
-          .set('x-access-token', admin.token)
+          .set('x-access-token', admin.token.token)
           .end((err1, res1) => {
 
             // meta
@@ -190,15 +190,13 @@ describe('users', function() {
         // get user by email returns token
         chai.request(server)
           .delete('/v1/users/' + user.id + "/tokens")
-          .query({user: user.id})
-          .set('x-access-token', user.token)
+          .query('user=' + user.id)
+          .set('x-access-token', user.token.token)
           .end((err3, res3) => {
 
             // meta
             should.not.exist(err3);
             testUtils.expectSuccessResponse(res3);
-            res3.body.status.should.eql('success');
-            res3.body.state.should.eql(1);
             res3.body.api.route = "user";
             res3.body.api.action = "delete user by token";
 

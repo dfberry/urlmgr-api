@@ -43,12 +43,12 @@ router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
 
 // get 1  
 router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
-  let id = req.params.id;
+  let urlId = req.params.id;
   let userUuid = req.claims.uuid ? req.claims.uuid : undefined;
 
   api.action="get by id";
 
-  urlLib.getById(id, userUuid).then(url => {
+  urlLib.getById(urlId, userUuid).then(url => {
 		return libResponse.buildResponseSuccess(req, api, {}, {url: url});
   }).then( finalObj => {
     res.status(200).json(finalObj);
@@ -58,7 +58,7 @@ router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
 
 });
 
-// get all  
+// get all for user id by credentials from token 
 router.get("/", libAuthorization.AdminOrId, function(req, res) {
   //TODO = pass in uuid for all requests
   //so only urls associated with user are returned
@@ -68,7 +68,7 @@ router.get("/", libAuthorization.AdminOrId, function(req, res) {
   api.action="get all by user";
   api.userUuid = userUuid;
 
-  urlLib.getAllByUser(userUuid).then(urls => {
+  urlLib.getAllByUser(api.userUuid).then(urls => {
 		return libResponse.buildResponseSuccess(req, api, {}, {urls: urls});
   }).then( finalObj => {
     res.status(200).json(finalObj);

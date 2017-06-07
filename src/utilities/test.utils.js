@@ -111,6 +111,7 @@ let TestUtils = {
     token.should.not.have.property('_id');
     token.should.not.have.property('__v');
 
+    token.token.length.should.be.above(200);
 
     return this;
   },

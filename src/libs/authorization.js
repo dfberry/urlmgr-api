@@ -82,6 +82,9 @@ function isId(req) {
 
   let uuid = req.body.user || req.query.user || req.headers['user'];
 
+  //console.log("claims uuid = " + req.claims.uuid);
+  //console.log("request uuid = " + uuid);
+
   if (req.claims.uuid === uuid) return true;
   return false;
 }
@@ -102,7 +105,10 @@ function isViewer(req) {
 }
 
 function authorizationPresented(req) {
-  if (req.claims) return true;
+  if (req.claims) {
+    //console.log("auth presented claims = " + JSON.stringify(req.claims));
+    return true;
+  }
   return false;
 }
 

@@ -26,7 +26,7 @@ let TestUsers = {
 
     return authLib.authenticate(email, password);
   },
-  createAuthenticatedUser(user, admin=false){
+  createAuthenticatedUser(user, admin=false, modifyName=false){
 
      if(!user) {
         user = { 
@@ -37,16 +37,21 @@ let TestUsers = {
         };
       }
 
+    if(modifyName) user.email = "abc"+ user.email;
+
     if(admin) user.roles = ['admin','user'];
 
     return this.createAdmin(user).then(returnedUser => {
+
+      // keep track of user id
       user.id = returnedUser.id;
+
       return authLib.authenticate(user.email, user.password);
-    }).then( token => {
-      user.token = token;
-      return user;
+    }).then( userWithToken => {
+      return Promise.resolve(userWithToken);
     }).catch(err => {
-      console.log("err = " + JSON.stringify(err));
+      console.log("test.users.js, err = " + JSON.stringify(err));
+      throw err;
     })
   },
   deleteAllUsers(){

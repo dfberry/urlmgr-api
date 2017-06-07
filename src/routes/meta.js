@@ -8,6 +8,7 @@ const config = require('../config.js'),
 
 let api = { route: "meta"};
 
+// public, no auth required
 router.get('/', function(req, res) {
 		
   let meta = {};

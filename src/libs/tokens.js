@@ -7,19 +7,18 @@ let Tokens = {
   deleteAllRaw: function(){
     TokenModel.remove().exec();
   },
-  getByUserId: function(userUuid){
+  getByUserId: function(user){
     let self = this;
     return new Promise(function(resolve, reject) {
 
-      if(!userUuid) return reject("empty user id");
+      if(!user || !user.id) return reject("empty user id");
 
-      let query = {userUuid: userUuid};
-      console.log("query");
-      console.log(query);
+      // TBD: this is not correct - id should already be a string
+      let query = "{userUuid: '" + user.id + "'}";
 
       TokenModel.find(query,(err, tokens) =>{
-        if(err)return reject(err);
-        return resolve(self.createReturnableToken(tokens));
+        if(err) return reject(err);
+        return resolve(self.createReturnableTokenArrayForUser(tokens));
       });
     });
   },
@@ -48,12 +47,11 @@ let Tokens = {
       if(!user || !token) reject("can't create token because user or token is empty");
 
       let tokenObj = new TokenModel(token);
+      tokenObj.userUuid = user.id;
 
-      tokenObj.save((err, token) => {
+      tokenObj.save((err, newtoken) => {
         if(err)return reject(err);
-        //console.log(token);
-        user.token = self.createReturnableToken(token);
-        resolve(user);
+        resolve(self.createReturnableToken(newtoken));
       }).catch(err => {
         reject(err);
       });
@@ -84,18 +82,15 @@ let Tokens = {
   },
   createReturnableToken:function(rawToken){
     return {
-      id: rawToken._id,
-      userUuid:rawToken.userUuid,
-      token: rawToken.token,
-      revoked:rawToken.revoked,
-      role:rawToken.role
-    };
+        id: rawToken._id.toString(),
+        userUuid:rawToken.userUuid.toString(),
+        token: rawToken.token,
+        revoked:rawToken.revoked,
+        role:rawToken.role
+      };
   },
-  createReturnableTokenArray(tokens){
+  createReturnableTokenArrayForUser(tokens){
     let safeArray = [];
-
-    //console.log("raw tokens");
-    //console.log(tokens)
 
     tokens.forEach(function(token, i, collection) {
         safeArray.push(this.createReturnableToken(token));

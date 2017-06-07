@@ -21,7 +21,7 @@ let Urls = {
   getAllByUser: function(userUuid){
     let self = this;
     return new Promise(function(resolve, reject) {
-
+      
       if (!userUuid) reject("userUuid is undefined");
 
       UrlModel.find({userUuid:userUuid}, (err, urls) =>{
@@ -60,9 +60,9 @@ let Urls = {
     if(!url)return {};
 
     return {
-      id: url._id,
+      id: url._id.toString(),
       url: url.url,
-      userId: url.userUuid,
+      userId: url.userUuid.toString(),
       added: url.created.toDateString(),
       feeds: url.feeds,
       title: url.title

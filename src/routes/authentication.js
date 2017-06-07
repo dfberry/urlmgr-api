@@ -33,14 +33,12 @@ router.post('/', function(req, res) {
 
 	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
 
-	return libUser.getByEmail(email).then(user => {
-		let returnableUser = libUser.createReturnableUser(user);
-		console.log("returnableUser");
-		console.log(returnableUser);
-		return libAuthentication.authenticate(returnableUser, password);
+	return libUser.getByEmail(email).then(returnableUser => {
+		//let returnableUser = libUser.createReturnableUser(user);
+		return libAuthentication.authenticate(email, password);
 	}).then(userWithToken => {
 		let meta = {};
-		return libResponse.buildResponseSuccess(req, api, meta, userWithToken);
+		return libResponse.buildResponseSuccess(req, api, meta, {user: userWithToken});
 	}).then ( finalObj => {
     return res.status(200).send(finalObj);
   }).catch(function(err) {
