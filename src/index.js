@@ -3,10 +3,9 @@
 const app = require('./server'),
     http = require('http'),
     port = process.env.SB_PORT || app.get('port'),
-    host = process.env.SB_HOST || "0.0.0.0",
-    server; 
+    host = process.env.SB_HOST || "0.0.0.0"; 
 
-server = http.createServer(app);
+let server = http.createServer(app);
 
 // Start Server
 server.listen(port, host, function() {

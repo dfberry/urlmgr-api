@@ -18,7 +18,12 @@ let Authentication = {
   // TODO: what was ipAddr for?
   getClaims: function(token, ipAddr) {
 
+    console.log(token);
+
     return new Promise(function(resolve, reject) {
+
+      let decodedToken;
+
       // decode token
       if (!token) return resolve();
 
@@ -29,14 +34,21 @@ let Authentication = {
           if (!tokenDoc) throw Error("Token has been revoked, as a result of deletion.");
           if (tokenDoc.revoked) throw Error("Token has been revoked.");
 
-          let decoded = Tokens.verify(token,config.jwt);
-          
-          // ISSUE: don't care when promise is returned, don't care if error is thrown
-          if (decoded.uuid) Users.setLastLogin(decoded.uuid).catch((error) => { console.log(error); });
+          return Tokens.verify(token,config.jwt);
 
+        }).then(decoded => {
+            
+          decodedToken = decoded;
+
+          // ISSUE: don't care when promise is returned, don't care if error is thrown
+          return Users.setLastLogin(decoded.uuid);
+        
+        }).then( (nothingIsReturned) => {
           // Send back the claims
-          resolve(decoded);
-        }).catch(reject);
+          resolve(decodedToken);
+        }).catch(err => {
+          throw err;
+        });
     });
   },
   /* Authenticates a user 
@@ -68,6 +80,7 @@ let Authentication = {
         return Tokens.insert(returnableUser, self.getToken(returnableUser.email, returnableUser, config.jwt));
       }).then(token => {
         foundToken = token;
+        console.log("token = " + JSON.stringify("token"));
         return Users.getByEmail(email);
       }).then( user => {
         user.token = foundToken;

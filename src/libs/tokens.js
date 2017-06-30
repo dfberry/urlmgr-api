@@ -58,12 +58,15 @@ let Tokens = {
     });
   },
   verify: function(token, jwtConfig) {
-  try {
-      let decoded = jwt.verify(token, jwtConfig.secret);
-      return decoded;
-    } catch (err) {
-      throw err;
-    }
+    return new Promise(function(resolve, reject) {
+      console.log("token.verify = " + JSON.stringify(token));
+      let options = {};
+
+      jwt.verify(token, jwtConfig.secret, options, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
+    });
   },
   // not setting revoke, just deleting it
   // TBD: why have revoke on the token then

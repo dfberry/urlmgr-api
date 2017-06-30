@@ -37,17 +37,38 @@ if (CONFIG.env === 'development'){
 
 mongoose.Promise = require('bluebird');
 
-let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+let preRouteError = "";
+
+
+    let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
                 replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
-let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
-mongoose.connect(db, mongooseOptions);
+    let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
+    mongoose.connect(db, mongooseOptions);
+
+// Log database events to the console for debugging purposes
+mongoose.connection.on('open', function () {  
+  console.log("Mongoose open event"); 
+});
+mongoose.connection.on('close', function () {  
+  console.log("Mongoose close event"); 
+});
+mongoose.connection.on('connected', function () {  
+  console.log("Mongoose connected event");
+}); 
+mongoose.connection.on('disconnected', function () {  
+  console.log("Mongoose disconnected event"); 
+});
+mongoose.connection.on('error',function (err) {  
+  console.log("Mongoose error event:");
+  console.log(err)
+}); 
 
 
 app.set('env', CONFIG.env || 'development');
 app.set('port', CONFIG.port || 3000);
 app.locals.container = CONFIG.db.db;
 
-console.log("environment = " + CONFIG.env);
+console.log(CONFIG);
 
 // Attach middleware
 app.use(require('morgan')('combined'));
@@ -83,6 +104,11 @@ if ((CONFIG.env === 'development') && isCoverageEnabled) {
     app.use('/coverage', im.createHandler());
 }
 
+function logErrors (err, req, res, next) {
+  console.error(err.stack)
+  next(err)
+}
+app.use(logErrors);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -93,5 +119,15 @@ app.use(function(req, res, next) {
 
 // catch all error handlers
 app.use(libError);
+
+
+app.use(function (err, req, res, next) {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
+
+process.on('uncaughtException', function (err) {
+  console.log('-------------------------- Caught exception: ' + err);
+});
 
 module.exports = app;

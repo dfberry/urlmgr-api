@@ -34,7 +34,7 @@ let Response = {
 
     return new Promise(function(resolve, reject) {
 
-      if(!req || !api) reject("no mergable results");
+      if(!req || !api) reject("missing mergable results");
 
       let responseJson = {};
       responseJson.api = api;
