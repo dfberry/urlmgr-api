@@ -1,14 +1,8 @@
-DEBUG with VSCODE
-node --debug=5858 node_modules/mocha/bin/_mocha src-non-sails/**/*.spec.js
-
-DEBUG with CHROME
-node --inspect=5858 src-non-sails/index.js
-
+Source code is in /src
+Source built with gulp and put in /dist
+Tests run against /dist - 'npm run test'
+Start: runs against /dist without build - so last build if it exists
+Start:dev runs against /dist - 'npm run start:dev' 
 
 netstat -tulpn
 
-Node latest 6.8.0 issues
-parameter destructuring doesn't seem to be supported
-
-Generating d.ts files
-https://github.com/Microsoft/dts-gen

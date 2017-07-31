@@ -91,6 +91,7 @@ let TestUtils = {
     url.should.have.property('title');
     url.should.have.property("feeds");
     url.should.have.property("userId");
+    url.should.have.property("tags");
   
     url.should.not.have.property('_id');
     url.should.not.have.property('__v');

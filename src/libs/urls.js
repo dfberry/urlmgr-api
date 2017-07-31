@@ -65,6 +65,7 @@ let Urls = {
       userId: url.userUuid.toString(),
       added: url.created.toDateString(),
       feeds: url.feeds,
+      tags: url.tags,
       title: url.title
     };
   },
@@ -79,17 +80,33 @@ let Urls = {
   },
 
 // return feed and title
+// get these from contacting that url
+// if that url can't be reached return successful/empty object
+// so process keeps going
+// TBD: all off-site http/https/ws must be able to return (successfully) if the url can't be reached
   getMetadata: function(url){
     return new Promise(function(resolve, reject) {
+
+        let data = { feeds: [], title: "" };
 
         if(!url) throw new Error("url is empty");
 
         htmlLib.getHtml(url).then(htmlReturned => {
-          let feeds = htmlLib.getFeeds(htmlReturned);
-          let title = htmlLib.getTitle(htmlReturned);
-          resolve({ feeds: feeds, title: title });
+
+          data.feeds = htmlLib.getFeeds(htmlReturned);
+          data.title = htmlLib.getTitle(htmlReturned);
+
+          resolve(data);
         }).catch(err => {
-          reject(err);
+          console.log("getMetaData err = " + JSON.stringify(err));
+
+          // the url can't be reached -- it is off server and out in cloud somewhere
+          if(err && (err.name=="RequestError") && err.error && (err.error.code=="ENOTFOUND")){
+            console.log("can't reach url");
+            resolve(data);
+          } else { 
+            reject(err);
+          }
         });
     });
   },

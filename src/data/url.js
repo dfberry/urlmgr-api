@@ -12,6 +12,7 @@ let urlSchema = new db.Schema({
   userUuid: {type: String},
   html: {type : db.Schema.Types.Mixed},
   feeds: {type: Array, default: []},
+  tags: { type: Array, default: []},
   created: {type: Date, default: Date.now}
 });
 

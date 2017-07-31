@@ -1,0 +1,27 @@
+{
+  "name": "RequestError",
+  "message": "Error: getaddrinfo ENOTFOUND www.hanselman.com www.hanselman.com:443",
+  "cause": {
+    "code": "ENOTFOUND",
+    "errno": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "www.hanselman.com",
+    "host": "www.hanselman.com",
+    "port": 443
+  },
+  "error": {
+    "code": "ENOTFOUND",
+    "errno": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "www.hanselman.com",
+    "host": "www.hanselman.com",
+    "port": 443
+  },
+  "options": {
+    "uri": "https://www.hanselman.com/",
+    "method": "GET",
+    "simple": true,
+    "resolveWithFullResponse": false,
+    "transform2xxOnly": false
+  }
+}

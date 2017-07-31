@@ -1,0 +1,59 @@
+These tests fail when no network is present;
+
+
+  1) html should return html:
+     RequestError: Error: getaddrinfo ENOTFOUND www.google.com www.google.com:80
+      at new RequestError (node_modules/request-promise-core/lib/errors.js:14:15)
+      at Request.plumbing.callback (node_modules/request-promise-core/lib/plumbing.js:87:29)
+      at Request.RP$callback [as _callback] (node_modules/request-promise-core/lib/plumbing.js:46:31)
+      at self.callback (node_modules/request/request.js:188:22)
+      at Request.onRequestError (node_modules/request/request.js:884:8)
+      at Socket.socketErrorListener (_http_client.js:358:9)
+      at connectErrorNT (net.js:1031:8)
+      at _combinedTickCallback (internal/process/next_tick.js:80:11)
+      at process._tickCallback (internal/process/next_tick.js:104:9)
+
+  2) urls auth success should return 1 url:
+
+      Uncaught AssertionError: expected '' to equal 'Project 31-A'
+      + expected - actual
+
+      +Project 31-A
+      
+      at chai.request.get.query.set.end (dist/routes/urls.spec.js:85:56)
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:619:12)
+      at node_modules/superagent/lib/node/index.js:795:18
+      at IncomingMessage.<anonymous> (node_modules/superagent/lib/node/parsers/json.js:16:7)
+      at endReadableNT (_stream_readable.js:975:12)
+      at _combinedTickCallback (internal/process/next_tick.js:80:11)
+      at process._tickCallback (internal/process/next_tick.js:104:9)
+
+  3) urls auth success should return metadata for url:
+
+      Uncaught AssertionError: expected '' to deeply equal 'Project 31-A'
+      + expected - actual
+
+      +Project 31-A
+      
+      at chai.request.post.set.send.end (dist/routes/urls.spec.js:105:51)
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:619:12)
+      at node_modules/superagent/lib/node/index.js:795:18
+      at IncomingMessage.<anonymous> (node_modules/superagent/lib/node/parsers/json.js:16:7)
+      at endReadableNT (_stream_readable.js:975:12)
+      at _combinedTickCallback (internal/process/next_tick.js:80:11)
+      at process._tickCallback (internal/process/next_tick.js:104:9)
+
+  4) urls auth success should create 1 url:
+
+      Uncaught AssertionError: expected '' to deeply equal 'Project 31-A'
+      + expected - actual
+
+      +Project 31-A
+      
+      at chai.request.post.query.set.send.end (dist/routes/urls.spec.js:127:51)
+      at Test.Request.callback (node_modules/superagent/lib/node/index.js:619:12)
+      at node_modules/superagent/lib/node/index.js:795:18
+      at IncomingMessage.<anonymous> (node_modules/superagent/lib/node/parsers/json.js:16:7)
+      at endReadableNT (_stream_readable.js:975:12)
+      at _combinedTickCallback (internal/process/next_tick.js:80:11)
+      at process._tickCallback (internal/process/next_tick.js:104:9)

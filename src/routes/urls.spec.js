@@ -169,6 +169,7 @@ describe('urls', function () {
           res.body.data.url.url.should.be.eql(url);
           res.body.data.url.userId.should.be.eql(testUser.id);
           res.body.data.url.feeds.should.be.a('array');
+          res.body.data.url.tags.should.be.a('array');
           res.body.data.url.title.should.be.eql('Project 31-A');
 
           testUtils.wellFormedUrl(res.body.data.url);
@@ -263,7 +264,8 @@ describe('urls', function () {
         title: "test title - should NOT create 1 url",
         url: url,
         html: {},
-        feeds: []
+        feeds: [],
+        tags: ['testing','javascript']
       };
 
       chai.request(server)
@@ -285,7 +287,8 @@ describe('urls', function () {
         title: "test title - should NOT delete 1 url",
         url: url,
         html: {},
-        feeds: []
+        feeds: [],
+        tags: ['testing','javascript']
       };
 
       chai.request(server)
