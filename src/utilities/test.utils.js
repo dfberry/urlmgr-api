@@ -116,6 +116,14 @@ let TestUtils = {
 
     return this;
   },
+  expectTagCleanedData: function(arr){
+    arr.should.be.a('array');
+    if(arr.length>0){
+      for(let i=0, max=arr.length;i<max;i++){
+        expect((typeof arr[i])=="number");
+      }
+    }
+  }
 }
 
 module.exports = TestUtils;

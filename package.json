@@ -23,7 +23,8 @@
     "gulp-build": "npm run clean && gulp build",
     "build": "npm run gulp-build",
     "coverage": "set COVERAGE=true && istanbul cover node_modules/mocha/bin/_mocha  src/**/*.spec.js -R spec",
-    "test": "npm run gulp-build && set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js"
+    "test": "npm run build && set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js",
+    "test:chrome": "npm run build && node --inspect=0.0.0.0:3004 --debug-brk node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
