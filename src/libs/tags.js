@@ -9,23 +9,22 @@ const UrlModel = require('../data/url.js'),
 let Tags = {
 
   getByUserId: function(userUuid) {
-    return new Promise(function(resolve, reject) {
 
-      if(!userUuid) reject("tag by user id, user id is empty");
+    if(!userUuid) return Promise.reject("userUuid is empty");
+    
+    let query = [{$match:{ "userUuid" : userUuid, tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
+    return this.aggregation(query);
 
-      let query = [{$match:{ "userUuid" : "' + userUuid + '", tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
-
-      UrlModel.findOne(query, (err, tagAggregation) =>{
-        if(err)reject(err);
-        resolve(tagAggregation);
-      });
-    });
   },
   getAll: function(){
-    return new Promise(function(resolve, reject) {
-      
-      let query = [{$match:{ tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
 
+    let query = [{$match:{ tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
+    return this.aggregation(query);
+
+  },
+  aggregation: function(query){
+    if(!query) Promise.reject("error: empty query for aggregation");
+    return new Promise(function(resolve, reject) {
       UrlModel.aggregate(query, (err, tagAggregation) =>{
         if(err)reject(err);
         resolve(tagAggregation);
