@@ -23,7 +23,7 @@ const exArrFromMongo = [
   { "count" : 1, "tag" : "nodejs" },
   { "count" : 1, "tag" : "testing" }];
 
-describe('tags', function() {
+describe('tags library', function() {
 
   let stub;
 
@@ -46,12 +46,12 @@ describe('tags', function() {
     tags.getByUserId().then(tagList => {
       done(tagList);
     }).catch(err => {
-      err.should.eql("userUuid is empty");
+      err.should.eql("user is empty");
       done();
     });
   });
   it("should getByUserId successfully", function(done){
-    let user = "fakeIdNotUsedBecauseOfStuf";
+    let user = "fakeIdNotUsedBecauseOfStub";
 
     tags.getByUserId(user).then(tagList => {
       tagList.should.deep.equal(exArrFromMongo);

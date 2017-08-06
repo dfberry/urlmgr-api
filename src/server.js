@@ -12,6 +12,7 @@ const express = require('express'),
     libMeta = require('./libs/meta'),
     libResponse = require('./libs/response'),
     meta = require('./routes/meta'),
+    tags = require('./routes/tags'),
     auth = require('./routes/authentication'),
     libError = require('./routes/errors'),
     _ = require('underscore'),
@@ -97,6 +98,7 @@ app.use('/v1/urls',urls);
 app.use('/v1/users',users);
 app.use('/v1/auth',auth);
 app.use('/v1/meta', meta);
+app.use('/v1/tags', tags);
 
 // test/coverage only
 if ((CONFIG.env === 'development') && isCoverageEnabled) {

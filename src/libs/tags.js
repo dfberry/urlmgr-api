@@ -10,7 +10,7 @@ let Tags = {
 
   getByUserId: function(userUuid) {
 
-    if(!userUuid) return Promise.reject("userUuid is empty");
+    if(!userUuid) return Promise.reject("user is empty");
     
     let query = [{$match:{ "userUuid" : userUuid, tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
     return this.aggregation(query);

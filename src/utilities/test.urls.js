@@ -16,7 +16,7 @@ let TestUrls = {
 
     urlObj.userUuid = userObj.id;
 
-    Promise.resolve(urlLib.create(urlObj));
+    return urlLib.create(urlObj);
 
   },
   deleteAllUrls: function(){

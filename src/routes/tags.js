@@ -8,18 +8,13 @@ const express = require('express'),
 
 let api = { route: "tags"};
 
-// get all tags grouped by count for user (user id in param)
-router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
-  //TODO = pass in uuid for all requests
-  //so only urls associated with user are returned
-  //this works for admin as well since authorization checks AdminOrId
-  //but the user id is passed in via the params and is guid-ish
-  
-  let userId = req.params.id;
-  api.action="get all tags grouped by count for user (user id in param)";
-  api.userUuid = userId;
+// PUBLIC 
+// get all tags - public tag cloud
+router.get("/all", function(req, res) {
 
-  tagsLib.getByUser(api.userUuid).then(tags => {
+  api.action="get all tags - public tag cloud";
+
+  tagsLib.getAll().then(tags => {
 		return libResponse.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);
@@ -29,13 +24,19 @@ router.get("/:id", libAuthorization.AdminOrId, function(req, res) {
 
 });
 
-// PUBLIC 
-// get all tags - public tag cloud
-router.get("/", function(req, res) {
+// get all tags grouped by count for user (user id in param)
+router.get("/user/:user", libAuthorization.AdminOrId, function(req, res) {
+  //TODO = pass in uuid for all requests
+  //so only tags associated with user are returned
+  //this works for admin as well since authorization checks AdminOrId
+  //but the user id is passed in via the params and is guid-ish
 
-  api.action="get all tags - public tag cloud";
+  let userId = req.params.user;
 
-  tagsLib.getAll().then(tags => {
+  api.action="get all tags grouped by count for user (user id in param)";
+  api.userUuid = userId;
+
+  tagsLib.getByUserId(api.userUuid).then(tags => {
 		return libResponse.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);

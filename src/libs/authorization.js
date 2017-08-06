@@ -83,7 +83,7 @@ let authorization = {
 // claims.uuid - was decoded from token
 function isId(req) {
 
-  let uuid = req.body.user || req.query.user || req.headers['user'];
+  let uuid = req.body.user || req.query.user || req.headers['user'] || req.params['user'];
 
   console.log("claims uuid = " + req.claims.uuid);
   console.log("request uuid = " + uuid);
