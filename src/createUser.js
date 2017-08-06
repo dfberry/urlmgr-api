@@ -10,8 +10,8 @@ let should = chai.should();
 let testUser = { 
   lastName: "berry",
   firstName: "dina",
-  email: "dinaberry@outlook.com",
-  password: "1234"
+  email: "youremail@gmail.com",
+  password: "password"
 };
 
 chai.request(server)
