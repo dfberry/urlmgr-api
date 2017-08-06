@@ -90,7 +90,6 @@ let Users = {
         if(_user && _user._doc)return resolve(self.createReturnableUser(_user._doc));      
         return resolve(self.createReturnableUser(_user));
       }).catch(err => {
-        console.log("user create error = " + JSON.stringify(err));
         reject(err);
       });
     });

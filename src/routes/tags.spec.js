@@ -54,7 +54,6 @@ describe('tags route',  ()=> {
 
       return Promise.all([pUrl1User1, pUrl2User1, pUrl3User1, pUrl1User2, pUrl2User2,pUrl3User2,pUrl4User2, pUrl5User2 ]);
     }).then(results => {
-      console.log("test urls created");
       done();
     }).catch(err => {
       console.log(err);

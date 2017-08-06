@@ -68,9 +68,6 @@ let authorization = {
   */
   AdminOrId: function(req, res, next) {
 
-    console.log("top of AdminOrId");
-    console.log(req.headers);
-
      // User must makes some claims
     if (!authorizationPresented(req)) throw new Error(noAuthPresented);
 
@@ -85,11 +82,7 @@ function isId(req) {
 
   let uuid = req.body.user || req.query.user || req.headers['user'] || req.params['user'];
 
-  console.log("claims uuid = " + req.claims.uuid);
-  console.log("request uuid = " + uuid);
-
   if (req.claims.uuid === uuid) {
-    console.log("isId == true");
     return true;
   }
   return false;
@@ -97,7 +90,6 @@ function isId(req) {
 
 function isAdmin(req) {
   if (req.claims.role.includes('admin')) {
-    console.log("isAdmin == true");
     return true;
   }
   return false;
@@ -115,7 +107,6 @@ function isViewer(req) {
 
 function authorizationPresented(req) {
   if (req.claims) {
-    //console.log("auth presented claims = " + JSON.stringify(req.claims));
     return true;
   }
   return false;

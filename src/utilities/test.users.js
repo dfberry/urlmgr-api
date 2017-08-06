@@ -50,7 +50,6 @@ let TestUsers = {
     }).then( userWithToken => {
       return Promise.resolve(userWithToken);
     }).catch(err => {
-      console.log("test.users.js, err = " + JSON.stringify(err));
       throw err;
     })
   },

@@ -62,7 +62,6 @@ describe('tokens lib', function() {
 
         done();
       }).catch(err => {  
-        console.log("test error = " + JSON.stringify(err));
         done(err);
       });
 

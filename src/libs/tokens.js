@@ -59,7 +59,6 @@ let Tokens = {
   },
   verify: function(token, jwtConfig) {
     return new Promise(function(resolve, reject) {
-      console.log("token.verify = " + JSON.stringify(token));
       let options = {};
 
       jwt.verify(token, jwtConfig.secret, options, (err, decoded) => {

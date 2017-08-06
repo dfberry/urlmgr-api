@@ -98,11 +98,9 @@ let Urls = {
 
           resolve(data);
         }).catch(err => {
-          console.log("getMetaData err = " + JSON.stringify(err));
 
-          // the url can't be reached -- it is off server and out in cloud somewhere
+          // the url can't be reached -- it is off server and out in cloud somewhere - but DNS fails
           if(err && (err.name=="RequestError") && err.error && (err.error.code=="ENOTFOUND")){
-            console.log("can't reach url");
             resolve(data);
           } else { 
             reject(err);

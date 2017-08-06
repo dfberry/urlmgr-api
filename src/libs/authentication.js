@@ -18,8 +18,6 @@ let Authentication = {
   // TODO: what was ipAddr for?
   getClaims: function(token, ipAddr) {
 
-    console.log(token);
-
     return new Promise(function(resolve, reject) {
 
       let decodedToken;
@@ -80,13 +78,11 @@ let Authentication = {
         return Tokens.insert(returnableUser, self.getToken(returnableUser.email, returnableUser, config.jwt));
       }).then(token => {
         foundToken = token;
-        console.log("token = " + JSON.stringify("token"));
         return Users.getByEmail(email);
       }).then( user => {
         user.token = foundToken;
         return resolve(user);
       }).catch(function(error) {
-        console.log("authentication error = " + error);
         reject("User & password did not match");
       });
 

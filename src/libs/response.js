@@ -47,7 +47,6 @@ let Response = {
 
         resolve(responseJson);
       }).catch((err) => {
-        console.log(err);
         reject(err);
       });
     });    
