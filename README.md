@@ -23,3 +23,9 @@ Clean removes /dist and typescript generated type files
 # Config.json
 The config.json file is expected to be one directory above the /dist folder - NOT in the folder. When the /dist is run, the root config.json is the file used. 
 
+# Production
+Copy /dist to production repo: cp -R /usr/src/app/urlmgr/urlmgr-compose/urlmgr-api/dist/ .
+
+Remove spec files from production repo: find -type f -name '*.spec.js' -delete
+
+Install production only: npm install --production 
