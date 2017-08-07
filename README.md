@@ -20,3 +20,6 @@ Currently via Yarn only
 # Clean
 Clean removes /dist and typescript generated type files
 
+# Config.json
+The config.json file is expected to be one directory above the /dist folder - NOT in the folder. When the /dist is run, the root config.json is the file used. 
+
