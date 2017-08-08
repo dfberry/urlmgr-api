@@ -6,6 +6,8 @@ const db = require('mongoose'),
 
 db.Promise = require('bluebird');
 
+// roles: ['admin','user']
+
 let userSchema = new db.Schema({
   firstName: {
     type: String

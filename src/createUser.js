@@ -11,7 +11,8 @@ let testUser = {
   lastName: "berry",
   firstName: "dina",
   email: "youremail@gmail.com",
-  password: "password"
+  password: "password",
+  roles: ["admin",'user']
 };
 
 chai.request(server)
