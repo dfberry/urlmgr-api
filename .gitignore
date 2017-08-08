@@ -10,3 +10,4 @@ example-json
 dist
 *.out.txt
 config.json
+**/*/createUser.js
