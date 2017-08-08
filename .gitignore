@@ -11,3 +11,4 @@ dist
 *.out.txt
 config.json
 src/createUser.js
+createUser.js
