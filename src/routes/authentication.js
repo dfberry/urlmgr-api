@@ -9,6 +9,9 @@ const config = require('../config.js'),
 	_ = require('underscore'),
 	api = { name: "authenticate"};
 
+//Hacking mongodb authentication
+//https://blog.websecurify.com/2014/08/attacks-nodejs-and-mongodb-part-to.html
+
 /* Authenticates a user based on a username and password. Returns a JWT.
 
 	No pre-authentication

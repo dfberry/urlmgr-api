@@ -121,4 +121,25 @@ describe('authentication', function() {
                 done();
           });   
     });
+    it('should NOT authenticate 1 user if user or password is not string', function(done) {
+
+      // json mongodb injection vulnerability
+
+      let authUser = "user[$regex]=cd&pass=abc123";
+
+      // user is created, now authenticate user back to same password
+      chai.request(server)
+          .post('/v1/auth')
+          .send(authUser)
+          .end((_err, _res) => {  
+
+                _res.status.should.be.eq(422);
+                should.exist(_err);
+
+                //TBD: this is the wrong error message but the hack was stopped
+                _res.body.error.should.be.eq("user or password is empty");
+                
+                done();
+          });   
+    });
 });
