@@ -18,10 +18,19 @@ let Tags = {
   },
   getAll: function(){
 
-    let query = [{$match:{ tags: { $gt: [] }}},{$project:{_id:0, tags:1}},{$unwind: "$tags"},{$group: {_id:"$tags", count:{$sum:1}}},{$project:{_id:0,tag:"$_id", count:1}},{$sort: {tag:1}}];
+    let query = [
+      {$match:{ tags: { $gt: [] }}},
+      {$project:{_id:0, tags:1}},
+      {$unwind: "$tags"},
+      {$group: {_id:"$tags", count:{$sum:1}}},
+      {$project:{_id:0,tag:"$_id", count:1}},
+      {$sort: {tag:1}},
+      {$limit: 20}
+    ];
     return this.aggregation(query);
 
   },
+  
   aggregation: function(query){
     if(!query) Promise.reject("error: empty query for aggregation");
     return new Promise(function(resolve, reject) {
