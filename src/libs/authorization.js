@@ -89,7 +89,7 @@ function isId(req) {
 }
 
 function isAdmin(req) {
-  if (req.claims.role.includes('admin')) {
+  if (req && req.claims && req.claims.role && req.claims.role.includes('admin')) {
     return true;
   }
   return false;
