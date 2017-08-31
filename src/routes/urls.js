@@ -25,6 +25,24 @@ router.post('/', libAuthorization.AdminOrId, function(req, res) {
   });
 });
 
+// PUBLIC 
+// get all urls by tag[s] - click on tag item, get these results
+router.post("/tags", function(req, res) {
+  let data = req.body;
+  let tags = data.tags ? data.tags : undefined;
+  
+  api.action="get urls by tag[s] - public";
+
+  urlLib.getAllByTags(tags).then(urls => {
+    return libResponse.buildResponseSuccess(req, api, {}, {urls: urls});
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
+  }).catch(function(err) {
+    res.status(500).send(err);
+  });
+
+});
+
 router.post('/meta', libAuthorization.AdminOrId, function(req, res) {
   let data = req.body;
 

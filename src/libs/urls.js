@@ -30,6 +30,22 @@ let Urls = {
       });
     });
   },
+  getAllByTags: function(tags){
+    let self = this;
+    return new Promise(function(resolve, reject) {
+          
+      // get all urls with these tags
+      // db.urls.find({ tags: { $in : [".net","dina"]}})
+      // db.urls.find({ tags: { $in : [".net","dina"]}} ).sort({"title":1})
+      let query = { tags: { $in : tags}};
+      UrlModel.find(query, (err, urls) =>{
+        if(err)reject(err);
+        let fpublic = true;
+        resolve(self.createReturnableUrlArray(urls, fpublic));
+      });
+    });
+    
+  },
   deleteById: function(uuid){
     let self = this;
     return new Promise(function(resolve, reject) {
@@ -69,12 +85,27 @@ let Urls = {
       title: url.title
     };
   },
-  createReturnableUrlArray: function(urls){
-    if (!urls) return [];
+  createPublicReturnableUrl: function(url){
+    
+    // make sure user id is not returned
+
+        if(!url)return {};
+    
+        return {
+          id: url._id.toString(),
+          url: url.url,
+          added: url.created.toDateString(),
+          feeds: url.feeds,
+          tags: url.tags,
+          title: url.title
+        };
+      },
+  createReturnableUrlArray: function(urls,fpublic=false){
+    if (!urls || urls.length===0) return [];
 
     let newArray = [];
     urls.forEach(url => {
-      newArray.push(this.createReturnableUrl(url));
+      !fpublic ? newArray.push(this.createReturnableUrl(url)) : newArray.push(this.createPublicReturnableUrl(url));
     });
     return newArray;
   },

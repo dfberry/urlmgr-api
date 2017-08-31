@@ -47,6 +47,130 @@ describe('urls', function () {
       console.log("urls.spec.js before - can't create test user - " + JSON.stringify(err));
     });
   });
+  describe('public success', function () {
+
+        // use same urls for all these tests
+        /*
+        before(function (done) {
+          done();
+        });
+
+        after(function(done){
+          
+          done();
+        });
+        */
+
+        it('should return empty array of urls when no tags selected', function (done) {
+
+          chai.request(server)
+          .post('/v1/urls/tags')
+          .send({ tags: [] })
+          .end((err, res) => {
+  
+            // meta
+            should.not.exist(err);
+            testUtils.expectSuccessResponse(res);
+  
+            // data
+            res.body.data.urls.should.be.a('array');
+            res.body.data.urls.length.should.be.eql(0);
+            res.body.data.urls.should.not.have.property('userId');
+            res.body.data.urls.should.not.have.property('userUuid');
+            
+            done();            
+          });
+          
+        });
+        it('should return empty array of urls when unused tag is set', function (done) {
+
+          TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',"tags":[".net","dina","js"]});
+          TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://test2.com',"tags":[".net","db","wayne","sql"]});
+          
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.dfberry.io',"tags":[".net","db","john","sql"]});
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test3.io',"tags":["john","db","mongo"]});
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test4.io',"tags":["john","db","postgresql"]});
+
+          chai.request(server)
+          .post('/v1/urls/tags')
+          .send({ tags: ["xyz-does-not-exist"] })
+          .end((err, res) => {
+  
+            // meta
+            should.not.exist(err);
+            testUtils.expectSuccessResponse(res);
+  
+            // data
+            res.body.data.urls.should.be.a('array');
+            res.body.data.urls.length.should.be.eql(0);
+            res.body.data.urls.should.not.have.property('userId');
+            res.body.data.urls.should.not.have.property('userUuid');
+
+            TestUrls.deleteAllUrls();
+            done();
+          });
+          
+        });
+        it('should return filled array of urls when 1 used tag is set', function (done) {
+
+          TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',"tags":[".net","dina","js"]});
+          TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://test2.com' ,"tags":[".net","db","wayne","sql"]});
+          
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.dfberry.io' ,"tags":[".net","db","john","sql"]});
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test3.io' ,"tags":["john","db","mongo"]});
+          TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test4.io' ,"tags":["john","db","postgresql"]});
+
+          chai.request(server)
+          .post('/v1/urls/tags')
+          .send({ tags: ["john"] })
+          .end((err, res) => {
+  
+            // meta
+            should.not.exist(err);
+            testUtils.expectSuccessResponse(res);
+  
+            // data
+            res.body.data.urls.should.be.a('array');
+            res.body.data.urls.length.should.be.eql(3);
+            res.body.data.urls.should.not.have.property('userId');
+            res.body.data.urls.should.not.have.property('userUuid');
+  
+            TestUrls.deleteAllUrls();
+            done();
+          });
+          
+        });
+        it('should return filled array of urls when n used tags are set', function (done) {
+          
+                    TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',"tags":[".net","dina","js"]});
+                    TestUrls.createUrl(testUser, { userUuid: testUser.id, url: 'http://test2.com' ,"tags":[".net","db","wayne","sql"]});
+                    
+                    TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.dfberry.io' ,"tags":[".net","db","john","sql"]});
+                    TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test3.io' ,"tags":["john","db","mongo"]});
+                    TestUrls.createUrl(testUser2, { userUuid: testUser2.id, url: 'http://www.test4.io' ,"tags":["john","db","postgresql"]});
+          
+                    chai.request(server)
+                    .post('/v1/urls/tags')
+                    .send({ tags: ["john", "dina"] })
+                    .end((err, res) => {
+            
+                      // meta
+                      should.not.exist(err);
+                      testUtils.expectSuccessResponse(res);
+            
+                      // data
+                      res.body.data.urls.should.be.a('array');
+                      res.body.data.urls.length.should.be.eql(4);
+                      res.body.data.urls.should.not.have.property('userId');
+                      res.body.data.urls.should.not.have.property('userUuid');
+
+                      TestUrls.deleteAllUrls();
+                      done();
+                    });
+                    
+                  });
+
+      });
 
   describe('auth success', function () {
 
