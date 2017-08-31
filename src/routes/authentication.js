@@ -46,16 +46,16 @@ router.post('/', function(req, res) {
     return res.status(200).send(finalObj);
   }).catch(function(err) {
 
-		if((err==='user is invalid') 
-			|| (err==="User doesn't exist")
-			|| (err==='User & password did not match') 
-			|| (err==='Authentication failed: Invalid email and/or password supplied.')) {
+		if((err.indexOf('user is invalid') != -1)
+			|| (err.indexOf("User doesn't exist")!= -1)
+			|| (err.indexOf('User & password did not match') != -1)
+			|| (err.indexOf('Authentication failed: Invalid email and/or password supplied.')!= -1)) {
 			
-			api.error = { type: "authentication failure", message: "User & password did not match"};
-			let data = {}; // because there is an error
-			let meta = {}; // because it is filled by libResponse
+				api.error = { type: "authentication failure", message: err};
+				let data = {}; // because there is an error
+				let meta = {}; // because it is filled by libResponse
 
-			return libResponse.buildResponseFailure(req, api, meta, data).then( finalObj => {
+				return libResponse.buildResponseFailure(req, api, meta, data).then( finalObj => {
 				return res.status(422).send(finalObj);
 			}).catch(err => {
 				return res.status(500).send({ error: err.message });

@@ -116,7 +116,7 @@ describe('authentication', function() {
 
                 _res.status.should.be.eq(422);
                 should.exist(_err);
-                _res.body.api.error.message.should.be.eq("User & password did not match");
+                _res.body.api.error.message.should.be.eq("User doesn\'t exist - gbe");
                 
                 done();
           });   

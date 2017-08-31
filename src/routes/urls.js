@@ -47,7 +47,7 @@ router.post("/tags", function(req, res) {
 // get n urls by most recent date entered for public consumption
 router.get("/public", function(req, res) {
   let n = req.params.n;
-  n = n || 5;
+  if (!n)  n = (config && config.thinkingabout && config.thinkingabout.length) ? config.thinkingabout.length : 5;
 
   let publicThinkingAboutEmailaddress = (config && config.thinkingabout && config.thinkingabout.email) ? config.thinkingabout.email : undefined;
   

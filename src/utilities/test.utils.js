@@ -14,6 +14,11 @@ let TestUtils = {
   randomBetween1And100000: function(){
     return Math.floor((Math.random() * 100000) + 1);
   },
+  expectFailureResponse: function(response){
+    response.should.have.not.status(200);
+    
+    return this;
+},
   expectSuccessResponse: function(response){
       response.should.have.status(200);
       response.body.should.be.a('object');

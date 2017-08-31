@@ -246,8 +246,8 @@ describe('urls', function() {
 
       });
     });
-    describe('public thinkingabout success', function() {
-      it('should return array of urls', function(done) {
+    describe('public thinkingabout ', function() {
+      it('should return array of urls when public user is created', function(done) {
 
         TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
@@ -296,7 +296,9 @@ describe('urls', function() {
 
             // data
             res.body.data.urls.should.be.a('array');
-            res.body.data.urls.length.should.be.eql(5);
+
+            // because config file says 30 so it will return all 6
+            res.body.data.urls.length.should.be.eql(6);
 
             res.body.data.urls.forEach(url => {
               testUtils.wellFormedPublicUrl(url);
@@ -307,7 +309,61 @@ describe('urls', function() {
             done();
           });
       });
+      it('should return error when public user is NOT created', function(done) {
+        
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://1.unittest.test.com',
+                  "tags": [".net", "dina", "js", "1"]
+                });
+        
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://2.unittest.test.com',
+                  "tags": ["2"]
+                });
+        
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://3.unittest.test.com',
+                  "tags": [".net", "3"]
+                });
+        
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://4.unittest.test.com',
+                  "tags": [".net", "dina", "js","4"]
+                });
+        
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://5.unittest.test.com',
+                  "tags": [".net", "dina", "js","5"]
+                });
+                TestUrls.createUrl(pUserDinaBerry, {
+                  userUuid: pUserDinaBerry.id,
+                  url: 'http://6.unittest.test.com',
+                  "tags": [".net", "dina", "js","6"]
+                });
+        
+                // delete public user acct
+                TestUsers.deleteAllUsers();
+        
+                chai.request(server)
+                  .get('/v1/urls/public')
+                  .end((err, res) => {
+        
+                    // meta
+                    should.exist(err);
+                    testUtils.expectFailureResponse(res);
+        
+                    TestUrls.deleteAllUrls();
+                    TestUsers.deleteAllUsers();
+                    testTokens.deleteAll();
 
+                    done();
+                  });
+              });
     });
   });
 
