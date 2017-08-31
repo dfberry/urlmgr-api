@@ -46,7 +46,7 @@ let Users = {
           if (err)
               return reject (err);
           if (!user)
-              return reject("User doesn't exist");
+              return reject("User doesn't exist - gbe");
           return resolve(self.createReturnableUser(user));
         });
       } catch (err ){

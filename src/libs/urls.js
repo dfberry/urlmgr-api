@@ -45,6 +45,8 @@ let Urls = {
           let fpublic = true;
           resolve(self.createReturnableUrlArray(urls,fpublic));
         });
+      }).catch(err => {
+        reject(err);
       });
     });
   },
