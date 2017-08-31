@@ -1,6 +1,7 @@
 "use strict";
 
 const UrlModel = require('../data/url.js'),
+  userLib = require('./users.js'),
   htmlLib = require('./html.js'),
   _ = require('underscore');
 
@@ -27,6 +28,23 @@ let Urls = {
       UrlModel.find({userUuid:userUuid}, (err, urls) =>{
         if(err)reject(err);
         resolve(self.createReturnableUrlArray(urls));
+      });
+    });
+  },
+  public: function(userEmailForPublicConsumption, countOfUrls){
+    let self = this;
+    return new Promise(function(resolve, reject) {
+      
+      if (!userEmailForPublicConsumption) reject("userEmailForPublicConsumption is undefined");
+      if (!countOfUrls) countOfUrls = 5;
+      
+      userLib.getByEmail(userEmailForPublicConsumption).then(user => {
+
+        UrlModel.find({userUuid:user.id}).limit(countOfUrls).exec((err, urls) => {
+          if(err)reject(err);
+          let fpublic = true;
+          resolve(self.createReturnableUrlArray(urls,fpublic));
+        });
       });
     });
   },

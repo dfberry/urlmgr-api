@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require('express'),
+  config = require('../config.js'),
   router = express.Router(),
   urlLib = require('../libs/urls'),
   libAuthorization = require('../libs/authorization'),
@@ -35,6 +36,27 @@ router.post("/tags", function(req, res) {
 
   urlLib.getAllByTags(tags).then(urls => {
     return libResponse.buildResponseSuccess(req, api, {}, {urls: urls});
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
+  }).catch(function(err) {
+    res.status(500).send(err);
+  });
+
+});
+
+// get n urls by most recent date entered for public consumption
+router.get("/public", function(req, res) {
+  let n = req.params.n;
+  n = n || 5;
+
+  let publicThinkingAboutEmailaddress = (config && config.thinkingabout && config.thinkingabout.email) ? config.thinkingabout.email : undefined;
+  
+  if (!publicThinkingAboutEmailaddress) return res.status(500).send("public thinkingabout account not set");
+  
+  api.action="public";
+
+  urlLib.public(publicThinkingAboutEmailaddress, n).then(url => {
+		return libResponse.buildResponseSuccess(req, api, {}, {urls: url});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
