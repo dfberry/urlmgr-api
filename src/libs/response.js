@@ -43,7 +43,8 @@ let Response = {
       metaLib.git().then(gitCommentAndBranch => {
 
         // add git commit and branch, db container name
-        responseJson.meta = _.extend(meta, gitCommentAndBranch, { container: req.app.locals.container});
+        let verMongo = req.app.get('ver-mongo');
+        responseJson.meta = _.extend(meta, gitCommentAndBranch, { container: req.app.locals.container, mver: verMongo});
 
         resolve(responseJson);
       }).catch((err) => {

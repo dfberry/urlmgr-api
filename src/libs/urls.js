@@ -40,7 +40,7 @@ let Urls = {
       
       userLib.getByEmail(userEmailForPublicConsumption).then(user => {
 
-        UrlModel.find({userUuid:user.id}).limit(countOfUrls).exec((err, urls) => {
+        UrlModel.find({userUuid:user.id},null,{sort:{created:-1}}).limit(countOfUrls).exec((err, urls) => {
           if(err)reject(err);
           let fpublic = true;
           resolve(self.createReturnableUrlArray(urls,fpublic));

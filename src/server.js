@@ -54,7 +54,14 @@ mongoose.connection.on('close', function () {
   console.log("Mongoose close event"); 
 });
 mongoose.connection.on('connected', function () {  
-  console.log("Mongoose connected event");
+  console.log("Mongoose connected event");  
+  
+  var admin = new mongoose.mongo.Admin(mongoose.connection.db);
+  admin.buildInfo(function (err, info) {
+    let mongoVersion = info.version;
+     app.set('ver-mongo', mongoVersion || undefined);
+  });
+
 }); 
 mongoose.connection.on('disconnected', function () {  
   console.log("Mongoose disconnected event"); 
@@ -75,6 +82,7 @@ console.log(CONFIG);
 app.use(require('morgan')('combined'));
 app.use(cors());
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.disable('x-powered-by');
 
 //http://stackoverflow.com/questions/19917401/error-request-entity-too-large
 app.use(bodyParser.json({limit: '50mb'}));
