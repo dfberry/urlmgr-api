@@ -29,3 +29,7 @@ Copy /dist to production repo: cp -R /usr/src/app/urlmgr/urlmgr-compose/urlmgr-a
 Remove spec files from production repo: find -type f -name '*.spec.js' -delete
 
 Install production only: npm install --production 
+
+# Test:Chrome
+
+chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:3004/

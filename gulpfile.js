@@ -14,7 +14,22 @@ gulp.task('assets', function () {
           .pipe(gulp.dest('dist'));
 });
 
+gulp.task('assets-test', function () {
+    
+            return gulp.src([
+                'src/**/*',
+                './package.json',
+                './yarn.lock'
+              ])
+              .pipe(gulp.dest('dist'));
+    });
+
 gulp.task("build", ["assets"], function () {
+    // This will only run if the lint task is successful...
+    console.log("build is done");
+});
+
+gulp.task("build-test", ["assets-test"], function () {
     // This will only run if the lint task is successful...
     console.log("build is done");
 });
