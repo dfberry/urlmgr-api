@@ -6,6 +6,7 @@ const chai = require('chai'),
   chaiHttp = require('chai-http'),
   server = require('../server.js'),
   testUtils = require('../utilities/test.utils'),
+  testUrls = require('../utilities/test.urls'),
   testUsers = require('../utilities/test.users'),
   testTokens = require('../utilities/test.tokens'),
   should = chai.should(),
@@ -15,11 +16,31 @@ chai.use(chaiHttp);
 
 describe('users', function() {
 
+    let generalUser;
+    let adminUser;
+
     beforeEach(function(done) {
       testUsers.deleteAllUsers();
       testTokens.deleteAll();
-      done();
+      testUrls.deleteAllUrls();
+  
+      let isAdmin = true;
+      let modifyName = true;
+
+      let pGeneralUser = testUsers.createAuthenticatedUser(undefined, !isAdmin, !modifyName);
+      let pAdminUser = testUsers.createAuthenticatedUser(undefined, isAdmin, !modifyName);
+
+      Promise.all([pGeneralUser, pAdminUser]).then(users => {
+        generalUser = users[0];
+        adminUser = users[1];
+
+        done();
+      }).catch(err => {
+        console.log(err);
+      });
     });
+
+
 
     it('should create 1 user - register', function(done) {
 
@@ -43,6 +64,48 @@ describe('users', function() {
             done();
           });
     });
+    it('should change 1 user\'s password', function(done) {
+
+      let isAdmin = true;
+      let modifyName = true;
+
+      let newPassword = "test.test.test";
+
+      chai.request(server)
+      .patch('/v1/users/password/reset')
+      .query('user='+ generalUser.id) 
+      .set('x-access-token', generalUser.token.token)
+      .send({
+        email: generalUser.email,
+        password: newPassword
+      })
+      .end((err, res) => {
+
+        // meta
+        should.not.exist(err);
+        testUtils.expectSuccessResponse(res);
+        res.body.api.action.should.equal('reset password');          
+
+        // authenticate with new password
+        let authUser = {
+          email: generalUser.email,
+          password: newPassword // new password used here!!!
+        }
+
+        // user is created, now authenticate user back with same password
+        chai.request(server)
+        .post('/v1/auth')
+        .send(authUser)
+        .end((_err, _res) => {   
+
+          should.not.exist(_err);
+          testUtils.expectSuccessResponse(_res);
+          testUtils.wellFormedUser(_res.body.data.user);
+
+          done();
+        });   
+      }); 
+    });
     it('should NOT create user if it already exists- register', function(done) {
 
       let testUser = { 
@@ -53,28 +116,28 @@ describe('users', function() {
       };
 
       chai.request(server)
-          .post('/v1/users')
-          .send(testUser)
-          .end((err, res) => {
+      .post('/v1/users')
+      .send(testUser)
+      .end((err, res) => {
 
-            testUtils.expectSuccessResponse(res);
-            testUtils.wellFormedUser(res.body.data.user);
-            res.body.data.user.email.should.be.eql(testUser.email);
-            res.body.data.user.roles.should.have.length(1);
-            res.body.data.user.roles[0].should.be.eql('user');
+        testUtils.expectSuccessResponse(res);
+        testUtils.wellFormedUser(res.body.data.user);
+        res.body.data.user.email.should.be.eql(testUser.email);
+        res.body.data.user.roles.should.have.length(1);
+        res.body.data.user.roles[0].should.be.eql('user');
 
-            //now do it again -- but should get error
-            chai.request(server)
-            .post('/v1/users')
-            .send(testUser)
-            .end((err, res) => {
+        //now do it again -- but should get error
+        chai.request(server)
+        .post('/v1/users')
+        .send(testUser)
+        .end((err, res) => {
 
-                should.exist(err);
-                res.status.should.be.eq(403);
-                res.body.api.error.message.should.be.eql('Email already exists');
-              done();
-            });
-          });
+          should.exist(err);
+          res.status.should.be.eq(403);
+          res.body.api.error.message.should.be.eql('Email already exists');
+          done();
+        });
+      });
     });
     it('should create 1 administrator  & get auth token - register & auth', function(done) {
 

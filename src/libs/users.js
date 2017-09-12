@@ -157,6 +157,26 @@ let Users = {
         safeUserArray.push(this.createReturnableUser(user));
       }, this);
     return safeUserArray;
+  },
+  resetPassword: function(user){
+    let self = this;
+    return new Promise(function(resolve, reject) {
+
+      if(!user || !user.email || !user.password) return reject("can't create user because required params are empty");
+      
+      let query = { email: user.email };
+
+      UserModel.findOne(query,(err, foundUser) => {
+
+        if(err)return reject(err);
+        foundUser.password = user.password;
+        foundUser.save(err2 =>{
+          
+          if(err2)return reject(err2);
+          return resolve(self.createReturnableUser(foundUser));
+        });
+      });
+    });
   }
 }
 

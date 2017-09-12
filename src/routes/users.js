@@ -35,6 +35,30 @@ router.post('/',  function(req, res) {
     return res.status(500).send({ error: err.message });
   });
 });
+
+// reset password 
+router.patch('/password/reset', libAuthorization.AdminOrId,  function(req, res) {
+  let data = req.body;
+  // just email and password
+
+  api.action="reset password";
+
+  libUsers.resetPassword(data).then( userObj => {
+    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
+  }).then( finalObj => {
+    res.status(200).json(finalObj);
+  }).catch(err => {
+      let meta={},data={};
+      api.error = { type: "reset password failure", message: JSON.stringify(err)};
+      return responseLib.buildResponse(req, api, meta, data).then( obj => {
+        // email already registered
+        return res.status(403).json(obj);
+      }).catch(err => {
+        res.status(500).send(err);
+      });
+  });
+});
+
 // TBD: when do I use this?
 router.get("/email/:email", libAuthorization.AdminOrId, function(req, res) {
   
