@@ -7,7 +7,7 @@ const libAuthorization = require('../libs/authorization'),
   uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}',
   responseLib = require('../libs/response.js');
 
-let api = { route: "user"};
+let api = { route: "user", cache:false};
 
 // create 1 - registration
 router.post('/',  function(req, res) {

@@ -54,7 +54,15 @@ let TestUsers = {
     })
   },
   deleteAllUsers(){
-    userLib.deleteAllUsersRaw();
+    return new Promise(function(resolve, reject) {
+      try{
+        userLib.deleteAllUsersRaw();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
+    
   }
 }
 module.exports = TestUsers;

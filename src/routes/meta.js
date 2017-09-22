@@ -6,7 +6,7 @@ const config = require('../config.js'),
   _ = require('underscore'),
   responseLib = require('../libs/response.js');
 
-let api = { route: "meta"};
+let api = { route: "meta", cache:false};
 
 // public, no auth required
 router.get('/', function(req, res) {

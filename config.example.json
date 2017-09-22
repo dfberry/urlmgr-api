@@ -18,5 +18,11 @@
         "127.0.0.1",
         "::1"
       ]
-    }  
+  },
+  "cache":{
+    "timeoutAfter": {
+      "value": 10,
+      "unit": "minutes" 
+    }
+  }   
 }

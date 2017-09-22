@@ -17,6 +17,8 @@ const express = require('express'),
     libError = require('./routes/errors'),
     _ = require('underscore'),
     app = express(),
+    memcache = require('memory-cache'),
+    routeCache = require('./routes/cache'),
     mongoose = require('mongoose');
 
 // for coverage of apis
@@ -41,10 +43,10 @@ mongoose.Promise = require('bluebird');
 let preRouteError = "";
 
 
-    let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
-                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
-    let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
-    mongoose.connect(db, mongooseOptions);
+let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+            replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
+let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
+mongoose.connect(db, mongooseOptions);
 
 // Log database events to the console for debugging purposes
 mongoose.connection.on('open', function () {  
@@ -75,6 +77,13 @@ mongoose.connection.on('error',function (err) {
 app.set('env', CONFIG.env || 'development');
 app.set('port', CONFIG.port || 3000);
 app.locals.container = CONFIG.db.db;
+app.locals.cache = memcache;
+app.locals.db = mongoose.connection.db;
+
+// milliseconds
+let oneMinute = 60000;
+CONFIG.cacheTimeMs = 10 * oneMinute; // 10 minute cache
+app.locals.config = CONFIG;
 
 console.log(CONFIG);
 
@@ -107,6 +116,7 @@ app.use('/v1/users',users);
 app.use('/v1/auth',auth);
 app.use('/v1/meta', meta);
 app.use('/v1/tags', tags);
+app.use('/v1/cache',routeCache);
 
 // test/coverage only
 if ((CONFIG.env === 'development') && isCoverageEnabled) {
@@ -133,7 +143,7 @@ app.use(libError);
 
 app.use(function (err, req, res, next) {
   console.error(err.stack)
-  res.status(500).send('Something broke!')
+  res.status(500).send('Something broke! ' + JSON.stringify(err))
 })
 
 process.on('uncaughtException', function (err) {

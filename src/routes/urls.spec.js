@@ -28,42 +28,35 @@ describe('urls', function() {
     let isAdmin = true;
     let modifyName = true;
 
-    TestUrls.deleteAllUrls();
-    TestUsers.deleteAllUsers();
-    testTokens.deleteAll();
-
-    let pUser1 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, !modifyName);
-
-    // if the code runs too fast, the email isn't unique
-    let pUser2 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, modifyName);
-
-    // if the code runs too fast, the email isn't unique
-    let pUserPublic = TestUsers.createAuthenticatedUser({email:"dinaberry@outlook.com", password:"testtesttest"}, !isAdmin, !modifyName);
-
-    Promise.all([pUser1, pUser2, pUserPublic]).then(users => {
-      testUser = users[0];
-      testUser2 = users[1];
-      pUserDinaBerry = users[2];
-      testUserId = testUser.id;
-      testUserToken = testUser.token.token;
-      done();
+    TestUrls.deleteAllUrls()
+    .then( () => {
+      return TestUsers.deleteAllUsers();
+    }).then( () => {
+      return testTokens.deleteAll();
+    }).then( () => {
+      let pUser1 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, !modifyName);
+      
+      // if the code runs too fast, the email isn't unique
+      let pUser2 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, modifyName);
+  
+      // if the code runs too fast, the email isn't unique
+      let pUserPublic = TestUsers.createAuthenticatedUser({email:"dinaberry@outlook.com", password:"testtesttest"}, !isAdmin, !modifyName);
+  
+      return Promise.all([pUser1, pUser2, pUserPublic]);
+    }).then(users => {
+        testUser = users[0];
+        testUser2 = users[1];
+        pUserDinaBerry = users[2];
+        testUserId = testUser.id;
+        testUserToken = testUser.token.token;
+        console.log("before Each done");
+        return done();
     }).catch(err => {
       console.log("urls.spec.js before - can't create test user - " + JSON.stringify(err));
     });
   });
   describe('public success', function() {
 
-    // use same urls for all these tests
-    /*
-    before(function (done) {
-      done();
-    });
-
-    after(function(done){
-      
-      done();
-    });
-    */
     describe('public tag cloud success', function() {
       it('should return empty array of urls when no tags selected', function(done) {
 
@@ -309,7 +302,8 @@ describe('urls', function() {
             done();
           });
       });
-      it('should return error when public user is NOT created', function(done) {
+      // when I start caching this information, it shouldn't matter if public user exists or not
+      xit('should return error when public user is NOT created', function(done) {
         
                 TestUrls.createUrl(pUserDinaBerry, {
                   userUuid: pUserDinaBerry.id,
@@ -352,7 +346,7 @@ describe('urls', function() {
                 chai.request(server)
                   .get('/v1/urls/public')
                   .end((err, res) => {
-        
+
                     // meta
                     should.exist(err);
                     testUtils.expectFailureResponse(res);

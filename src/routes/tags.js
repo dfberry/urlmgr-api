@@ -6,7 +6,11 @@ const express = require('express'),
   libAuthorization = require('../libs/authorization'),
   libResponse = require('../libs/response');
 
-let api = { route: "tags"};
+
+let api = { route: "tags", cache:false};
+// milliseconds
+let oneMinute = 60000;
+let cacheTimeMs = 10 * oneMinute; // 10 minute cache
 
 // PUBLIC 
 // get all tags - public tag cloud
@@ -14,7 +18,17 @@ router.get("/all", function(req, res) {
 
   api.action="get all tags - public tag cloud";
 
-  tagsLib.getAll().then(tags => {
+  // get cache
+  let cacheLib = req.app.locals.cache;
+  let tagCache = cacheLib ? cacheLib.get("tags"): undefined;
+  api.cache = tagCache ? true: false;
+  cacheTimeMs = (tagCache && req.app.locals.config && req.app.locals.config.cacheTimeMs) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
+  
+  let pTags = tagCache ? Promise.resolve(tagCache): tagsLib.getAll();
+
+
+  pTags.then(tags => {
+    if(!tagCache && tags && cacheTimeMs) cacheLib.put("tags",tags, cacheTimeMs);
 		return libResponse.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);

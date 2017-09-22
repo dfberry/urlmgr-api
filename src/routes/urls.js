@@ -7,7 +7,11 @@ const express = require('express'),
   libAuthorization = require('../libs/authorization'),
   libResponse = require('../libs/response');
 
-let api = { route: "url"};
+// milliseconds
+let oneMinute = 60000;
+let cacheTimeMs = 10 * oneMinute; // 10 minute cache
+
+let api = { route: "url", cache:false};
 
 // create 1
 router.post('/', libAuthorization.AdminOrId, function(req, res) {
@@ -55,7 +59,16 @@ router.get("/public", function(req, res) {
   
   api.action="public";
 
-  urlLib.public(publicThinkingAboutEmailaddress, n).then(url => {
+  // get cache
+  let cacheLib = req.app.locals.cache;
+  let urlCache = cacheLib ? cacheLib.get("urls"): undefined;
+  api.cache = urlCache ? true: false;  
+  cacheTimeMs = (urlCache && req.app.locals.config && req.app.locals.config.cacheTimeMs) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
+
+  let pUrls = urlCache ? Promise.resolve(urlCache): urlLib.public(publicThinkingAboutEmailaddress, n);
+
+  pUrls.then(url => {
+    if(!urlCache && url && cacheTimeMs) cacheLib.put("urls",url, cacheTimeMs);
 		return libResponse.buildResponseSuccess(req, api, {}, {urls: url});
   }).then( finalObj => {
     res.status(200).json(finalObj);

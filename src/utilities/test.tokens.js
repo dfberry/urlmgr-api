@@ -5,9 +5,16 @@ const tokensLib = require('../libs/tokens'),
 
 
 let TestTokens = {
-
+  
   deleteAll: function(){
-    tokensLib.deleteAllRaw();
+    return new Promise(function(resolve, reject) {
+      try{
+        tokensLib.deleteAllRaw();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
 module.exports = TestTokens;

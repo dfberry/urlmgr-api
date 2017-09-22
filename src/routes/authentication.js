@@ -7,7 +7,7 @@ const config = require('../config.js'),
 	express = require('express'),
 	router = express.Router(),
 	_ = require('underscore'),
-	api = { name: "authenticate"};
+	api = { name: "authenticate", cache:false};
 
 //Hacking mongodb authentication
 //https://blog.websecurify.com/2014/08/attacks-nodejs-and-mongodb-part-to.html

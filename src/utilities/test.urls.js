@@ -20,7 +20,14 @@ let TestUrls = {
 
   },
   deleteAllUrls: function(){
-    urlLib.deleteAllUrlsRaw();
+    return new Promise(function(resolve, reject) {
+      try{
+        urlLib.deleteAllUrlsRaw();
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
 module.exports = TestUrls;
