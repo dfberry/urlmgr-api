@@ -13,9 +13,8 @@ const express = require('express'),
     memcache = require('memory-cache'),
     v1Routes = require("./routes/v1/route"),
     database = require('./database');
-    /*,
-    mongoose = require('mongoose');
-*/
+
+    
 // for coverage of apis
 let im = undefined, 
     isCoverageEnabled = false;
@@ -32,59 +31,15 @@ if (CONFIG.env === 'development'){
     }
 }
 
-
-//mongoose.Promise = require('bluebird');
 app.locals.cache = memcache;
 
-let preRouteError = "";
-database.connect(CONFIG,app); //app.locals.dbconnection is the db connection
-/*
-let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
-            replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
-let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
-mongoose.connect(db, mongooseOptions);
-
-// Log database events to the console for debugging purposes
-mongoose.connection.on('open', function () {  
-  console.log("Mongoose open event"); 
-});
-mongoose.connection.on('close', function () {  
-  console.log("Mongoose close event"); 
-});
-mongoose.connection.on('connected', function () {  
-  console.log("Mongoose connected event");  
-  
-  var admin = new mongoose.mongo.Admin(mongoose.connection.db);
-  admin.buildInfo(function (err, info) {
-    let mongoVersion = info.version;
-     app.set('ver-mongo', mongoVersion || undefined);
-     app.locals.db = mongoose.connection.db;
-     app.locals.container = CONFIG.db.db;
-  });
-
-}); 
-mongoose.connection.on('disconnected', function () {  
-  console.log("Mongoose disconnected event"); 
-});
-mongoose.connection.on('error',function (err) {  
-  console.log("Mongoose error event:");
-  console.log(err);
-  process.exit(1);
-}); 
-*/
+// get db connection
+//app.locals.dbconnection is the db connection
+database.connect(CONFIG,app); 
 
 app.set('env', CONFIG.env || 'development');
 app.set('port', CONFIG.port || 3000);
-
-
-
-
-// milliseconds
-let oneMinute = 60000;
-CONFIG.cacheTimeMs = 10 * oneMinute; // 10 minute cache
 app.locals.config = CONFIG;
-
-console.log(CONFIG);
 
 // Attach middleware
 app.use(require('morgan')('combined'));
@@ -102,7 +57,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-// Attach routes
+// ROOT
 app.get("/", (req, res) => {
     libResponse.buildResponseSuccess(req, { route: 'root'}, {}, {}).then(response => {
         res.json(response);
@@ -110,6 +65,8 @@ app.get("/", (req, res) => {
         res.json({error: err});
     });
 });
+
+// V1 API
 app.use('/v1/',v1Routes);
 
 // test/coverage only
@@ -133,7 +90,6 @@ app.use(function(req, res, next) {
 
 // catch all error handlers
 app.use(libError);
-
 
 app.use(function (err, req, res, next) {
   console.error(err.stack)

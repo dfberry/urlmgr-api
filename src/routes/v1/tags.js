@@ -22,10 +22,9 @@ router.get("/all", function(req, res) {
   let cacheLib = req.app.locals.cache;
   let tagCache = cacheLib ? cacheLib.get("tags"): undefined;
   api.cache = tagCache ? true: false;
-  cacheTimeMs = (tagCache && req.app.locals.config && req.app.locals.config.cacheTimeMs) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
+  cacheTimeMs = (tagCache && req.app.locals.config && req.app.locals.config.cacheMilliseconds) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
   
   let pTags = tagCache ? Promise.resolve(tagCache): tagsLib.getAll();
-
 
   pTags.then(tags => {
     if(!tagCache && tags && cacheTimeMs) cacheLib.put("tags",tags, cacheTimeMs);

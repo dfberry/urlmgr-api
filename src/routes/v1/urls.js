@@ -63,7 +63,7 @@ router.get("/public", function(req, res) {
   let cacheLib = req.app.locals.cache;
   let urlCache = cacheLib ? cacheLib.get("urls"): undefined;
   api.cache = urlCache ? true: false;  
-  cacheTimeMs = (urlCache && req.app.locals.config && req.app.locals.config.cacheTimeMs) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
+  cacheTimeMs = (urlCache && req.app.locals.config && req.app.locals.config.cacheMilliseconds) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
 
   let pUrls = urlCache ? Promise.resolve(urlCache): urlLib.public(publicThinkingAboutEmailaddress, n);
 
