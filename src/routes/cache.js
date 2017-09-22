@@ -4,6 +4,7 @@ const config = require('../config.js'),
   express = require('express'),
   router = express.Router(),
   _ = require('underscore'),
+  libAuthorization = require('../libs/authorization'),
   responseLib = require('../libs/response.js');
 
 let api = { route: "cache", cache:false};
@@ -24,7 +25,7 @@ router.get('/', function(req, res) {
   });
 });
 
-router.delete('/', function(req, res) {
+router.delete('/', libAuthorization.admin, function(req, res) {
   
   let meta = {};
   let data = { cache:{action:'clear'}};
