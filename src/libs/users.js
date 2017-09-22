@@ -82,16 +82,22 @@ let Users = {
 
       if(!user) return reject("can't create user because user is empty");
       let userObj = new UserModel(user);
-      userObj.save((err, _user) => {
-        if(err)return reject(err); 
-        if(!_user) return reject("user not returned");
 
-        // mongoose create is wrapped in another object
-        if(_user && _user._doc)return resolve(self.createReturnableUser(_user._doc));      
-        return resolve(self.createReturnableUser(_user));
-      }).catch(err => {
-        reject(err);
-      });
+
+      try{
+        userObj.save((err, _user) => {
+
+          if(err)return reject(err); 
+          if(!_user) return reject("user not returned");
+
+          // mongoose create is wrapped in another object
+          if(_user && _user._doc) return resolve(self.createReturnableUser(_user._doc));      
+          return resolve(self.createReturnableUser(_user));
+        });
+      } catch (err) {
+        console.log("create user error = " + err);
+      }
+
     });
   },
   setLastLogin: function(id){

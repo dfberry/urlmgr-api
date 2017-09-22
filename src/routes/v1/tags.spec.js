@@ -4,17 +4,17 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  testUtils = require('../utilities/test.utils'),
-  testTokens = require('../utilities/test.tokens'),
-  TestUsers = require('../utilities/test.users'),
-  TestUrls = require('../utilities/test.urls'),
-  server = require('../server.js'),
+  testUtils = require('../../utilities/test.utils'),
+  testTokens = require('../../utilities/test.tokens'),
+  TestUsers = require('../../utilities/test.users'),
+  TestUrls = require('../../utilities/test.urls'),
+  server = require('../../server.js'),
   should = chai.should();
 
 chai.use(chaiHttp);
 
 
-describe('tags route',  ()=> {
+describe('route v1 tags',  ()=> {
 
   let testUserAdmin, 
     testUserNotAdmin, 
@@ -26,16 +26,17 @@ describe('tags route',  ()=> {
     let isAdmin = true;
     let modifyName = true;
 
-    TestUrls.deleteAllUrls();
-    TestUsers.deleteAllUsers();
-    testTokens.deleteAll();
-
-    let pUser1 = TestUsers.createAuthenticatedUser(undefined, isAdmin, !modifyName);
-
-    // if the code runs too fast, the email isn't unique
-    let pUser2 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, modifyName);
-
-    Promise.all([pUser1, pUser2]).then(users => {
+    TestUrls.deleteAllUrls().then( () => {
+      return TestUsers.deleteAllUsers();
+    }).then( () => {
+      return testTokens.deleteAll();
+    }).then( () => {
+      let pUser1 = TestUsers.createAuthenticatedUser(undefined, isAdmin, !modifyName);
+      
+      // if the code runs too fast, the email isn't unique
+      let pUser2 = TestUsers.createAuthenticatedUser(undefined, !isAdmin, modifyName);
+      return Promise.all([pUser1, pUser2]);
+    }).then(users => {
       testUserAdmin = users[0];
       testUserNotAdmin = users[1];
 

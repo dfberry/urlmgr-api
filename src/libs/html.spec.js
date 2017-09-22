@@ -13,7 +13,7 @@ const testLinks = [
   { path: './testData/31a.html', linkCount :6, feedCount: 3, title: 'Project 31-A' }
 ];
 
-describe('html', function() {
+describe('lib html', function() {
 
     it('should return html', function(done) {
       html.getHtml('http://www.google.com')

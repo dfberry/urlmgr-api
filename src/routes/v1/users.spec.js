@@ -4,33 +4,36 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  server = require('../server.js'),
-  testUtils = require('../utilities/test.utils'),
-  testUrls = require('../utilities/test.urls'),
-  testUsers = require('../utilities/test.users'),
-  testTokens = require('../utilities/test.tokens'),
+  server = require('../../server.js'),
+  testUtils = require('../../utilities/test.utils'),
+  TestUrls = require('../../utilities/test.urls'),
+  TestUsers = require('../../utilities/test.users'),
+  TestTokens = require('../../utilities/test.tokens'),
   should = chai.should(),
   expect = require('chai').expect;
 
 chai.use(chaiHttp);
 
-describe('users', function() {
+describe('route v1 users', function() {
 
     let generalUser;
     let adminUser;
 
     beforeEach(function(done) {
-      testUsers.deleteAllUsers();
-      testTokens.deleteAll();
-      testUrls.deleteAllUrls();
+
+      TestUrls.deleteAllUrls().then( () => {
+        return TestUsers.deleteAllUsers();
+      }).then( () => {
+        return TestTokens.deleteAll();
+      }).then( () => {
+        let isAdmin = true;
+        let modifyName = true;
   
-      let isAdmin = true;
-      let modifyName = true;
-
-      let pGeneralUser = testUsers.createAuthenticatedUser(undefined, !isAdmin, !modifyName);
-      let pAdminUser = testUsers.createAuthenticatedUser(undefined, isAdmin, !modifyName);
-
-      Promise.all([pGeneralUser, pAdminUser]).then(users => {
+        let pGeneralUser = TestUsers.createAuthenticatedUser(undefined, !isAdmin, !modifyName);
+        let pAdminUser = TestUsers.createAuthenticatedUser(undefined, isAdmin, !modifyName);
+  
+        return Promise.all([pGeneralUser, pAdminUser]);
+      }).then(users => {
         generalUser = users[0];
         adminUser = users[1];
 
@@ -185,7 +188,7 @@ describe('users', function() {
       let isAdmin=true;
       let agent = chai.request.agent(server);
 
-      testUsers.createAuthenticatedUser(undefined, !isAdmin).then(userWithToken => {
+      TestUsers.createAuthenticatedUser(undefined, !isAdmin).then(userWithToken => {
  
         testUtils.wellFormedUser(userWithToken);
 
@@ -215,14 +218,14 @@ describe('users', function() {
 
       let numUsers = 3;
       for(let i=0, max=numUsers;i<max;i++){
-        Promise.resolve(testUsers.createUser());
+        Promise.resolve(TestUsers.createUser());
       }
 
       let isAdmin=true, 
         user=undefined;
 
 
-      testUsers.createAuthenticatedUser(user, isAdmin).then(admin => {
+      TestUsers.createAuthenticatedUser(user, isAdmin).then(admin => {
         // get user by email returns token
         agent.get('/v1/users/')
           .set('x-access-token', admin.token.token)
@@ -249,7 +252,7 @@ describe('users', function() {
       let user = null;
       let isAdmin = true;
 
-      testUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
+      TestUsers.createAuthenticatedUser(user, !isAdmin).then(user => {
         // get user by email returns token
         chai.request(server)
           .delete('/v1/users/' + user.id + "/tokens")

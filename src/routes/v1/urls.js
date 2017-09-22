@@ -1,11 +1,11 @@
 "use strict";
 
 const express = require('express'),
-  config = require('../config.js'),
+  config = require('../../config.js'),
   router = express.Router(),
-  urlLib = require('../libs/urls'),
-  libAuthorization = require('../libs/authorization'),
-  libResponse = require('../libs/response');
+  urlLib = require('../../libs/urls'),
+  libAuthorization = require('../../libs/authorization'),
+  libResponse = require('../../libs/response');
 
 // milliseconds
 let oneMinute = 60000;

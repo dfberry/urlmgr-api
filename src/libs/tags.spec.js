@@ -23,7 +23,7 @@ const exArrFromMongo = [
   { "count" : 1, "tag" : "nodejs" },
   { "count" : 1, "tag" : "testing" }];
 
-describe('tags library', function() {
+describe('lib tags', function() {
 
   let stub;
 

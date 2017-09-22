@@ -3,13 +3,14 @@
 
 const chai = require('chai'),
   should = chai.should(),
+  testBeforeEach = require('../utilities/test.beforeEach'),
   testUtils = require('../utilities/test.utils'),
   testUsers = require('../utilities/test.users'),
   testTokens = require('../utilities/test.tokens'),
   authLib = require('./authentication'),
   tokenLib = require('./tokens');
 
-describe('tokens lib', function() {
+describe('lib tokens', function() {
 
   let jwt = {
     "issuer": "test.dfberry.io",
@@ -17,9 +18,11 @@ describe('tokens lib', function() {
   };
 
   beforeEach(function(done) {
-    testUsers.deleteAllUsers();
-    testTokens.deleteAll();
-    done();
+    testBeforeEach.clearOutDB().then( () => {
+      done();
+    }).catch(err => {
+      done(err);
+    });
   });
 
 

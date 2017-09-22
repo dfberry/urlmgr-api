@@ -4,14 +4,14 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  server = require('../server.js'),
-  utils = require('../utilities/test.utils'),
+  server = require('../../server.js'),
+  utils = require('../../utilities/test.utils'),
   should = chai.should();
 
 chai.use(chaiHttp);
 
 
-describe('meta', function() {
+describe('route v1 meta', function() {
 
     it('should return meta info for request', function(done) {
 

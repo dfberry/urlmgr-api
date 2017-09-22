@@ -7,7 +7,7 @@ const userLib = require('./users'),
   should = chai.should(),
   expect = require('chai').expect;
 
-describe('users lib', function() {
+describe('lib users', function() {
 
     it('should create returnable array of users (no password, no id)', function(done) {
 

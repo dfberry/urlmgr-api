@@ -1,9 +1,9 @@
 "use strict";
 
-const config = require('../config.js'),
-	libAuthentication = require('../libs/authentication'),
-	libUser = require('../libs/users'),
-	libResponse = require('../libs/response'),
+const config = require('../../config.js'),
+	libAuthentication = require('../../libs/authentication'),
+	libUser = require('../../libs/users'),
+	libResponse = require('../../libs/response'),
 	express = require('express'),
 	router = express.Router(),
 	_ = require('underscore'),

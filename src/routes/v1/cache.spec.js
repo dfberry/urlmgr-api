@@ -4,14 +4,14 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  server = require('../server.js'),
-  utils = require('../utilities/test.utils'),
+  server = require('../../server.js'),
+  utils = require('../../utilities/test.utils'),
   should = chai.should();
 
 chai.use(chaiHttp);
 
 
-describe('cache', function() {
+describe('route v1 cache', function() {
     it('should return cache info for request', function(done) {
 
       // create user

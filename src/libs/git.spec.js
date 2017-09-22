@@ -7,7 +7,7 @@ const chai = require('chai'),
   should = chai.should(),
   git = require('./git');
 
-describe('git', function() {
+describe('lib git', function() {
 
     it('should return git commit', function(done) {
       git.gitBranch()

@@ -6,21 +6,16 @@ const express = require('express'),
     favicon = require('serve-favicon'),
     path = require('path'),
     CONFIG = require('./config.js'),
-    urls = require('./routes/urls'),
-    users = require('./routes/users'),
     libClaims = require('./libs/claims'),
-    libMeta = require('./libs/meta'),
     libResponse = require('./libs/response'),
-    meta = require('./routes/meta'),
-    tags = require('./routes/tags'),
-    auth = require('./routes/authentication'),
-    libError = require('./routes/errors'),
-    _ = require('underscore'),
+    libError = require('./errors.js'),
     app = express(),
     memcache = require('memory-cache'),
-    routeCache = require('./routes/cache'),
+    v1Routes = require("./routes/v1/route"),
+    database = require('./database');
+    /*,
     mongoose = require('mongoose');
-
+*/
 // for coverage of apis
 let im = undefined, 
     isCoverageEnabled = false;
@@ -38,11 +33,12 @@ if (CONFIG.env === 'development'){
 }
 
 
-mongoose.Promise = require('bluebird');
+//mongoose.Promise = require('bluebird');
+app.locals.cache = memcache;
 
 let preRouteError = "";
-
-
+database.connect(CONFIG,app); //app.locals.dbconnection is the db connection
+/*
 let mongooseOptions = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
             replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } }; 
 let db = 'mongodb://' + CONFIG.db.host + ":" + CONFIG.db.port + "/" + CONFIG.db.db;
@@ -62,6 +58,8 @@ mongoose.connection.on('connected', function () {
   admin.buildInfo(function (err, info) {
     let mongoVersion = info.version;
      app.set('ver-mongo', mongoVersion || undefined);
+     app.locals.db = mongoose.connection.db;
+     app.locals.container = CONFIG.db.db;
   });
 
 }); 
@@ -70,15 +68,16 @@ mongoose.connection.on('disconnected', function () {
 });
 mongoose.connection.on('error',function (err) {  
   console.log("Mongoose error event:");
-  console.log(err)
+  console.log(err);
+  process.exit(1);
 }); 
-
+*/
 
 app.set('env', CONFIG.env || 'development');
 app.set('port', CONFIG.port || 3000);
-app.locals.container = CONFIG.db.db;
-app.locals.cache = memcache;
-app.locals.db = mongoose.connection.db;
+
+
+
 
 // milliseconds
 let oneMinute = 60000;
@@ -111,12 +110,7 @@ app.get("/", (req, res) => {
         res.json({error: err});
     });
 });
-app.use('/v1/urls',urls);
-app.use('/v1/users',users);
-app.use('/v1/auth',auth);
-app.use('/v1/meta', meta);
-app.use('/v1/tags', tags);
-app.use('/v1/cache',routeCache);
+app.use('/v1/',v1Routes);
 
 // test/coverage only
 if ((CONFIG.env === 'development') && isCoverageEnabled) {

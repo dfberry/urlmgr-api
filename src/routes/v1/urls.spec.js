@@ -4,18 +4,18 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  testUtils = require('../utilities/test.utils'),
-  testTokens = require('../utilities/test.tokens'),
-  TestUsers = require('../utilities/test.users'),
-  TestUrls = require('../utilities/test.urls'),
-  server = require('../server.js'),
+  testUtils = require('../../utilities/test.utils'),
+  testTokens = require('../../utilities/test.tokens'),
+  TestUsers = require('../../utilities/test.users'),
+  TestUrls = require('../../utilities/test.urls'),
+  server = require('../../server.js'),
   should = chai.should();
 
 chai.use(chaiHttp);
 
 
 
-describe('urls', function() {
+describe('route v1 urls', function() {
 
   let testUser,
     testUser2,
@@ -28,8 +28,7 @@ describe('urls', function() {
     let isAdmin = true;
     let modifyName = true;
 
-    TestUrls.deleteAllUrls()
-    .then( () => {
+    TestUrls.deleteAllUrls().then( () => {
       return TestUsers.deleteAllUsers();
     }).then( () => {
       return testTokens.deleteAll();
@@ -55,6 +54,7 @@ describe('urls', function() {
       console.log("urls.spec.js before - can't create test user - " + JSON.stringify(err));
     });
   });
+
   describe('public success', function() {
 
     describe('public tag cloud success', function() {
@@ -84,34 +84,38 @@ describe('urls', function() {
       });
       it('should return empty array of urls when unused tag is set', function(done) {
 
-        TestUrls.createUrl(testUser, {
+        let pUrl1 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',
           "tags": [".net", "dina", "js"]
         });
-        TestUrls.createUrl(testUser, {
+        let pUrl2 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://test2.com',
           "tags": [".net", "db", "wayne", "sql"]
         });
 
-        TestUrls.createUrl(testUser2, {
+        let pUrl3 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.dfberry.io',
           "tags": [".net", "db", "john", "sql"]
         });
-        TestUrls.createUrl(testUser2, {
+        let pUrl4 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test3.io',
           "tags": ["john", "db", "mongo"]
         });
-        TestUrls.createUrl(testUser2, {
+        let pUrl5 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test4.io',
           "tags": ["john", "db", "postgresql"]
         });
 
-        chai.request(server)
+        Promise.all([pUrl1,pUrl2,pUrl3,pUrl4,pUrl5]).then(urls => {
+
+          //don't really care about urls
+
+          chai.request(server)
           .post('/v1/urls/tags')
           .send({
             tags: ["xyz-does-not-exist"]
@@ -129,266 +133,226 @@ describe('urls', function() {
               testUtils.wellFormedPublicUrl(url);
             });
 
-            TestUrls.deleteAllUrls();
+
             done();
+
+            
           });
+        }).catch(err => {
+          console.log(err);
+          done(err);
+        });
+
+
 
       });
       it('should return filled array of urls when 1 used tag is set', function(done) {
 
-        TestUrls.createUrl(testUser, {
+        let p1 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',
           "tags": [".net", "dina", "js"]
         });
-        TestUrls.createUrl(testUser, {
+        let p2 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://test2.com',
           "tags": [".net", "db", "wayne", "sql"]
         });
 
-        TestUrls.createUrl(testUser2, {
+        let p3 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.dfberry.io',
           "tags": [".net", "db", "john", "sql"]
         });
-        TestUrls.createUrl(testUser2, {
+        let p4 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test3.io',
           "tags": ["john", "db", "mongo"]
         });
-        TestUrls.createUrl(testUser2, {
+        let p5 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test4.io',
           "tags": ["john", "db", "postgresql"]
         });
 
-        chai.request(server)
-          .post('/v1/urls/tags')
-          .send({
-            tags: ["john"]
-          })
-          .end((err, res) => {
+        Promise.all([p1,p2,p3,p4,p5]).then(urls => {
+          chai.request(server)
+            .post('/v1/urls/tags')
+            .send({
+              tags: ["john"]
+            })
+            .end((err, res) => {
 
-            // meta
-            should.not.exist(err);
-            testUtils.expectSuccessResponse(res);
+              // meta
+              should.not.exist(err);
+              testUtils.expectSuccessResponse(res);
 
-            // data
-            res.body.data.urls.should.be.a('array');
-            res.body.data.urls.length.should.be.eql(3);
-            res.body.data.urls.forEach(url => {
-              testUtils.wellFormedPublicUrl(url);
+              // data
+              res.body.data.urls.should.be.a('array');
+              res.body.data.urls.length.should.be.eql(3);
+              res.body.data.urls.forEach(url => {
+                testUtils.wellFormedPublicUrl(url);
+              });
+              done();
             });
-
-            TestUrls.deleteAllUrls();
-            done();
+          }).catch(err => {
+            console.log(err);
+            done(err);
           });
-
       });
       it('should return filled array of urls when n used tags are set', function(done) {
 
-        TestUrls.createUrl(testUser, {
+        let p1 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com',
           "tags": [".net", "dina", "js"]
         });
-        TestUrls.createUrl(testUser, {
+        let p2 = TestUrls.createUrl(testUser, {
           userUuid: testUser.id,
           url: 'http://test2.com',
           "tags": [".net", "db", "wayne", "sql"]
         });
 
-        TestUrls.createUrl(testUser2, {
+        let p3 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.dfberry.io',
           "tags": [".net", "db", "john", "sql"]
         });
-        TestUrls.createUrl(testUser2, {
+        let p4 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test3.io',
           "tags": ["john", "db", "mongo"]
         });
-        TestUrls.createUrl(testUser2, {
+        let p5 = TestUrls.createUrl(testUser2, {
           userUuid: testUser2.id,
           url: 'http://www.test4.io',
           "tags": ["john", "db", "postgresql"]
         });
+        Promise.all([p1,p2,p3,p4,p5]).then(urls => {
 
-        chai.request(server)
-          .post('/v1/urls/tags')
-          .send({
-            tags: ["john", "dina"]
-          })
-          .end((err, res) => {
+          chai.request(server)
+            .post('/v1/urls/tags')
+            .send({
+              tags: ["john", "dina"]
+            })
+            .end((err, res) => {
 
-            // meta
-            should.not.exist(err);
-            testUtils.expectSuccessResponse(res);
+              // meta
+              should.not.exist(err);
+              testUtils.expectSuccessResponse(res);
 
-            // data
-            res.body.data.urls.should.be.a('array');
-            res.body.data.urls.length.should.be.eql(4);
-            res.body.data.urls.forEach(url => {
-              testUtils.wellFormedPublicUrl(url);
+              // data
+              res.body.data.urls.should.be.a('array');
+              res.body.data.urls.length.should.be.eql(4);
+              res.body.data.urls.forEach(url => {
+                testUtils.wellFormedPublicUrl(url);
+              });
+
+              TestUrls.deleteAllUrls();
+              done();
             });
-
-            TestUrls.deleteAllUrls();
-            done();
+          }).catch(err => {
+            console.log(err);
+            done(err);
           });
-
       });
     });
     describe('public thinkingabout ', function() {
       it('should return array of urls when public user is created', function(done) {
 
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p1 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://1.unittest.test.com',
           "tags": [".net", "dina", "js", "1"]
         });
 
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p2 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://2.unittest.test.com',
           "tags": ["2"]
         });
 
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p3 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://3.unittest.test.com',
           "tags": [".net", "3"]
         });
 
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p4 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://4.unittest.test.com',
           "tags": [".net", "dina", "js","4"]
         });
 
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p5 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://5.unittest.test.com',
           "tags": [".net", "dina", "js","5"]
         });
-        TestUrls.createUrl(pUserDinaBerry, {
+        let p6 = TestUrls.createUrl(pUserDinaBerry, {
           userUuid: pUserDinaBerry.id,
           url: 'http://6.unittest.test.com',
           "tags": [".net", "dina", "js","6"]
         });
 
+        Promise.all([p1,p2,p3,p4,p5,p6]).then(urls => {
 
+          chai.request(server)
+            .get('/v1/urls/public')
+            .end((err, res) => {
 
-        chai.request(server)
-          .get('/v1/urls/public')
-          .end((err, res) => {
+              // meta
+              should.not.exist(err);
+              testUtils.expectSuccessResponse(res);
 
-            // meta
-            should.not.exist(err);
-            testUtils.expectSuccessResponse(res);
+              // data
+              res.body.data.urls.should.be.a('array');
 
-            // data
-            res.body.data.urls.should.be.a('array');
+              // because config file says 30 so it will return all 6
+              res.body.data.urls.length.should.be.eql(6);
 
-            // because config file says 30 so it will return all 6
-            res.body.data.urls.length.should.be.eql(6);
+              res.body.data.urls.forEach(url => {
+                testUtils.wellFormedPublicUrl(url);
+              });
 
-            res.body.data.urls.forEach(url => {
-              testUtils.wellFormedPublicUrl(url);
+              done();
             });
-            TestUrls.deleteAllUrls();
-            TestUsers.deleteAllUsers();
-            testTokens.deleteAll();
-            done();
+          }).catch(err => {
+            console.log(err);
+            done(err);
           });
       });
-      // when I start caching this information, it shouldn't matter if public user exists or not
-      xit('should return error when public user is NOT created', function(done) {
-        
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://1.unittest.test.com',
-                  "tags": [".net", "dina", "js", "1"]
-                });
-        
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://2.unittest.test.com',
-                  "tags": ["2"]
-                });
-        
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://3.unittest.test.com',
-                  "tags": [".net", "3"]
-                });
-        
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://4.unittest.test.com',
-                  "tags": [".net", "dina", "js","4"]
-                });
-        
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://5.unittest.test.com',
-                  "tags": [".net", "dina", "js","5"]
-                });
-                TestUrls.createUrl(pUserDinaBerry, {
-                  userUuid: pUserDinaBerry.id,
-                  url: 'http://6.unittest.test.com',
-                  "tags": [".net", "dina", "js","6"]
-                });
-        
-                // delete public user acct
-                TestUsers.deleteAllUsers();
-        
-                chai.request(server)
-                  .get('/v1/urls/public')
-                  .end((err, res) => {
-
-                    // meta
-                    should.exist(err);
-                    testUtils.expectFailureResponse(res);
-        
-                    TestUrls.deleteAllUrls();
-                    TestUsers.deleteAllUsers();
-                    testTokens.deleteAll();
-
-                    done();
-                  });
-              });
     });
   });
 
   describe('auth success', function() {
-
     // TODO - make this test more meaningful
     it('should return array of urls for this user only', function(done) {
 
       let arrLength = 3;
 
-      try {
+      let pArr = [];
+
+
+
         // testUser has N urls
         for (let i = 0; i < arrLength; i++) {
-          TestUrls.createUrl(testUser, {
+          pArr.push(TestUrls.createUrl(testUser, {
             userUuid: testUser.id,
             url: 'http://www.31a2ba2a-b718-11dc-8314-0800200c9a66.com'
-          });
+          }));
         }
 
         // testUser2 has N urls
         for (let i = 0; i < arrLength; i++) {
-          TestUrls.createUrl(testUser2, {
+          pArr.push(TestUrls.createUrl(testUser2, {
             userUuid: testUser2.id,
             url: 'http://www.dfberry.io'
-          });
+          }));
         }
-      } catch (err) {
-        console.log("error creating N urls = " + err);
-      }
-
-      chai.request(server)
+      
+      Promise.all(pArr).then( urls => {
+        chai.request(server)
         .get('/v1/urls')
         .query('user=' + testUserId)
         .set('x-access-token', testUserToken)
@@ -408,6 +372,9 @@ describe('urls', function() {
 
           done();
         });
+      }).catch(err =>  {
+        console.log("error creating N urls = " + err);
+      });
     });
     it('should return 1 url', function(done) {
 
@@ -541,7 +508,6 @@ describe('urls', function() {
             });
         });
     });
-
   });
   describe('auth fail', function() {
     it('should NOT return array of urls if not auth presented', function(done) {
@@ -650,5 +616,3 @@ describe('urls', function() {
     });
   });
 });
-
-

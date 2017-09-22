@@ -1,10 +1,10 @@
 "use strict";
 
-const config = require('../config.js'),
+const config = require('../../config.js'),
   express = require('express'),
   router = express.Router(),
   _ = require('underscore'),
-  responseLib = require('../libs/response.js');
+  responseLib = require('../../libs/response.js');
 
 let api = { route: "meta", cache:false};
 

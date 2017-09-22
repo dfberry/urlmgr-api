@@ -4,19 +4,22 @@
 
 const chai = require('chai'),
   chaiHttp = require('chai-http'),
-  server = require('../server.js'),
-  testUtils = require('../utilities/test.utils'),
-  testUsers = require('../utilities/test.users'),
+  server = require('../../server.js'),
+  testUtils = require('../../utilities/test.utils'),
+  testUsers = require('../../utilities/test.users'),
   should = chai.should();
 
 chai.use(chaiHttp);
  
 
-describe('authentication', function() {
+describe('route v1 authentication', function() {
 
     beforeEach(function(done) {
-      testUsers.deleteAllUsers();
-      done();
+      testUsers.deleteAllUsers().then( () => {
+        done();
+      }).catch( (err) => {
+        done(err);
+      });
     });
 
     it('should authenticate 1 user to password - login', function(done) {

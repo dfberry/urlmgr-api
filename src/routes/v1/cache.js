@@ -1,11 +1,11 @@
 "use strict";
 
-const config = require('../config.js'),
+const config = require('../../config.js'),
   express = require('express'),
   router = express.Router(),
   _ = require('underscore'),
-  libAuthorization = require('../libs/authorization'),
-  responseLib = require('../libs/response.js');
+  libAuthorization = require('../../libs/authorization'),
+  responseLib = require('../../libs/response.js');
 
 let api = { route: "cache", cache:false};
 

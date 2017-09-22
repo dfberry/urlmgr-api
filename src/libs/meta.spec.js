@@ -8,7 +8,7 @@ const chai = require('chai'),
   expect = chai.expect();
 
 
-describe('meta', function() {
+describe('lib meta', function() {
 
     it('should return meta json object of git info', function(done) {
       meta.git().then(response => {

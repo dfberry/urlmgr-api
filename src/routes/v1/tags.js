@@ -2,9 +2,9 @@
 
 const express = require('express'),
   router = express.Router(),
-  tagsLib = require('../libs/tags'),
-  libAuthorization = require('../libs/authorization'),
-  libResponse = require('../libs/response');
+  tagsLib = require('../../libs/tags'),
+  libAuthorization = require('../../libs/authorization'),
+  libResponse = require('../../libs/response');
 
 
 let api = { route: "tags", cache:false};

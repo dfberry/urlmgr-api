@@ -22,11 +22,12 @@
     "tsc": "tsc",
     "gulp-build:test": "npm run clean && gulp build-test",
     "gulp-build:prod": "npm run clean && gulp build",
+    "gulp-test":"gulp runtests",
     "build:test": "npm run gulp-build:test",
     "build:prod": "npm run gulp-build:prod",
     "coverage": "set COVERAGE=true && istanbul cover node_modules/mocha/bin/_mocha  src/**/*.spec.js -R spec",
-    "test": "npm run build:test && set NODE_ENV=test && node node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js",
-    "test:chrome": "npm run build:test && node --inspect-brk=0.0.0.0:3004 node_modules/mocha/bin/_mocha -t 20000 dist/**/*.spec.js"
+    "test": "npm run build:test && npm run gulp-test",
+    "test:chrome": "npm run build:test && node --inspect-brk=0.0.0.0:3004 node_modules/mocha/bin/_mocha  -t 20000 dist/**/*.spec.js"
   },
   "keywords": [],
   "author": "",
