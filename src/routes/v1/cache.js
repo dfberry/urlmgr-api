@@ -1,11 +1,8 @@
 "use strict";
 
-const config = require('../../config.js'),
-  express = require('express'),
+const express = require('express'),
   router = express.Router(),
-  _ = require('underscore'),
-  libAuthorization = require('../../libs/authorization'),
-  responseLib = require('../../libs/response.js');
+  authorization = require('./authorization');
 
 let api = { route: "cache", cache:false};
 
@@ -18,14 +15,14 @@ router.get('/', function(req, res) {
   let cacheLib = req.app.locals.cache;
   data.cache.values = getCache(cacheLib);
   
-  responseLib.buildResponseSuccess(req, api, meta, data).then ( json => {
+  req.app.locals.libraries.response.buildResponseSuccess(req, api, meta, data).then ( json => {
     res.status(200).send(json);
   }).catch(function(err) {
 		return res.status(500).send({ error: err.message });
   });
 });
 
-router.delete('/', libAuthorization.admin, function(req, res) {
+router.delete('/', authorization.admin, function(req, res) {
   
   let meta = {};
   let data = { cache:{action:'clear'}};
@@ -37,7 +34,7 @@ router.delete('/', libAuthorization.admin, function(req, res) {
     data.cache.values = getCache(cacheLib);
   }
 
-  responseLib.buildResponseSuccess(req, api, meta, data).then ( json => {
+  req.locals.libraries.response.buildResponseSuccess(req, api, meta, data).then ( json => {
     res.status(200).send(json);
   }).catch(function(err) {
     return res.status(500).send({ error: err.message });

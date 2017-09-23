@@ -1,6 +1,6 @@
 "use strict"
 const validator = require('validator'),
-  TokenModel = require('../data/token'),
+  TokenModel = require('../data/index').token,
   Tokens = require('./tokens'),
   Users = require('./users'),
   config = require('../config.js');

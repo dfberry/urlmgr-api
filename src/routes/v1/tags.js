@@ -2,9 +2,7 @@
 
 const express = require('express'),
   router = express.Router(),
-  tagsLib = require('../../libs/tags'),
-  libAuthorization = require('../../libs/authorization'),
-  libResponse = require('../../libs/response');
+  authorization = require('./authorization');
 
 
 let api = { route: "tags", cache:false};
@@ -24,11 +22,11 @@ router.get("/all", function(req, res) {
   api.cache = tagCache ? true: false;
   cacheTimeMs = (tagCache && req.app.locals.config && req.app.locals.config.cacheMilliseconds) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
   
-  let pTags = tagCache ? Promise.resolve(tagCache): tagsLib.getAll();
+  let pTags = tagCache ? Promise.resolve(tagCache): req.app.locals.libraries.tag.getAll();
 
   pTags.then(tags => {
     if(!tagCache && tags && cacheTimeMs) cacheLib.put("tags",tags, cacheTimeMs);
-		return libResponse.buildResponseSuccess(req, api, {}, {tags: tags});
+		return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -38,7 +36,7 @@ router.get("/all", function(req, res) {
 });
 
 // get all tags grouped by count for user (user id in param)
-router.get("/user/:user", libAuthorization.AdminOrId, function(req, res) {
+router.get("/user/:user", authorization.AdminOrId, function(req, res) {
   //TODO = pass in uuid for all requests
   //so only tags associated with user are returned
   //this works for admin as well since authorization checks AdminOrId
@@ -49,8 +47,8 @@ router.get("/user/:user", libAuthorization.AdminOrId, function(req, res) {
   api.action="get all tags grouped by count for user (user id in param)";
   api.userUuid = userId;
 
-  tagsLib.getByUserId(api.userUuid).then(tags => {
-		return libResponse.buildResponseSuccess(req, api, {}, {tags: tags});
+  req.app.locals.libraries.tag.getByUserId(api.userUuid).then(tags => {
+		return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {

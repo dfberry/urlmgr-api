@@ -1,5 +1,5 @@
 "use strict";
-const TokenModel = require('../data/token'),
+const TokenModel = require('../data/index').token,
   jwt = require('jsonwebtoken');
 
 

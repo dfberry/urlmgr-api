@@ -1,11 +1,9 @@
 "use strict";
 
-const libAuthorization = require('../../libs/authorization'),
-  libUsers = require('../../libs/users'),
+const authorization = require('./authorization'),
   express = require('express'),
   router = express.Router(),
-  uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}',
-  responseLib = require('../../libs/response.js');
+  uuidV4Regex = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4{1}[a-fA-F0-9]{3}-[89abAB]{1}[a-fA-F0-9]{3}-[a-fA-F0-9]{12}';
 
 let api = { route: "user", cache:false};
 
@@ -15,8 +13,8 @@ router.post('/',  function(req, res) {
 
   api.action="create";
 
-  libUsers.create(data).then( userObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
+  req.app.locals.libraries.user.create(data).then( userObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {user: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(err => {
@@ -24,7 +22,7 @@ router.post('/',  function(req, res) {
       let meta={},data={};
       api.error = { type: "registration failure", message: "Email already exists"};
       
-      return responseLib.buildResponse(req, api, meta, data).then( obj => {
+      return req.app.locals.libraries.response.buildResponse(req, api, meta, data).then( obj => {
         // email already registered
         return res.status(403).json(obj);
       }).catch(err => {
@@ -37,20 +35,20 @@ router.post('/',  function(req, res) {
 });
 
 // reset password 
-router.patch('/password/reset', libAuthorization.AdminOrId,  function(req, res) {
+router.patch('/password/reset', authorization.AdminOrId,  function(req, res) {
   let data = req.body;
   // just email and password
 
   api.action="reset password";
 
-  libUsers.resetPassword(data).then( userObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
+  req.app.locals.libraries.user.resetPassword(data).then( userObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {user: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(err => {
       let meta={},data={};
       api.error = { type: "reset password failure", message: JSON.stringify(err)};
-      return responseLib.buildResponse(req, api, meta, data).then( obj => {
+      return req.app.locals.libraries.response.buildResponse(req, api, meta, data).then( obj => {
         // email already registered
         return res.status(403).json(obj);
       }).catch(err => {
@@ -60,14 +58,14 @@ router.patch('/password/reset', libAuthorization.AdminOrId,  function(req, res) 
 });
 
 // TBD: when do I use this?
-router.get("/email/:email", libAuthorization.AdminOrId, function(req, res) {
+router.get("/email/:email", authorization.AdminOrId, function(req, res) {
   
   let email = req.params.email;
 
   api.action = "get user by email";
 
-  libUsers.getByEmail(email).then( userObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {user: userObj});
+  req.app.locals.libraries.user.getByEmail(email).then( userObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {user: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -76,12 +74,12 @@ router.get("/email/:email", libAuthorization.AdminOrId, function(req, res) {
 });
 
 // get all
-router.get("/", libAuthorization.admin, function(req, res) {
+router.get("/", authorization.admin, function(req, res) {
 
   api.action = "get all users";
 
-  libUsers.getAll().then( usersObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {users: usersObj});
+  req.app.locals.libraries.user.getAll().then( usersObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {users: usersObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -90,14 +88,14 @@ router.get("/", libAuthorization.admin, function(req, res) {
 });
 
 // get by id
-router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req, res) {
+router.get("/:id(" + uuidV4Regex + ")", authorization.AdminOrId, function(req, res) {
   //let id = req.params.id;
   let id = req.claims.uuid ? req.claims.uuid : undefined;
   
   api.action = "get user by id";
 
-  libUsers.get(id).then( userObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {users: userObj});
+  req.app.locals.libraries.user.get(id).then( userObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {users: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {
@@ -115,15 +113,15 @@ router.get("/:id(" + uuidV4Regex + ")", libAuthorization.AdminOrId, function(req
      *  If no token is passed then it deletes ALL the user's tokens
 
 */
-router.delete("/:id/tokens", libAuthorization.AdminOrId, function(req, res) {
+router.delete("/:id/tokens", authorization.AdminOrId, function(req, res) {
   let id = req.params.id;
 
   api.action = "delete user by token";
 
   let token = req.headers['x-access-token'];
 
-  libUsers.logout(id, token).then( userObj => {
-    return responseLib.buildResponseSuccess(req, api, {}, {users: userObj});
+  req.app.locals.libraries.user.logout(id, token).then( userObj => {
+    return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {users: userObj});
   }).then( finalObj => {
     res.status(200).json(finalObj);
   }).catch(function(err) {

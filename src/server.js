@@ -6,13 +6,12 @@ const express = require('express'),
     favicon = require('serve-favicon'),
     path = require('path'),
     CONFIG = require('./config.js'),
-    libClaims = require('./libs/claims'),
-    libResponse = require('./libs/response'),
     libError = require('./errors.js'),
     app = express(),
     memcache = require('memory-cache'),
     v1Routes = require("./routes/v1/route"),
-    database = require('./database');
+    database = require('./database'),
+    libraries = require('./libs/index');
 
     
 // for coverage of apis
@@ -33,6 +32,8 @@ if (CONFIG.env === 'development'){
 
 app.locals.cache = memcache;
 
+app.locals.libraries = libraries;
+
 // get db connection
 //app.locals.dbconnection is the db connection
 database.connect(CONFIG,app); 
@@ -50,7 +51,7 @@ app.disable('x-powered-by');
 //http://stackoverflow.com/questions/19917401/error-request-entity-too-large
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
-app.use(libClaims);
+app.use(libraries.claims);
 
 app.use(function(req, res, next) {
   console.log('method %s url %s path %s', req.method, req.url, req.path);
@@ -59,7 +60,7 @@ app.use(function(req, res, next) {
 
 // ROOT
 app.get("/", (req, res) => {
-    libResponse.buildResponseSuccess(req, { route: 'root'}, {}, {}).then(response => {
+    libraries.response.buildResponseSuccess(req, { route: 'root'}, {}, {}).then(response => {
         res.json(response);
     }).catch(err => {
         res.json({error: err});

@@ -4,11 +4,8 @@
 // each url has array of tags so need the url model
 const chai = require('chai'),
   tags = require('./tags'),
-  UrlModel = require("../data/url"),
-  utils = require('../utilities/test.utils'),
   sinon = require('sinon'),
   should = chai.should(),
-  expect = chai.expect(),
   sandbox = sinon.sandbox.create();
 
 const exArrFromMongo = [
@@ -27,11 +24,13 @@ describe('lib tags', function() {
 
   let stub;
 
-  before(function() {
+  before(function(done) {
     stub = sinon.stub(tags, "aggregation").returns(Promise.resolve(exArrFromMongo));
+    done();
   });
-  after(function() {
+  after(function(done) {
     stub.restore();
+    done();
   });
 
   it("should getAll successfully", function(done){

@@ -2,7 +2,7 @@
 "use strict";
 
 // each url has array of tags so need the url model
-const UrlModel = require('../data/url.js'),
+const UrlModel = require('../data/index').url,
   Promise = require("bluebird");
 
 

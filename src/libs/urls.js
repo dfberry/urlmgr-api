@@ -1,6 +1,6 @@
 "use strict";
 
-const UrlModel = require('../data/url.js'),
+const UrlModel = require('../data/index').url,
   userLib = require('./users.js'),
   htmlLib = require('./html.js'),
   _ = require('underscore');

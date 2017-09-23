@@ -1,12 +1,7 @@
 "use strict";
 
-const config = require('../../config.js'),
-	libAuthentication = require('../../libs/authentication'),
-	libUser = require('../../libs/users'),
-	libResponse = require('../../libs/response'),
-	express = require('express'),
+const express = require('express'),
 	router = express.Router(),
-	_ = require('underscore'),
 	api = { name: "authenticate", cache:false};
 
 //Hacking mongodb authentication
@@ -36,12 +31,12 @@ router.post('/', function(req, res) {
 
 	if(!email || !password) return res.status(422).send({error: "user or password is empty"});
 
-	return libUser.getByEmail(email).then(returnableUser => {
+	return req.app.locals.libraries.user.getByEmail(email).then(returnableUser => {
 		//let returnableUser = libUser.createReturnableUser(user);
-		return libAuthentication.authenticate(email, password);
+		return req.app.locals.libraries.authentication.authenticate(email, password);
 	}).then(userWithToken => {
 		let meta = {};
-		return libResponse.buildResponseSuccess(req, api, meta, {user: userWithToken});
+		return req.app.locals.libraries.response.buildResponseSuccess(req, api, meta, {user: userWithToken});
 	}).then ( finalObj => {
     return res.status(200).send(finalObj);
   }).catch(function(err) {
@@ -55,7 +50,7 @@ router.post('/', function(req, res) {
 				let data = {}; // because there is an error
 				let meta = {}; // because it is filled by libResponse
 
-				return libResponse.buildResponseFailure(req, api, meta, data).then( finalObj => {
+				return req.app.locals.libraries.response.buildResponseFailure(req, api, meta, data).then( finalObj => {
 				return res.status(422).send(finalObj);
 			}).catch(err => {
 				return res.status(500).send({ error: err.message });
