@@ -1,7 +1,5 @@
 "use strict";
 
-const libAuthentication = require('./authentication');
-
 module.exports = function(req, res, next) {
     // check header or url parameters or post parameters for token
     let token = req.body.token || req.query.token || req.headers['x-access-token'],
@@ -9,7 +7,7 @@ module.exports = function(req, res, next) {
 
     // decode token
     if (token) {
-      libAuthentication.getClaimsPromise(token, ip).then(function(claims) {
+      req.app.locals.libraries.authentication.getClaimsPromise(token, ip).then(function(claims) {
         // Store the actual claims
         req.claims = claims;
         next();
