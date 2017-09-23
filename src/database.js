@@ -11,7 +11,6 @@ let mongooseOptions = {
 const Database = {
   
   connect: function (config, app){
-    debugger;
     try{
       let db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
       mongoose.connect(db, mongooseOptions);

@@ -33,7 +33,7 @@ router.post('/', function(req, res) {
 
 	return req.app.locals.libraries.user.getByEmail(email).then(returnableUser => {
 		//let returnableUser = libUser.createReturnableUser(user);
-		return req.app.locals.libraries.authentication.authenticate(email, password);
+		return req.app.locals.libraries.authentication.authenticatePromise(email, password);
 	}).then(userWithToken => {
 		let meta = {};
 		return req.app.locals.libraries.response.buildResponseSuccess(req, api, meta, {user: userWithToken});

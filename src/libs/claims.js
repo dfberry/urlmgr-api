@@ -9,7 +9,7 @@ module.exports = function(req, res, next) {
 
     // decode token
     if (token) {
-      libAuthentication.getClaims(token, ip).then(function(claims) {
+      libAuthentication.getClaimsPromise(token, ip).then(function(claims) {
         // Store the actual claims
         req.claims = claims;
         next();
