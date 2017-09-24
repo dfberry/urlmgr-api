@@ -8,7 +8,7 @@ const express = require('express'),
     CONFIG = require('./config.js'),
     app = express(),
     memcache = require('memory-cache'),
-    v1Routes = require("./routes/v1/route"),
+    routes = require("./routes/root"),
     database = require('./database'),
     libraries = require('./libs/index');
 
@@ -52,7 +52,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit:50000 }));
 
 // V1 API
-app.use('/v1/',v1Routes);
+app.use('/',routes);
 
 // test/coverage only
 if ((CONFIG.env === 'development') && isCoverageEnabled) {
