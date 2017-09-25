@@ -15,9 +15,12 @@ let Response = {
       response.status = "success";
       response.state = 1;
 
-      return Promise.resolve(response);
+      return (response);
 
-    }).catch(err => {return Promise.reject(err)});
+    }).catch((err) => {
+
+      throw(err);
+    });
   },
   buildResponseFailure: function(req, api, meta, data){
 
@@ -26,31 +29,35 @@ let Response = {
       response.status = "failure";
       response.state = 0;
 
-      return Promise.resolve(response);
+      return (response);
 
-      }).catch(err => {return Promise.reject(err)});
+    }).catch((err) => {
+
+      throw(err);
+    });
   },
   buildResponse: function(req, api, meta, data){
 
-    return new Promise(function(resolve, reject) {
 
-      if(!req || !api) reject("missing mergable results");
+      if(!req || !api) {
+
+        Promise.reject("missing mergable results");
+      }
 
       let responseJson = {};
       responseJson.api = api;
       responseJson.data = data; 
 
-      metaLib.git().then(gitCommentAndBranch => {
+      return metaLib.git().then(results => {
 
         // add git commit and branch, db container name
         let verMongo = req.app.get('ver-mongo');
-        responseJson.meta = _.extend(meta, gitCommentAndBranch, { container: req.app.locals.container, mver: verMongo});
-
-        resolve(responseJson);
+        responseJson.meta = _.extend(meta, results, { container: req.app.locals.container, mver: verMongo});
+        return (responseJson);
       }).catch((err) => {
-        reject(err);
+        throw(err);
       });
-    });    
+  
   }
 }
 

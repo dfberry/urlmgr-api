@@ -28,6 +28,7 @@ let Authentication = {
     let query = TokenModel.find({"token": token}).exec();
 
     return query.then(function(tokenDoc) {
+      console.log("getClaimsPromise step 1");
 
       if (!tokenDoc) throw Error("Token has been revoked, as a result of deletion.");
       if (tokenDoc.revoked) throw Error("Token has been revoked.");
@@ -35,18 +36,22 @@ let Authentication = {
       return Tokens.verify(token,config.jwt);
 
     }).then(decoded => {
-        
-      decodedToken = decoded;
+      console.log("getClaimsPromise step 2");
+
+      let decodedTokenPromise =  Promise.resolve(decoded);
 
       // ISSUE: don't care when promise is returned, don't care if error is thrown
-      return Users.setLastLogin(decoded.uuid);
+      let setLastLoginPromise =  Users.setLastLogin(decoded.uuid);
     
-    }).then( (nothingIsReturned) => {
-      
+      return Promise.all([decodedTokenPromise, setLastLoginPromise]);
+
+    }).then( (arr) => {
+      console.log("getClaimsPromise step 3");
       // Send back the claims
-      return Promise.resolve(decodedToken);
+      return (arr[0]);
     }).catch(err => {
-      throw err;
+      console.log("getClaimsPromise catch " + err);
+      throw Error(err);
     });
 
   },
@@ -79,9 +84,10 @@ let Authentication = {
       return Users.getByEmail(email);
     }).then( user => {
       user.token = foundToken;
-      return Promise.resolve(user);
+      return (user);
     }).catch(function(error) {
-      throw("User & password did not match " + error);
+      console.log("authenticatPromise error = " + error);
+      throw ("User & password did not match ");
     });
 
   },

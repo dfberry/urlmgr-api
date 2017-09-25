@@ -96,7 +96,7 @@ describe('route v1 authentication', function() {
                 .post('/v1/auth')
                 .send(authUser)
                 .end((_err, _res) => {  
-
+                  debugger;
                   _res.status.should.be.eq(422);
                   _err.message.should.be.eq("Unprocessable Entity");
                   done();

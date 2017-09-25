@@ -116,20 +116,23 @@ let Users = {
   */
   checkPassword: function(email, candidatePassword){
     let self = this;
-    return new Promise(function(resolve, reject) {
 
-      if(!email || !candidatePassword) reject("email or password not provided");
 
-      self.getByEmailRaw(email).then( user => {
+      if(!email || !candidatePassword) Promise.reject("email or password not provided");
+
+      return self.getByEmailRaw(email).then( user => {
         if ( !user ) return reject("User does not exist");
         let _user = Promise.resolve(user);
         let _verifyPassword = self.verifyPassword(candidatePassword, user.password);
         return Promise.all([_verifyPassword, _user]);
       }).then( (result) => {
-        if (!result[0]) return reject("Password doesn't match");
-        return resolve(result[1]);
-      }).catch(reject);
-    });
+        if (!result[0]) throw("Password doesn't match");
+        return (result[1]);
+      }).catch( err => {
+        console.log("checkPassword error = " + err);
+        throw(err);
+      });
+
   },
   verifyPassword: function(candidatePassword, hashedPassword) {
     return new Promise(function(resolve, reject) {
