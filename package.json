@@ -16,7 +16,11 @@
     "install-dev": "npm install",
     "start": "npm run start-ts",
     "start-ts": "npm run build:prod && node dist/index.js",
+<<<<<<< HEAD
     "start-prod": "npm run build:prod && node dist_prod/index.js",
+=======
+    "start:prod": "npm run build:prod && node dist_prod/index.js",
+>>>>>>> cache
     "start:dev": "npm run build:test && node --inspect=0.0.0.0:3004 --debug-brk dist/index.js ",
     "start-js": "node --inspect-brk ./src/index.js",
     "lint": "gulp lint",
@@ -27,7 +31,11 @@
     "build:test": "npm run gulp-build:test",
     "build:prod": "npm run gulp-build:prod",
     "coverage": "set COVERAGE=true && istanbul cover node_modules/mocha/bin/_mocha  src/**/*.spec.js -R spec",
+<<<<<<< HEAD
     "test": "npm run build:test && npm run gulp-test",
+=======
+    "test": "npm run build:test && node_modules/mocha/bin/_mocha --recursive -t 20000 dist",
+>>>>>>> cache
     "test:chrome": "npm run build:test && node --inspect-brk=0.0.0.0:3004 node_modules/mocha/bin/_mocha --recursive -t 20000 dist"
   },
   "keywords": [],

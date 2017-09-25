@@ -63,7 +63,7 @@ describe('route v1 tags',  ()=> {
 
   describe('auth success', () => {
 
-    it('should return tags for all users', (done) => {
+    it('should return tags for all users, checks cache', (done) => {
 
       let allTags = [ { count: 3, tag: '.net' },
         { count: 2, tag: 'admin' },
@@ -81,7 +81,7 @@ describe('route v1 tags',  ()=> {
         { count: 2, tag: 'web' } ];
 
       chai.request(server)
-        .get('/v1/tags/all')
+        .get('/v1/tags/all') // puts it in cache
         .query('user='+ testUserNotAdminId) //this should be ignored
         .set('x-access-token', testUserNotAdminToken)
         .end((err, res) => {
@@ -94,9 +94,20 @@ describe('route v1 tags',  ()=> {
           // data
           res.body.data.tags.should.be.a('array');
           res.body.data.tags.length.should.equal(14);
-          res.body.data.tags.should.deep.equal(allTags);          
+          res.body.data.tags.should.deep.equal(allTags);  
+          
+          // check tags are in cache
+          chai.request(server)
+            .get('/v1/cache')
+            .end((err2, res2) => {
 
-          done();
+              res2.body.data.cache.values.tags.should.be.a('array');
+              res2.body.data.cache.values.tags.length.should.equal(14);
+              done();
+
+            });
+
+
         });
     });
     it('should return tags for non admin user', (done) => {

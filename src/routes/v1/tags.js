@@ -18,6 +18,7 @@ router.get("/all", function(req, res) {
 
   // get cache
   let cacheLib = req.app.locals.cache;
+<<<<<<< HEAD:src/routes/v1/tags.js
   let tagCache = cacheLib ? cacheLib.get("tags"): undefined;
   api.cache = tagCache ? true: false;
   cacheTimeMs = (tagCache && req.app.locals.config && req.app.locals.config.cacheMilliseconds) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
@@ -26,6 +27,24 @@ router.get("/all", function(req, res) {
 
   pTags.then(tags => {
     if(!tagCache && tags && cacheTimeMs) cacheLib.put("tags",tags, cacheTimeMs);
+=======
+  let currentCache = cacheLib ? cacheLib.get("tags"): undefined;
+  let isCached = currentCache ? true : false;
+
+  api.cache = isCached;
+  
+  cacheTimeMs = (isCached && req.app.locals.config && req.app.locals.config.cacheMilliseconds) ? req.app.locals.config.cacheTimeMs : cacheTimeMs;
+  
+  let pTags = isCached ? Promise.resolve(currentCache): req.app.locals.libraries.tag.getAll();
+
+  pTags.then(tags => {
+    // cache library takes it out when it expires
+    // so if there isn't a value in cache, it is time to cache again
+    if(!currentCache && tags && cacheTimeMs) {
+      cacheLib.put("tags",tags, cacheTimeMs);
+    }
+
+>>>>>>> cache:src/routes/v1/tags.js
 		return req.app.locals.libraries.response.buildResponseSuccess(req, api, {}, {tags: tags});
   }).then( finalObj => {
     res.status(200).json(finalObj);
