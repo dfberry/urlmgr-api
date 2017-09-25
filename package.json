@@ -10,12 +10,13 @@
     "node": ">=6.8.0"
   },
   "scripts": {
-    "clean": "rimraf dist src/types/*.d.ts",
+    "clean": "rimraf dist dist_prod src/types/*.d.ts",
     "postinstall": "npm run clean && node createTypingsFiles.js > createTypingsFiles.out.txt",
     "install-prod": "npm install --production",
     "install-dev": "npm install",
     "start": "npm run start-ts",
     "start-ts": "npm run build:prod && node dist/index.js",
+    "start-prod": "npm run build:prod && node dist_prod/index.js",
     "start:dev": "npm run build:test && node --inspect=0.0.0.0:3004 --debug-brk dist/index.js ",
     "start-js": "node --inspect-brk ./src/index.js",
     "lint": "gulp lint",

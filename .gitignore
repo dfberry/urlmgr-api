@@ -8,6 +8,7 @@ example-json
 **/*/config.json
 /coverage
 dist
+dist_prod
 *.out.txt
 config.json
 src/createUser.js

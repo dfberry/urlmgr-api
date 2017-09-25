@@ -24,9 +24,10 @@ gulp.task('assets', function () {
             '!./src/**/*.spec.*/',
             '!./src/utilities/*.*/',
             '!./src/utilities',
-            '!**/createUser.js/'
+            '!**/createUser.js',
+            '!**/changeUserPassword.js'
           ])
-          .pipe(gulp.dest('dist'));
+          .pipe(gulp.dest('dist_prod'));
 });
 
 gulp.task('assets-test', function () {
