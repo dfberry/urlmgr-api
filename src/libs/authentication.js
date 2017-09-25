@@ -28,7 +28,6 @@ let Authentication = {
     let query = TokenModel.find({"token": token}).exec();
 
     return query.then(function(tokenDoc) {
-      console.log("getClaimsPromise step 1");
 
       if (!tokenDoc) throw Error("Token has been revoked, as a result of deletion.");
       if (tokenDoc.revoked) throw Error("Token has been revoked.");
@@ -36,7 +35,6 @@ let Authentication = {
       return Tokens.verify(token,config.jwt);
 
     }).then(decoded => {
-      console.log("getClaimsPromise step 2");
 
       let decodedTokenPromise =  Promise.resolve(decoded);
 
@@ -46,11 +44,9 @@ let Authentication = {
       return Promise.all([decodedTokenPromise, setLastLoginPromise]);
 
     }).then( (arr) => {
-      console.log("getClaimsPromise step 3");
       // Send back the claims
       return (arr[0]);
     }).catch(err => {
-      console.log("getClaimsPromise catch " + err);
       throw Error(err);
     });
 
@@ -86,7 +82,6 @@ let Authentication = {
       user.token = foundToken;
       return (user);
     }).catch(function(error) {
-      console.log("authenticatPromise error = " + error);
       throw ("User & password did not match ");
     });
 

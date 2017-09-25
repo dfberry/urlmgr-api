@@ -57,7 +57,7 @@ describe('route v1 tags',  ()=> {
     }).then(results => {
       done();
     }).catch(err => {
-      console.log(err);
+      done(err);
     });
   });
 

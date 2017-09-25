@@ -39,7 +39,7 @@ describe('route v1 users', function() {
 
         done();
       }).catch(err => {
-        console.log(err);
+        done(err);
       });
     });
 

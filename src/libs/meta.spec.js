@@ -12,7 +12,6 @@ describe('lib meta', function() {
 
     it('should return meta json object of git info', function(done) {
       meta.git().then(response => {
-        console.log("meta.git = " + response);
         response.should.be.a('object');
         utils.expectGitData(response);
         done();

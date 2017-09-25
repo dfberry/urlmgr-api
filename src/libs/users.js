@@ -95,7 +95,7 @@ let Users = {
           return resolve(self.createReturnableUser(_user));
         });
       } catch (err) {
-        console.log("create user error = " + err);
+        //TBD - promises fix: reject(err);
       }
 
     });
@@ -129,7 +129,6 @@ let Users = {
         if (!result[0]) throw("Password doesn't match");
         return (result[1]);
       }).catch( err => {
-        console.log("checkPassword error = " + err);
         throw(err);
       });
 

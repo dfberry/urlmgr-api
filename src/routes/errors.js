@@ -7,8 +7,6 @@ function errorHandler(err, req, res, next) {
 
   if (err.name === 'UnauthorizedError') {
 
-    console.log("untreated error " + req.path + " " + req.method);
-
     res.status(401).json({
         message : err.message,
         error: errorStack

@@ -43,29 +43,25 @@ router.post('/', function(req, res) {
 
     return res.status(200).send(finalObj);
   }).catch(function(err) {
-		console.log("auth step 4 = " + err);
-
 
 		if((err.indexOf('user is invalid') != -1)
 			|| (err.indexOf("User doesn't exist")!= -1)
 			|| (err.indexOf('User & password did not match') != -1)
 			|| (err.indexOf('Authentication failed: Invalid email and/or password supplied.')!= -1)) {
-			
-				console.log("caught error");
 
 				api.error = { type: "authentication failure", message: err};
 				let data = {}; // because there is an error
 				let meta = {}; // because it is filled by libResponse
 
 				return req.app.locals.libraries.response.buildResponseFailure(req, api, meta, data).then( finalObj => {
-					console.log("caught error returning 422");
+
 					return res.status(422).send(finalObj);
 				}).catch(err => {
-					console.log("caught error returning 500");
+
 					return res.status(500).send({ error: err.message });
 				});
 		} else {
-			console.log("auth general error, returning 500");
+
 			return res.status(500).send({ error: err.message });
 		}
   });

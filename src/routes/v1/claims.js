@@ -10,12 +10,10 @@ module.exports = function(req, res, next) {
 
     // decode token
     req.app.locals.libraries.authentication.getClaimsPromise(token, ip).then(function(claims) {
-      console.log("getClaimsPromise success");
       // Store the actual claims
       req.claims = claims;
       next();
     }).catch(function(error) {
-      console.log("getClaimsPromise failure");
       // If a bad token is supplied probably best to stop right there
       res.sendStatus(500).send("CLAIM_ERROR " + error);
     });
