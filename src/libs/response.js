@@ -41,7 +41,7 @@ let Response = {
 
       if(!req || !api) {
 
-        Promise.reject("missing mergable results");
+        return Promise.reject("missing mergable results");
       }
 
       let responseJson = {};

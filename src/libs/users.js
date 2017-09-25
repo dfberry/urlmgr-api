@@ -95,7 +95,7 @@ let Users = {
           return resolve(self.createReturnableUser(_user));
         });
       } catch (err) {
-        //TBD - promises fix: reject(err);
+        reject(err);
       }
 
     });
@@ -118,7 +118,7 @@ let Users = {
     let self = this;
 
 
-      if(!email || !candidatePassword) Promise.reject("email or password not provided");
+      if(!email || !candidatePassword) return Promise.reject("email or password not provided");
 
       return self.getByEmailRaw(email).then( user => {
         if ( !user ) return reject("User does not exist");

@@ -32,7 +32,7 @@ let Tags = {
   },
   
   aggregation: function(query){
-    if(!query) Promise.reject("error: empty query for aggregation");
+    if(!query) return Promise.reject("error: empty query for aggregation");
     return new Promise(function(resolve, reject) {
       UrlModel.aggregate(query, (err, tagAggregation) =>{
         if(err)reject(err);
