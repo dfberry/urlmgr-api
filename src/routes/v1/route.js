@@ -7,8 +7,10 @@ const express = require('express'),
   meta = require('./meta'),
   tags = require('./tags'),
   auth = require('./authentication'),
+  claims = require('./claims'),
   cache = require('./cache');
 
+router.use(claims);
 
 router.use('/urls',urls);
 router.use('/users',users);
@@ -17,4 +19,4 @@ router.use('/meta', meta);
 router.use('/tags', tags);
 router.use('/cache',cache);
 
-module.exports = router
+module.exports = router;

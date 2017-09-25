@@ -11,7 +11,7 @@ let testUser = {
   lastName: "berry",
   firstName: "dina",
   email: "dinaberry@outlook.com",
-  password: "1234",
+  password: "xxxx",
   roles: ["admin",'user']
 };
 

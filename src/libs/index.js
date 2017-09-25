@@ -1,11 +1,13 @@
 "use strict";
 
+// this library used in routes via
+// req.app.locals.libraries...
+
 const authentication = require('./authentication'),
   meta = require('./meta'),
   response = require('./response'),
   tag = require('./tags'),
   url = require('./urls'),
-  claims = require('./claims'),
   token = require('./tokens'),
   git = require('./git'),
   html = require('./html'),
@@ -13,7 +15,6 @@ const authentication = require('./authentication'),
   
 const Libraries = {
   authentication: authentication,
-  claims: claims,
   git: git,
   html: html,
   meta: meta,

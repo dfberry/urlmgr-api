@@ -4,14 +4,12 @@ const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 let mongooseOptions = {
-  server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
-  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }
+  server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000, connectionTimeout: 30000 , socketTimeoutMS: 30000} },
+  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000, connectionTimeout: 30000 , socketTimeoutMS: 30000 } }
 }; 
-
 const Database = {
   
   connect: function (config, app){
-    debugger;
     try{
       let db = 'mongodb://' + config.db.host + ":" + config.db.port + "/" + config.db.db;
       mongoose.connect(db, mongooseOptions);

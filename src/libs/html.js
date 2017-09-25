@@ -15,11 +15,11 @@ let Html = {
     ].sort();
   },
   getHtml: function(url) {
-      return new Promise(function(resolve, reject) {
-        if(!url) reject("url not provided");
 
-        rp.get(url).then(resolve).catch(reject);
-    });
+    if(!url) return Promise.reject("url not provided");
+
+    return rp.get(url);
+
   },
   getLinks: function(html){
       let list = [];

@@ -18,14 +18,14 @@ describe('lib html', function() {
     it('should return html', function(done) {
       html.getHtml('http://www.google.com')
       .then(response => {
+        response.should.exist;
         done();
       }).catch(err => {
         done(err);
       })
     });
     it('should fail when url is empty', function(done) {
-      html.getHtml()
-      .then(response => {
+      html.getHtml().then(response => {
         done(response);
       }).catch(err => {
         done();

@@ -48,10 +48,9 @@ describe('route v1 urls', function() {
         pUserDinaBerry = users[2];
         testUserId = testUser.id;
         testUserToken = testUser.token.token;
-        console.log("before Each done");
         return done();
     }).catch(err => {
-      console.log("urls.spec.js before - can't create test user - " + JSON.stringify(err));
+      done(err);
     });
   });
 
@@ -133,13 +132,10 @@ describe('route v1 urls', function() {
               testUtils.wellFormedPublicUrl(url);
             });
 
-
             done();
-
             
           });
         }).catch(err => {
-          console.log(err);
           done(err);
         });
 
@@ -196,7 +192,6 @@ describe('route v1 urls', function() {
               done();
             });
           }).catch(err => {
-            console.log(err);
             done(err);
           });
       });
@@ -252,7 +247,6 @@ describe('route v1 urls', function() {
               done();
             });
           }).catch(err => {
-            console.log(err);
             done(err);
           });
       });
@@ -318,7 +312,6 @@ describe('route v1 urls', function() {
               done();
             });
           }).catch(err => {
-            console.log(err);
             done(err);
           });
       });
@@ -373,7 +366,7 @@ describe('route v1 urls', function() {
           done();
         });
       }).catch(err =>  {
-        console.log("error creating N urls = " + err);
+        done(err);
       });
     });
     it('should return 1 url', function(done) {

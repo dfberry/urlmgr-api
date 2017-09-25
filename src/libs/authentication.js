@@ -16,38 +16,40 @@ let Authentication = {
    Sets Last Login time
   */
   // TODO: what was ipAddr for?
-  getClaims: function(token, ipAddr) {
+  getClaimsPromise: function(token, ipAddr) {
 
-    return new Promise(function(resolve, reject) {
+    let decodedToken;
 
-      let decodedToken;
+    if (!token) return Promise.resolve();
 
-      // decode token
-      if (!token) return resolve();
+    // Check for the token in the DB
+    // if it isn't found - it definitely isn't authorized
 
-        // Check for the token in the DB
-        // if it isn't found - it definitely isn't authorized
-        TokenModel.find({"token": token}).then(function(tokenDoc) {
+    let query = TokenModel.find({"token": token}).exec();
 
-          if (!tokenDoc) throw Error("Token has been revoked, as a result of deletion.");
-          if (tokenDoc.revoked) throw Error("Token has been revoked.");
+    return query.then(function(tokenDoc) {
 
-          return Tokens.verify(token,config.jwt);
+      if (!tokenDoc) throw Error("Token has been revoked, as a result of deletion.");
+      if (tokenDoc.revoked) throw Error("Token has been revoked.");
 
-        }).then(decoded => {
-            
-          decodedToken = decoded;
+      return Tokens.verify(token,config.jwt);
 
-          // ISSUE: don't care when promise is returned, don't care if error is thrown
-          return Users.setLastLogin(decoded.uuid);
-        
-        }).then( (nothingIsReturned) => {
-          // Send back the claims
-          resolve(decodedToken);
-        }).catch(err => {
-          throw err;
-        });
+    }).then(decoded => {
+
+      let decodedTokenPromise =  Promise.resolve(decoded);
+
+      // ISSUE: don't care when promise is returned, don't care if error is thrown
+      let setLastLoginPromise =  Users.setLastLogin(decoded.uuid);
+    
+      return Promise.all([decodedTokenPromise, setLastLoginPromise]);
+
+    }).then( (arr) => {
+      // Send back the claims
+      return (arr[0]);
+    }).catch(err => {
+      throw Error(err);
     });
+
   },
   /* Authenticates a user 
 
@@ -57,36 +59,32 @@ let Authentication = {
    Returns either a valid JWT token or throws an error
 
   */
-  authenticate: function(email, password) {
-    let self = this;
+  authenticatePromise: function(email, password) {
 
-    return new Promise(function(resolve, reject) {
+    let foundToken;
 
-      let foundToken;
+    if(!email || !password) return Promise.reject("email or password is empty");
 
-      if(!email || !password) reject("email or password is empty");
+    // Validate email and password
+    if (!this.validate(email, password)) return Promise.reject("Authentication failed: Invalid email and/or password supplied."); 
+    
+    return Users.checkPassword(email, password).then(function(user) {
+      if (!user) throw("Authentication Failed: No such user.");
 
-      // Validate email and password
-      if (!self.validate(email, password)) return reject("Authentication failed: Invalid email and/or password supplied."); 
-      
-      Users.checkPassword(email, password).then(function(user) {
-        if (!user) reject("Authentication Failed: No such user.");
-
-        return Users.createReturnableUser(user);
-      }).then(returnableUser => {
-        // Store JWT in DB for logout/revocation
-        return Tokens.insert(returnableUser, self.getToken(returnableUser.email, returnableUser, config.jwt));
-      }).then(token => {
-        foundToken = token;
-        return Users.getByEmail(email);
-      }).then( user => {
-        user.token = foundToken;
-        return resolve(user);
-      }).catch(function(error) {
-        reject("User & password did not match");
-      });
-
+      return Users.createReturnableUser(user);
+    }).then(returnableUser => {
+      // Store JWT in DB for logout/revocation
+      return Tokens.insert(returnableUser, this.getToken(returnableUser.email, returnableUser, config.jwt));
+    }).then(token => {
+      foundToken = token;
+      return Users.getByEmail(email);
+    }).then( user => {
+      user.token = foundToken;
+      return (user);
+    }).catch(function(error) {
+      throw ("User & password did not match ");
     });
+
   },
   createReturnableToken(token){
 

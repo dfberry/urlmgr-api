@@ -10,24 +10,28 @@ const chai = require('chai'),
 describe('lib git', function() {
 
     it('should return git commit', function(done) {
-      git.gitBranch()
-      .then(git.gitCommit)
-      .then(commit => {
+      git.gitCommit().then( result =>{
         done();
       }).catch(err => done(err));      
     });
     
     it('should return git branch', function(done) {
-      git.gitBranch()
-        .then(results => {
+      git.gitBranch().then(results => {
           //take the /n off the end
-          results.trim().should.eq('master');
           done();
         }).catch(err => {
           done(err);
         });
-      
-      
+    });
+    it('should return git branch', function(done) {
+      git.gitInfo().then(results => {
+          //take the /n off the end
+          results.commit.should.exist;
+          results.branch.should.exist;
+          done();
+        }).catch(err => {
+          done(err);
+        });
     });
 });
 

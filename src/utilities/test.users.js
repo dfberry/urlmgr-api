@@ -24,7 +24,7 @@ let TestUsers = {
   }, 
   authenticateUser: function (email, password) {
 
-    return authLib.authenticate(email, password);
+    return authLib.authenticatePromise(email, password);
   },
   createAuthenticatedUser(user, admin=false, modifyName=false){
 
@@ -46,7 +46,7 @@ let TestUsers = {
       // keep track of user id
       user.id = returnedUser.id;
 
-      return authLib.authenticate(user.email, user.password);
+      return authLib.authenticatePromise(user.email, user.password);
     }).then( userWithToken => {
       return Promise.resolve(userWithToken);
     }).catch(err => {
